@@ -1,0 +1,76 @@
+{{define "pad-content"}}
+
+	<form method="post" class="d-inline-block d-print-none mb-3">
+		<div class="input-group">
+			<a class="btn btn-primary" href="{{.Pad.Link}}/week/{{.EarlierYear}}/{{.EarlierWeek}}">&#8592;</a>
+			<input class="form-control" type="week" name="week" value="{{.ISOWeek}}">
+			<button class="btn btn-primary" type="submit">Go</button>
+			<a class="btn btn-primary" href="{{.Pad.Link}}/week/{{.ThisYear}}/{{.ThisWeek}}">This</a>
+			<a class="btn btn-primary" href="{{.Pad.Link}}/week/{{.NextYear}}/{{.NextWeek}}">Next</a>
+			<a class="btn btn-primary" href="{{.Pad.Link}}/week/{{.LaterYear}}/{{.LaterWeek}}">&#8594;</a>
+		</div>
+	</form>
+
+	{{range $day := .Days}}
+		<div class="card mb-3">
+			<div class="card-body">
+				<h5 class="card-title" id="{{FmtISODate .Begin}}">{{FmtDate .Begin}}</h5>
+				{{with .Groups}}
+					<table class="table align-middle mb-0">
+						<thead>
+							<tr>
+								<th>Time</th>
+								<th>Shift</th>
+								<th><!-- edit --></th>
+								<th>Taker</th>
+							</tr>
+						</thead>
+						{{range .}}
+							<tbody class="table-group-divider">
+								{{with .Event}}
+									<tr class="table-secondary">
+										<td>{{$day.FmtEventTime .}}</td>
+										<td colspan="3">
+											{{if .URL}}
+												<a href="{{.URL}}" rel="noreferrer" target="_blank">{{.Summary}}</a>
+											{{else}}
+												{{.Summary}}
+											{{end}}
+										</td>
+									</tr>
+								{{end}}
+								{{range .Shifts}}
+									<tr>
+										<td>{{$day.FmtShiftTime .}}</td>
+										<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
+										<td>
+											{{if $.Pad.CanEditShift .}}
+												<a class="btn btn-sm btn-primary d-print-none" href="{{$.Pad.Link}}/edit/{{.ID}}">
+													<span class="d-inline d-lg-none">&#x270E;</span>
+													<span class="d-none d-lg-inline">Edit</span>
+												</a>
+												<a class="btn btn-sm btn-primary d-print-none" href="{{$.Pad.Link}}/delete/{{.ID}}">
+													<span class="d-inline d-lg-none">X</span>
+													<span class="d-none d-lg-inline">Delete</span>
+												</a>
+											{{end}}
+										</td>
+										<td>
+											{{$.Pad.TakerString .}}
+											{{if $.Pad.CanTakeShift .}}
+												<a class="btn btn-sm btn-primary d-print-none" href="{{$.Pad.Link}}/take/{{.ID}}"><!-- &#x270B; -->Take</a>
+											{{end}}
+										</td>
+									</tr>
+								{{end}}
+							</tbody>
+						{{end}}
+					</table>
+				{{end}}
+				{{if $.Pad.CanEditSomeShift}}
+					<a class="btn btn-sm btn-primary d-print-none mt-3" href="{{$.Pad.Link}}/add/{{FmtISODate .Begin}}">Create Shift</a>
+				{{end}}
+			</div>
+		</div>
+	{{end}}
+{{end}}

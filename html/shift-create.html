@@ -1,0 +1,110 @@
+{{define "pad-content"}}
+	{{with .Error}}
+		<div class="alert alert-danger">{{.}}</div>
+	{{end}}
+	<form method="post">
+		{{with .Day}}
+			<div class="card mb-3">
+				<div class="card-body">
+					<h5 class="card-title">{{FmtDate .Begin}}</h5>
+					{{with .Groups}}
+						<table class="table align-middle">
+							<thead>
+								<tr>
+									<th>Begin</th>
+									<th>End</th>
+									<th>Shift</th>
+									<th>Taker</th>
+								</tr>
+							</thead>
+							{{range .}}
+								<tbody class="table-group-divider">
+									{{with .Event}}
+										<tr class="table-secondary">
+											<td>{{$.Day.FmtDateTime .Start}}</td>
+											<td>{{$.Day.FmtDateTime .End}}</td>
+											<td colspan="2">{{.Summary}}</td>
+										</tr>
+									{{end}}
+									{{range .Shifts}}
+										<tr>
+											<td>{{$.Day.FmtDateTime .Begin}}</td>
+											<td>{{$.Day.FmtDateTime .End}}</td>
+											<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
+											<td>{{$.Pad.TakerString .}}</td>
+										</tr>
+									{{end}}
+								</tbody>
+							{{end}}
+						</table>
+					{{end}}
+					{{with .Events}}
+						<div class="mb-3">
+							<div class="form-check">
+								<input class="form-check-input" id="uid" type="radio" name="event-uid" value="" checked>
+								<label class="form-check-label" for="uid">
+									do not assign to an event
+								</label>
+							</div>
+							{{range .}}
+								<div class="form-check">
+									<input class="form-check-input"  id="uid-{{.UID}}" type="radio" name="event-uid" value="{{.UID}}">
+									<label class="form-check-label" for="uid-{{.UID}}">
+										{{$.Day.FmtDateTimeRange .Start .End}}: {{.Summary}}
+									</label>
+								</div>
+							{{end}}
+						</div>
+					{{end}}
+					<div class="row my-3">
+						<div class="col-lg-2 mb-1">
+							<div class="input-group">
+								<span class="input-group-text">Count</span>
+								<input class="form-control" type="number" name="count" min="1" max="10" value="1">
+							</div>
+						</div>
+						<div class="col-lg-3 mb-1">
+							<div class="input-group">
+								<!-- separate date and time because date has an initial value while time can be empty -->
+								<span class="input-group-text">Begin</span>
+								<input class="form-control" type="date" name="begin-date" value="{{FmtISODate .Begin}}" min="{{$.MinDate}}" max="{{$.MaxDate}}">
+								<input class="form-control" type="time" name="begin-time">
+							</div>
+						</div>
+						<div class="col-lg-3 mb-1">
+							<div class="input-group">
+								<span class="input-group-text">End</span>
+								<input class="form-control" type="date" name="end-date" value="{{FmtISODate .Begin}}" min="{{$.MinDate}}" max="{{$.MaxDate}}">
+								<input class="form-control" type="time" name="end-time">
+							</div>
+						</div>
+						<div class="col-lg-4 mb-1">
+							<div class="input-group">
+								{{if $.Pad.ShiftNames}}
+									{{with $.Pad.EditShiftNames}}
+										<select class="form-select" name="name">
+											{{if gt (len .) 1}}
+												<option></option>
+											{{end}}
+											{{range .}}
+												<option value="{{.}}">{{.}}</option>
+											{{end}}
+										</select>
+									{{else}}
+										<em>no shifts available</em>
+									{{end}}
+								{{else}}
+									<input class="form-control" type="text" name="name" maxlength="64" placeholder="Shift name">
+								{{end}}
+								<input class="form-control" type="text" name="note" maxlength="64" placeholder="Note">
+							</div>
+						</div>
+					</div>
+
+					<button class="btn btn-primary" type="submit">Create shifts</button>
+					<a class="btn btn-light" href="{{$.Pad.Link}}/day/{{FmtISODate .Begin}}">Cancel</a>
+				</div>
+			</div>
+		{{end}}
+	</form>
+{{end}}

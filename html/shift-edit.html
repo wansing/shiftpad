@@ -1,0 +1,115 @@
+{{define "pad-content"}}
+	{{with .Error}}
+		<div class="alert alert-danger">{{.}}</div>
+	{{end}}
+	<form method="post">
+		{{with .Day}}
+			<div class="card mb-3">
+				<div class="card-body">
+					<h5 class="card-title">{{FmtDate .Begin}}</h5>
+					{{with .Groups}}
+						<table class="table align-middle">
+							<thead>
+								<tr>
+									<th>Begin</th>
+									<th>End</th>
+									<th>Shift</th>
+									<th>Taker</th>
+								</tr>
+							</thead>
+							{{range .}}
+								<tbody class="table-group-divider">
+									{{with .Event}}
+										<tr class="table-secondary">
+											<td>{{$.Day.FmtDateTime .Start}}</td>
+											<td>{{$.Day.FmtDateTime .End}}</td>
+											<td colspan="2">{{.Summary}}</td>
+										</tr>
+									{{end}}
+									{{range .Shifts}}
+										{{if eq .ID $.Shift.ID}}
+											<input type="hidden" name="id" value="{{.ID}}">
+											{{with $.Day.Events}}
+												<tr class="table-warning">
+													<td colspan="4">
+														<div>
+															<div class="form-check">
+																<input class="form-check-input"  id="uid" type="radio" name="event-uid" value="" {{if eq "" $.Shift.EventUID}}checked{{end}}>
+																<label class="form-check-label" for="uid">
+																	do not assign to an event
+																</label>
+															</div>
+															{{range .}}
+																<div class="form-check">
+																	<input class="form-check-input"  id="uid-{{.UID}}" type="radio" name="event-uid" value="{{.UID}}" {{if eq .UID $.Shift.EventUID}}checked{{end}}>
+																	<label class="form-check-label" for="uid-{{.UID}}">
+																		{{$.Day.FmtDateTimeRange .Start .End}}: {{.Summary}}
+																	</label>
+																</div>
+															{{end}}
+														</div>
+													</td>
+												</tr>
+											{{end}}
+											<tr class="table-warning">
+												<td>
+													<div class="input-group">
+														<input type="date" class="form-control" name="begin-date" value="{{FmtISODate .Begin}}" min="{{$.MinDate}}" max="{{$.MaxDate}}">
+														<input type="time" class="form-control" name="begin-time" value="{{FmtISOTime .Begin}}">
+													</div>
+												</td>
+												<td>
+													<div class="input-group">
+														<input type="date" class="form-control" name="end-date" value="{{FmtISODate .End}}" min="{{$.MinDate}}" max="{{$.MaxDate}}">
+														<input type="time" class="form-control" name="end-time" value="{{FmtISOTime .End}}">
+													</div>
+												</td>
+												<td>
+													<div class="input-group">
+														{{$shiftname := .Name}}
+														{{if $.Pad.ShiftNames}}
+															{{with $.Pad.EditShiftNames}}
+																<select class="form-select" name="name">
+																	{{if gt (len .) 1}}
+																		<option></option>
+																	{{end}}
+																	{{range .}}
+																		<option value="{{.}}" {{if eq . $shiftname}}selected{{end}}>{{.}}</option>
+																	{{end}}
+																</select>
+															{{else}}
+																<em>no shifts available</em>
+															{{end}}
+														{{else}}
+															<input class="form-control" type="text" name="name" maxlength="64" value="{{.Name}}" placeholder="Shift name">
+														{{end}}
+														<input class="form-control" type="text" name="note" maxlength="64" value="{{.Note}}" placeholder="Note">
+													</div>
+												</td>
+												<td>
+													<div class="input-group">
+														<input type="text" class="form-control" name="taker-name"    maxlength="64"  value="{{.TakerName}}"    placeholder="Name">
+														<input type="text" class="form-control" name="taker-contact" maxlength="128" value="{{.TakerContact}}" placeholder="Contact">
+													</div>
+												</td>
+											</tr>
+										{{else}}
+											<tr>
+												<td>{{$.Day.FmtDateTime .Begin}}</td>
+												<td>{{$.Day.FmtDateTime .End}}</td>
+												<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
+												<td>{{.TakerName}} {{with .TakerContact}}({{.}}){{end}}</td>
+											</tr>
+										{{end}}
+									{{end}}
+								</tbody>
+							{{end}}
+						</table>
+						<button class="btn btn-primary" type="submit">Save changes</button>
+					{{end}}
+					<a class="btn btn-light" href="{{$.Pad.Link}}/day/{{FmtISODate .Begin}}">Cancel</a>
+				</div>
+			</div>
+		{{end}}
+	</form>
+{{end}}

@@ -1,0 +1,5 @@
+{{define "pad-content"}}
+	<p>This is your customized share link:</p>
+	<p><code>{{.Host}}{{.Link}}</code></p>
+	<p><a class="btn btn-primary" href="{{.Link}}" onclick="copyHref(event)">Copy link</a></p>
+{{end}}

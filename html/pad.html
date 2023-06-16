@@ -1,0 +1,68 @@
+{{define "title"}}
+	{{with .Pad}}
+		{{with .Name}}{{.}}{{else}}Unnamed Pad{{end}} {{with .Note}}({{.}}){{end}}
+	{{end}}
+{{end}}
+
+{{define "body"}}
+	<script>
+		// copyHref detects the host on its own. The event.target href must not contain a host.
+		function copyHref(event) {
+			event.preventDefault();
+			navigator.clipboard.writeText(location.protocol + '//' + location.host + event.target.getAttribute('href'));
+			let classname = event.target.className;
+			event.target.className = classname + " active";
+			setTimeout(function() {
+				event.target.className = classname;
+			}, 1000);
+		}
+	</script>
+
+	{{with .Pad}}
+		<nav class="navbar bg-light">
+			<div class="container">
+				<span class="navbar-brand">
+					<a href="{{.Link}}" class="text-decoration-none text-dark text-truncate me-1">{{with .Name}}{{.}}{{else}}Unnamed Pad{{end}}</a>
+					{{with .Note}}
+						<span class="badge bg-secondary fw-normal">{{.}}</span>
+					{{end}}
+					{{with .Expires}}
+						<span class="badge bg-secondary fw-normal">Link expires {{.}}</span>
+					{{end}}
+				</span>
+				<ul class="d-print-none ms-auto nav nav-pills">
+					<li class="nav-item">
+						<a class="nav-link" href="{{.Link}}" onclick="copyHref(event)">Copy link</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{{.Link}}/ical" onclick="copyHref(event)">Copy iCalendar</a>
+					</li>
+					{{if .Admin}}
+						<li class="nav-item">
+							<a class="nav-link {{if eq $.ActiveTab "settings"}}active{{end}}" href="{{.Link}}/settings">Settings</a>
+						</li>
+					{{end}}
+					<li class="nav-item">
+						<a class="nav-link {{if eq $.ActiveTab "share"}}active{{end}}" href="{{.Link}}/share">Share</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link disabled px-2">{{.Location}}</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link disabled ps-2 pe-0">last changed {{.LastUpdated}}</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+		{{with .Description}}
+			<div class="bg-light pb-1">
+				<div class="container">
+					<small>{{Markdown .}}</small>
+				</div>
+			</div>
+		{{end}}
+	{{end}}
+	<div class="container pt-3 mb-5">
+		{{template "pad-content" .}}
+	</div>
+{{end}}

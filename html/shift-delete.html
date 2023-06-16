@@ -1,0 +1,53 @@
+{{define "pad-content"}}
+	{{with .Error}}
+		<div class="alert alert-danger">{{.}}</div>
+	{{end}}
+	<form method="post">
+		{{with .Day}}
+			<div class="card mb-3">
+				<div class="card-body">
+					<h5 class="card-title">{{FmtDate .Begin}}</h5>
+					{{with .Groups}}
+						<table class="table align-middle">
+							<thead>
+								<tr>
+									<th>Time</th>
+									<th>Shift</th>
+									<th>Taker</th>
+								</tr>
+							</thead>
+							{{range .}}
+								<tbody class="table-group-divider">
+									{{with .Event}}
+										<tr class="table-secondary">
+											<td>{{$.Day.FmtEventTime .}}</td>
+											<td colspan="2">{{.Summary}}</td>
+										</tr>
+									{{end}}
+									{{range .Shifts}}
+										{{if eq .ID $.Shift.ID}}
+											<input type="hidden" name="id" value="{{.ID}}">
+											<tr class="table-danger" style="text-decoration: line-through">
+												<td>{{$.Day.FmtShiftTime .}}</td>
+												<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
+												<td>{{$.Pad.TakerString .}}</td>
+											</tr>
+										{{else}}
+											<tr>
+												<td>{{$.Day.FmtShiftTime .}}</td>
+												<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
+												<td>{{$.Pad.TakerString .}}</td>
+											</tr>
+										{{end}}
+									{{end}}
+								</tbody>
+							{{end}}
+						</table>
+						<button class="btn btn-primary" type="submit">Delete shift</button>
+					{{end}}
+					<a class="btn btn-light" href="{{$.Pad.Link}}/day/{{FmtISODate .Begin}}">Cancel</a>
+				</div>
+			</div>
+		{{end}}
+	</form>
+{{end}}

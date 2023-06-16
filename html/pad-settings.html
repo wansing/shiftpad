@@ -1,0 +1,35 @@
+{{define "pad-content"}}
+	{{with .Error}}
+		<div class="alert alert-danger">{{.}}</div>
+	{{end}}
+	{{with .Pad}}
+		<form class="mb-3" method="post">
+			<div class="mb-3">
+				<label class="form-label">Name</label>
+				<input type="text" class="form-control" name="name" maxlength="64" value="{{.Name}}">
+			</div>
+			<div class="mb-3">
+				<label class="form-label">Description (Markdown)</label>
+				<textarea class="form-control" name="description" maxlength="1024" rows="3">{{.Description}}</textarea>
+			</div>
+			<div class="mb-3">
+				<label class="form-label">Location</label>
+				<select class="form-select" name="location">
+					{{range $.Locations}}
+						<option value="{{.}}" {{if eq . $.Pad.Location.String}}selected{{end}}>{{.}}</option>
+					{{end}}
+				</select>
+			</div>
+			<div class="mb-3">
+				<label class="form-label">Shift Names (one name per row)</label>
+				<textarea class="form-control" name="shift-names" maxlength="1024" rows="{{Max 3 (len .ShiftNames)}}">{{Join .ShiftNames}}</textarea>
+			</div>
+			<div class="mb-3">
+				<label class="form-label">ical Overlay</label>
+				<input type="text" class="form-control" name="ical" maxlength="128" value="{{.ICalOverlay}}">
+			</div>
+			<button type="submit" class="btn btn-primary">Save</button>
+			<a class="btn btn-light" href="{{.Link}}">Back</a>
+		</form>
+	{{end}}
+{{end}}
