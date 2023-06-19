@@ -35,7 +35,7 @@
 					{{end}}
 				</div>
 				<div class="form-check mt-3">
-					<input class="form-check-input" id="edit-retro-always" type="checkbox" name="edit-retro-always" value="_">
+					<input class="form-check-input" id="edit-retro-always" type="checkbox" name="edit-retro-always" value="_" {{if not .EditRetroAlways}}disabled{{end}}>
 					<label class="form-check-label" for="edit-retro-always">Edit retroactively</label>
 				</div>
 
