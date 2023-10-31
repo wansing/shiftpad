@@ -50,7 +50,9 @@ func (srv *Server) GetICalFeedCache(url string) *ical.FeedCache {
 	feedCache, ok := srv.icalCaches[url]
 	if !ok {
 		feedCache = &ical.FeedCache{
-			URL: url,
+			Config: ical.Config{
+				URL: url,
+			},
 		}
 		srv.icalCaches[url] = feedCache
 	}
