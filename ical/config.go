@@ -23,3 +23,8 @@ func LoadConfig(jsonfile string) (Config, error) {
 	}
 	return config, nil
 }
+
+func MustLoadConfig(jsonfile string) Config {
+	config, _ := LoadConfig(jsonfile)
+	return config
+}
