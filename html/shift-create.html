@@ -1,9 +1,10 @@
 {{define "pad-content"}}
 	<script>
 		function reset(element) {
+			element.removeAttribute("min");
 			element.value = element.defaultValue;
 		}
-		function addrow(element) {
+		function addRow(element) {
 			element.onchange = null;
 			let row = element.closest('[role="row"]');
 			let clone = row.cloneNode(true);
@@ -15,6 +16,20 @@
 			reset(clone.querySelector('[name="name"]'));
 			reset(clone.querySelector('[name="note"]'));
 			row.after(clone);
+		}
+		function setMinEnd(element) {
+			let row = element.closest('[role="row"]');
+			let beginDate = row.querySelector('[name="begin-date"]');
+			let beginTime = row.querySelector('[name="begin-time"]');
+			let endDate = row.querySelector('[name="end-date"]');
+			let endTime = row.querySelector('[name="end-time"]');
+
+			endDate.min = beginDate.value;
+			if(beginDate.value == endDate.value) {
+				endTime.min = beginTime.value;
+			} else {
+				endTime.removeAttribute("min");
+			}
 		}
 	</script>
 	{{with .Error}}
@@ -74,7 +89,7 @@
 							{{end}}
 						</div>
 					{{end}}
-					<div class="row my-3" role="row"><!-- role is used in addrow -->
+					<div class="row my-3" role="row"><!-- role is used in addRow and setMinEnd -->
 						<div class="col-lg-2 mb-1">
 							<div class="input-group">
 								<span class="input-group-text">Count</span>
@@ -85,8 +100,8 @@
 							<div class="input-group">
 								<!-- separate date and time because date has an initial value while time can be empty -->
 								<span class="input-group-text">Begin</span>
-								<input class="form-control" type="date" name="begin-date" value="{{FmtISODate .Begin}}" min="{{$.MinDate}}" max="{{$.MaxDate}}">
-								<input class="form-control" type="time" name="begin-time">
+								<input class="form-control" type="date" name="begin-date" onchange="setMinEnd(this)" value="{{FmtISODate .Begin}}" min="{{$.MinDate}}" max="{{$.MaxDate}}">
+								<input class="form-control" type="time" name="begin-time" onchange="setMinEnd(this)">
 							</div>
 						</div>
 						<div class="col-lg-3 mb-1">
@@ -100,7 +115,7 @@
 							<div class="input-group">
 								{{if $.Pad.ShiftNames}}
 									{{with $.Pad.EditShiftNames}}
-										<select class="form-select" name="name" onchange="addrow(this)">
+										<select class="form-select" name="name" onchange="addRow(this)">
 											{{if gt (len .) 1}}
 												<option></option>
 											{{end}}
@@ -112,7 +127,7 @@
 										<em>no shifts available</em>
 									{{end}}
 								{{else}}
-									<input class="form-control" type="text" name="name" maxlength="64" placeholder="Shift name" onchange="addrow(this)">
+									<input class="form-control" type="text" name="name" maxlength="64" placeholder="Shift name" onchange="addRow(this)">
 								{{end}}
 								<input class="form-control" type="text" name="note" maxlength="64" placeholder="Note">
 							</div>
