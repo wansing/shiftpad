@@ -273,7 +273,7 @@ func (db *DB) AddShift(pad *shiftpad.Pad, shift shiftpad.Shift) error {
 	if err := db.getMaxShiftID.QueryRow(pad.ID).Scan(&maxShiftID); err != nil {
 		return err
 	}
-	_, err := db.addShift.Exec(pad.ID, maxShiftID+1, shift.Modified.Unix(), shift.Name, shift.Note, shift.EventUID, toUnix(shift.Begin), toUnix(shift.End), shift.TakerName, shift.TakerContact)
+	_, err := db.addShift.Exec(pad.ID, maxShiftID+1, shift.Modified.Unix(), shift.Name, shift.Note, shift.EventUID, shift.Begin.Unix(), shift.End.Unix(), shift.TakerName, shift.TakerContact)
 	return err
 }
 
@@ -325,8 +325,8 @@ func (db *DB) GetShift(pad *shiftpad.Pad, id int) (*shiftpad.Shift, error) {
 		return nil, err
 	}
 	shift.Modified = time.Unix(modified, 0).In(pad.Location)
-	shift.Begin = toTime(begin).In(pad.Location)
-	shift.End = toTime(end).In(pad.Location)
+	shift.Begin = time.Unix(begin, 0).In(pad.Location)
+	shift.End = time.Unix(end, 0).In(pad.Location)
 	return shift, nil
 }
 
@@ -359,8 +359,8 @@ func (db *DB) readShifts(rows *sql.Rows, location *time.Location) ([]shiftpad.Sh
 			return nil, err
 		}
 		shift.Modified = time.Unix(modified, 0).In(location)
-		shift.Begin = toTime(begin).In(location)
-		shift.End = toTime(end).In(location)
+		shift.Begin = time.Unix(begin, 0).In(location)
+		shift.End = time.Unix(end, 0).In(location)
 		shifts = append(shifts, shift)
 	}
 	return shifts, nil
@@ -383,6 +383,6 @@ func (db *DB) UpdatePadLastUpdated(pad *shiftpad.Pad, lastUpdated string) error 
 }
 
 func (db *DB) UpdateShift(pad *shiftpad.Pad, shift *shiftpad.Shift) error {
-	_, err := db.updateShift.Exec(shift.Modified.Unix(), shift.Name, shift.Note, shift.EventUID, toUnix(shift.Begin), toUnix(shift.End), shift.TakerName, shift.TakerContact, pad.ID, shift.ID)
+	_, err := db.updateShift.Exec(shift.Modified.Unix(), shift.Name, shift.Note, shift.EventUID, shift.Begin.Unix(), shift.End.Unix(), shift.TakerName, shift.TakerContact, pad.ID, shift.ID)
 	return err
 }

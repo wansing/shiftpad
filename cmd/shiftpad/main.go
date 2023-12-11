@@ -334,25 +334,13 @@ func (srv *Server) padICal(w http.ResponseWriter, r *http.Request, authpad shift
 			summary = summary + ": " + authpad.TakerString(shift)
 		}
 
-		// ical requires both begin and end
-		var begin = shift.Begin
-		if begin.IsZero() {
-			begin = shift.End.Add(-1 * time.Hour)
-			summary = "[open beginning] " + summary
-		}
-		var end = shift.End
-		if end.IsZero() {
-			end = shift.Begin.Add(1 * time.Hour)
-			summary = "[open end] " + summary
-		}
-
 		event := ical.NewEvent()
 		event.Props.SetText(ical.PropUID, uid)
 		event.Props.SetText(ical.PropSummary, summary)
 		// use UTC ("Z") because go-ical can't export timezone details
 		event.Props.SetDateTime(ical.PropDateTimeStamp, shift.Modified.In(time.UTC))
-		event.Props.SetDateTime(ical.PropDateTimeStart, begin.In(time.UTC))
-		event.Props.SetDateTime(ical.PropDateTimeEnd, end.In(time.UTC))
+		event.Props.SetDateTime(ical.PropDateTimeStart, shift.Begin.In(time.UTC))
+		event.Props.SetDateTime(ical.PropDateTimeEnd, shift.End.In(time.UTC))
 		cal.Children = append(cal.Children, event.Component)
 	}
 
@@ -572,7 +560,7 @@ func (srv *Server) shiftDeleteGet(w http.ResponseWriter, r *http.Request, authpa
 		return NotFound()
 	}
 
-	day, err := shiftpad.GetDay(srv, authpad.Pad, shift.BeginTime(), authpad.Location)
+	day, err := shiftpad.GetDay(srv, authpad.Pad, shift.Begin, authpad.Location)
 	if err != nil {
 		return InternalServerError(err)
 	}
@@ -601,7 +589,7 @@ func (srv *Server) shiftDeletePost(w http.ResponseWriter, r *http.Request, authp
 		return InternalServerError(err)
 	}
 
-	return http.RedirectHandler(authpad.Link()+fmt.Sprintf("/day/%s", datefmt.ISODate(shift.BeginTime())), http.StatusSeeOther)
+	return http.RedirectHandler(authpad.Link()+fmt.Sprintf("/day/%s", datefmt.ISODate(shift.Begin)), http.StatusSeeOther)
 }
 
 func (srv *Server) shiftEditGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift) http.Handler {
@@ -613,7 +601,7 @@ func (srv *Server) shiftEditGet(w http.ResponseWriter, r *http.Request, authpad 
 }
 
 func (srv *Server) shiftEditTemplate(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift, errMsg string) http.Handler {
-	day, err := shiftpad.GetDay(srv, authpad.Pad, shift.BeginTime(), authpad.Location)
+	day, err := shiftpad.GetDay(srv, authpad.Pad, shift.Begin, authpad.Location)
 	if err != nil {
 		return InternalServerError(err)
 	}
@@ -675,7 +663,7 @@ func (srv *Server) shiftEditPost(w http.ResponseWriter, r *http.Request, authpad
 		return InternalServerError(err)
 	}
 
-	return http.RedirectHandler(authpad.Link()+fmt.Sprintf("/day/%s", datefmt.ISODate(shift.BeginTime())), http.StatusSeeOther)
+	return http.RedirectHandler(authpad.Link()+fmt.Sprintf("/day/%s", datefmt.ISODate(shift.Begin)), http.StatusSeeOther)
 }
 
 func (srv *Server) shiftTakeGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift) http.Handler {
@@ -687,7 +675,7 @@ func (srv *Server) shiftTakeGet(w http.ResponseWriter, r *http.Request, authpad 
 }
 
 func (srv *Server) shiftTakeTemplate(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift, errMsg string) http.Handler {
-	day, err := shiftpad.GetDay(srv, authpad.Pad, shift.BeginTime(), authpad.Location)
+	day, err := shiftpad.GetDay(srv, authpad.Pad, shift.Begin, authpad.Location)
 	if err != nil {
 		return InternalServerError(err)
 	}
@@ -732,5 +720,5 @@ func (srv *Server) shiftTakePost(w http.ResponseWriter, r *http.Request, authpad
 		return InternalServerError(err)
 	}
 
-	return http.RedirectHandler(authpad.Link()+fmt.Sprintf("/day/%s", datefmt.ISODate(shift.BeginTime())), http.StatusSeeOther)
+	return http.RedirectHandler(authpad.Link()+fmt.Sprintf("/day/%s", datefmt.ISODate(shift.Begin)), http.StatusSeeOther)
 }

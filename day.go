@@ -118,7 +118,7 @@ func GetWeek(repo Repository, pad *Pad, year, week int, location *time.Location)
 
 	// move independent shifts into their individual day
 	for _, shift := range shifts {
-		shiftDay := closestDay(days, shift.BeginTime())
+		shiftDay := closestDay(days, shift.Begin)
 		shiftDay.Shifts = append(shiftDay.Shifts, shift)
 	}
 

@@ -147,27 +147,30 @@ func (auth Auth) CanTakerName(shift Shift, name string) bool {
 // CheckBeginEnd checks that begin or end are non-zero, that end is after begin (or end is zero), and that begin and end are not too far in the past and future.
 func CheckBeginEnd(begin, end time.Time, pastAlways bool, future time.Duration) error {
 	// basics
-	if begin.IsZero() && end.IsZero() {
-		return errors.New("begin or end must be non-zero")
+	if begin.IsZero() {
+		return errors.New("begin is zero")
 	}
-	if !end.IsZero() && end.Before(begin) {
-		return errors.New("end must be after begin")
+	if end.IsZero() {
+		return errors.New("end is zero")
+	}
+	if end.Before(begin) {
+		return errors.New("end is before begin")
 	}
 	// past
 	if !pastAlways {
 		past := time.Now()
-		if !begin.IsZero() && begin.Before(past) {
+		if begin.Before(past) {
 			return errors.New("begin is too far in the past")
 		}
-		if !end.IsZero() && end.Before(past) {
+		if end.Before(past) {
 			return errors.New("end is too far in the past")
 		}
 	}
 	// future
-	if !begin.IsZero() && time.Until(begin) > future {
+	if time.Until(begin) > future {
 		return errors.New("begin is too far in the future")
 	}
-	if !end.IsZero() && time.Until(end) > future {
+	if time.Until(end) > future {
 		return errors.New("end is too far in the future")
 	}
 	return nil

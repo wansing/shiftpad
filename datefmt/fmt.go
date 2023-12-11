@@ -10,8 +10,7 @@ func Date(t time.Time) string {
 	return t.Format("Monday 2. Jan 2006")
 }
 
-// DateTime returns "2. Jan 2006 15:04", or "15:04" if t and reference have the same day,
-// or an empty string if t is the zero time.
+// DateTime returns "2. Jan 2006 15:04", or "15:04" if t and reference have the same day.
 func DateTime(t, reference time.Time) string {
 	if t.IsZero() {
 		return ""

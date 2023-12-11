@@ -98,7 +98,7 @@
 						</div>
 						<div class="col-lg-3 mb-1">
 							<div class="input-group">
-								<!-- separate date and time because date has an initial value while time can be empty -->
+								<!-- separate date and time because date has an initial value while time has not -->
 								<span class="input-group-text">Begin</span>
 								<input class="form-control" type="date" name="begin-date" onchange="setMinEnd(this)" value="{{FmtISODate .Begin}}" min="{{$.MinDate}}" max="{{$.MaxDate}}">
 								<input class="form-control" type="time" name="begin-time" onchange="setMinEnd(this)">
