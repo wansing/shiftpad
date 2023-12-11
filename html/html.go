@@ -55,6 +55,7 @@ var (
 
 type PadData struct {
 	ActiveTab string
+	Errors    []string
 	Pad       shiftpad.AuthPad
 }
 

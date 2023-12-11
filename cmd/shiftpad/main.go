@@ -83,7 +83,7 @@ func main() {
 	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/delete/:shift", srv.withShift(srv.shiftDeletePost))
 
 	log.Println("listening to 127.0.0.1:8200")
-	http.ListenAndServe("127.0.0.1:8200", router)
+	http.ListenAndServe("127.0.0.1:8200", srv.sessionManager.LoadAndSave(router))
 }
 
 func (srv *Server) withCreateKey(f HandlerFunc) HandlerFunc {
@@ -428,9 +428,12 @@ func (srv *Server) padViewWeek(w http.ResponseWriter, r *http.Request, authpad s
 	thisYear, thisWeek := time.Now().ISOWeek()
 	nextYear, nextWeek := time.Now().AddDate(0, 0, 7).ISOWeek()
 
+	errs, _ := srv.sessionManager.Pop(r.Context(), "errs").([]string)
+
 	if err := html.PadViewWeek.Execute(w, html.PadViewWeekData{
 		PadData: html.PadData{
-			Pad: authpad,
+			Pad:    authpad,
+			Errors: errs,
 		},
 		ISOWeek:     fmt.Sprintf("%04d-W%02d", year, weekNumber),
 		Days:        week.Days,
@@ -491,46 +494,77 @@ func (srv *Server) shiftAddPost(w http.ResponseWriter, r *http.Request, authpad 
 		return NotFound()
 	}
 
-	name := trim(r.PostFormValue("name"), 64)
-	note := trim(r.PostFormValue("note"), 64)
 	eventUID := trim(r.PostFormValue("event-uid"), 128)
-	begin, _ := time.ParseInLocation("2006-01-02 15:04", r.PostFormValue("begin-date")+" "+r.PostFormValue("begin-time"), authpad.Location)
-	end, _ := time.ParseInLocation("2006-01-02 15:04", r.PostFormValue("end-date")+" "+r.PostFormValue("end-time"), authpad.Location)
-	if err := shiftpad.CheckBeginEnd(begin, end, authpad.EditRetroAlways, shiftpad.MaxFuture); err != nil {
-		return srv.shiftAddTemplate(w, r, authpad, err.Error())
-	}
 
-	shift := shiftpad.Shift{
-		Name:     name,
-		Note:     note,
-		Modified: time.Now().In(authpad.Location),
-		EventUID: eventUID,
-		Begin:    begin,
-		End:      end,
-	}
+	counts := r.PostForm["count"]
+	beginDates := r.PostForm["begin-date"]
+	beginTimes := r.PostForm["begin-time"]
+	endDates := r.PostForm["end-date"]
+	endTimes := r.PostForm["end-time"]
+	names := r.PostForm["name"]
+	notes := r.PostForm["note"]
 
-	if !authpad.CanEditShift(shift) {
-		return Forbidden()
-	}
+	var errs []string
 
-	count, _ := strconv.Atoi(r.PostFormValue("count"))
-	if count < 0 {
-		count = 0
-	}
-	if count > 10 {
-		count = 10
-	}
+	for i := 0; i < min(len(counts), len(beginDates), len(beginTimes), len(endDates), len(endTimes), len(names), len(notes)); i++ {
+		count, err := strconv.Atoi(counts[i])
+		if err != nil {
+			continue
+		}
+		begin, err := time.ParseInLocation("2006-01-02 15:04", beginDates[i]+" "+beginTimes[i], authpad.Location)
+		if err != nil {
+			continue
+		}
+		end, err := time.ParseInLocation("2006-01-02 15:04", endDates[i]+" "+endTimes[i], authpad.Location)
+		if err != nil {
+			continue
+		}
+		if err := shiftpad.CheckBeginEnd(begin, end, authpad.EditRetroAlways, shiftpad.MaxFuture); err != nil {
+			errs = append(errs, fmt.Sprintf("adding row %d: %v", i+1, err))
+			continue
+		}
+		name := trim(names[i], 64)
+		if name == "" {
+			continue
+		}
+		note := trim(notes[i], 64)
 
-	for i := 0; i < count; i++ {
-		if err := srv.DB.AddShift(authpad.Pad, shift); err != nil {
-			return InternalServerError(err)
+		shift := shiftpad.Shift{
+			Name:     name,
+			Note:     note,
+			Modified: time.Now().In(authpad.Location),
+			EventUID: eventUID,
+			Begin:    begin,
+			End:      end,
+		}
+
+		if !authpad.CanEditShift(shift) {
+			errs = append(errs, fmt.Sprintf("adding row %d: unauthorized: %v", i+1, err))
+			continue
+		}
+
+		if count < 0 {
+			count = 0
+		}
+		if count > 10 {
+			count = 10
+		}
+
+		for i := 0; i < count; i++ {
+			if err := srv.DB.AddShift(authpad.Pad, shift); err != nil {
+				return InternalServerError(err)
+			}
 		}
 	}
+
 	if err := srv.UpdatePadLastUpdated(authpad.Pad); err != nil {
 		return InternalServerError(err)
 	}
 
-	return http.RedirectHandler(authpad.Link()+fmt.Sprintf("/day/%s", datefmt.ISODate(shift.BeginTime())), http.StatusSeeOther)
+	srv.sessionManager.Put(r.Context(), "errs", errs)
+
+	redirectDate := way.Param(r.Context(), "date") // alternative: min shift or event begin time
+	return http.RedirectHandler(authpad.Link()+fmt.Sprintf("/day/%s", redirectDate), http.StatusSeeOther)
 }
 
 func (srv *Server) shiftDeleteGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift) http.Handler {

@@ -1,4 +1,22 @@
 {{define "pad-content"}}
+	<script>
+		function reset(element) {
+			element.value = element.defaultValue;
+		}
+		function addrow(element) {
+			element.onchange = null;
+			let row = element.closest('[role="row"]');
+			let clone = row.cloneNode(true);
+			reset(clone.querySelector('[name="count"]'));
+			reset(clone.querySelector('[name="begin-date"]'));
+			reset(clone.querySelector('[name="begin-time"]'));
+			reset(clone.querySelector('[name="end-date"]'));
+			reset(clone.querySelector('[name="end-time"]'));
+			reset(clone.querySelector('[name="name"]'));
+			reset(clone.querySelector('[name="note"]'));
+			row.after(clone);
+		}
+	</script>
 	{{with .Error}}
 		<div class="alert alert-danger">{{.}}</div>
 	{{end}}
@@ -56,7 +74,7 @@
 							{{end}}
 						</div>
 					{{end}}
-					<div class="row my-3">
+					<div class="row my-3" role="row"><!-- role is used in addrow -->
 						<div class="col-lg-2 mb-1">
 							<div class="input-group">
 								<span class="input-group-text">Count</span>
@@ -82,7 +100,7 @@
 							<div class="input-group">
 								{{if $.Pad.ShiftNames}}
 									{{with $.Pad.EditShiftNames}}
-										<select class="form-select" name="name">
+										<select class="form-select" name="name" onchange="addrow(this)">
 											{{if gt (len .) 1}}
 												<option></option>
 											{{end}}
@@ -94,7 +112,7 @@
 										<em>no shifts available</em>
 									{{end}}
 								{{else}}
-									<input class="form-control" type="text" name="name" maxlength="64" placeholder="Shift name">
+									<input class="form-control" type="text" name="name" maxlength="64" placeholder="Shift name" onchange="addrow(this)">
 								{{end}}
 								<input class="form-control" type="text" name="note" maxlength="64" placeholder="Note">
 							</div>

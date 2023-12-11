@@ -1,6 +1,6 @@
 module github.com/wansing/shiftpad
 
-go 1.19
+go 1.21
 
 require (
 	github.com/emersion/go-ical v0.0.0-20220601085725-0864dccc089f
@@ -11,6 +11,7 @@ require (
 )
 
 require (
+	github.com/alexedwards/scs/v2 v2.7.0 // indirect
 	github.com/teambition/rrule-go v1.7.2 // indirect
 	gitlab.com/golang-commonmark/html v0.0.0-20191124015941-a22733972181 // indirect
 	gitlab.com/golang-commonmark/linkify v0.0.0-20191026162114-a0c2df6c8f82 // indirect

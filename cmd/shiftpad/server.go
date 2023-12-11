@@ -1,9 +1,11 @@
 package main
 
 import (
+	"net/http"
 	"sync"
 	"time"
 
+	"github.com/alexedwards/scs/v2"
 	"github.com/wansing/shiftpad"
 	"github.com/wansing/shiftpad/ical"
 )
@@ -29,12 +31,21 @@ type Server struct {
 	DB             DB
 	icalCaches     map[string]*ical.FeedCache
 	icalCachesLock sync.Mutex
+	sessionManager *scs.SessionManager
 }
 
 func NewServer(db DB) *Server {
+	sessionManager := scs.New()
+	sessionManager.Cookie.Persist = false                 // Don't store cookie across browser sessions. Required for GDPR cookie consent exemption criterion B.
+	sessionManager.Cookie.SameSite = http.SameSiteLaxMode // good CSRF protection if/because HTTP GET don't modify anything
+	sessionManager.Cookie.Secure = false                  // else running on localhost:8080 fails
+	sessionManager.IdleTimeout = 2 * time.Hour
+	sessionManager.Lifetime = 12 * time.Hour
+
 	return &Server{
-		DB:         db,
-		icalCaches: make(map[string]*ical.FeedCache),
+		DB:             db,
+		icalCaches:     make(map[string]*ical.FeedCache),
+		sessionManager: sessionManager,
 	}
 }
 

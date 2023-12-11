@@ -11,6 +11,10 @@
 		</div>
 	</form>
 
+	{{range .Errors}}
+		<div class="alert alert-danger">Error: {{.}}</div>
+	{{end}}
+
 	{{range $day := .Days}}
 		<div class="card mb-3">
 			<div class="card-body">

@@ -1,3 +1,5 @@
+github.com/alexedwards/scs/v2 v2.7.0 h1:DY4rqLCM7UIR9iwxFS0++z1NhTzQlKV30aMHkJCDWKw=
+github.com/alexedwards/scs/v2 v2.7.0/go.mod h1:ToaROZxyKukJKT/xLcVQAChi5k6+Pn1Gvmdl7h3RRj8=
 github.com/emersion/go-ical v0.0.0-20220601085725-0864dccc089f h1:feGUUxxvOtWVOhTko8Cbmp33a+tU0IMZxMEmnkoAISQ=
 github.com/emersion/go-ical v0.0.0-20220601085725-0864dccc089f/go.mod h1:2MKFUgfNMULRxqZkadG1Vh44we3y5gJAtTBlVsx1BKQ=
 github.com/gorhill/cronexpr v0.0.0-20180427100037-88b0669f7d75 h1:f0n1xnMSmBLzVfsMMvriDyA75NB/oBgILX2GcHXIQzY=
