@@ -9,27 +9,11 @@
 			let row = element.closest('[role="row"]');
 			let clone = row.cloneNode(true);
 			reset(clone.querySelector('[name="count"]'));
-			reset(clone.querySelector('[name="begin-date"]'));
-			reset(clone.querySelector('[name="begin-time"]'));
-			reset(clone.querySelector('[name="end-date"]'));
-			reset(clone.querySelector('[name="end-time"]'));
+			reset(clone.querySelector('[name="begin"]'));
+			reset(clone.querySelector('[name="end"]'));
 			reset(clone.querySelector('[name="name"]'));
 			reset(clone.querySelector('[name="note"]'));
 			row.after(clone);
-		}
-		function setMinEnd(element) {
-			let row = element.closest('[role="row"]');
-			let beginDate = row.querySelector('[name="begin-date"]');
-			let beginTime = row.querySelector('[name="begin-time"]');
-			let endDate = row.querySelector('[name="end-date"]');
-			let endTime = row.querySelector('[name="end-time"]');
-
-			endDate.min = beginDate.value;
-			if(beginDate.value == endDate.value) {
-				endTime.min = beginTime.value;
-			} else {
-				endTime.removeAttribute("min");
-			}
 		}
 	</script>
 	{{with .Error}}
@@ -89,7 +73,7 @@
 							{{end}}
 						</div>
 					{{end}}
-					<div class="row my-3" role="row"><!-- role is used in addRow and setMinEnd -->
+					<div class="row my-3" role="row"><!-- role is used in javascript functions -->
 						<div class="col-lg-2 mb-1">
 							<div class="input-group">
 								<span class="input-group-text">Count</span>
@@ -98,17 +82,14 @@
 						</div>
 						<div class="col-lg-3 mb-1">
 							<div class="input-group">
-								<!-- separate date and time because date has an initial value while time has not -->
 								<span class="input-group-text">Begin</span>
-								<input class="form-control" type="date" name="begin-date" onchange="setMinEnd(this)" value="{{FmtISODate .Begin}}" min="{{$.MinDate}}" max="{{$.MaxDate}}">
-								<input class="form-control" type="time" name="begin-time" onchange="setMinEnd(this)">
+								<input class="form-control" type="datetime-local" name="begin" onchange="updateEnd(this)" value="{{FmtISODate .Begin}}T10:00" min="{{$.MinDate}}" max="{{$.MaxDate}}">
 							</div>
 						</div>
 						<div class="col-lg-3 mb-1">
 							<div class="input-group">
 								<span class="input-group-text">End</span>
-								<input class="form-control" type="date" name="end-date" value="{{FmtISODate .Begin}}" min="{{$.MinDate}}" max="{{$.MaxDate}}">
-								<input class="form-control" type="time" name="end-time">
+								<input class="form-control" type="datetime-local" name="end" onchange="updateBegin(this)" value="{{FmtISODate .Begin}}T11:00" min="{{$.MinDate}}" max="{{$.MaxDate}}">
 							</div>
 						</div>
 						<div class="col-lg-4 mb-1">

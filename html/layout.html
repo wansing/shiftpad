@@ -6,6 +6,32 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link href="/static/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 		<title>{{block "title" .}}ShiftPad{{end}}</title>
+		<script>
+			function updateBegin(element) {
+				let row = element.closest('[role="row"]');
+				let begin = row.querySelector('[name="begin"]');
+				let end = row.querySelector('[name="end"]');
+				// set max
+				begin.max = end.value;
+				// fix value
+				if(begin.value >= begin.max) {
+					let duration = Math.abs(Date.parse(end.defaultValue + ":00.000Z") - Date.parse(begin.defaultValue + ":00.000Z")) // GMT
+					begin.value = new Date(Date.parse(end.value + ":00.000Z") - duration).toISOString().slice(0, -8);
+				}
+			}
+			function updateEnd(element) {
+				let row = element.closest('[role="row"]');
+				let begin = row.querySelector('[name="begin"]');
+				let end = row.querySelector('[name="end"]');
+				// set min
+				end.min = begin.value;
+				// fix value
+				if(end.value <= end.min) {
+					let duration = Math.abs(Date.parse(end.defaultValue + ":00.000Z") - Date.parse(begin.defaultValue + ":00.000Z")) // GMT
+					end.value = new Date(Date.parse(begin.value + ":00.000Z") + duration).toISOString().slice(0, -8);
+				}
+			}
+		</script>
 	</head>
 	<body>
 		{{template "body" .}}

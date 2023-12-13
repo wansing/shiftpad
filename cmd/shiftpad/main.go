@@ -485,25 +485,23 @@ func (srv *Server) shiftAddPost(w http.ResponseWriter, r *http.Request, authpad 
 	eventUID := trim(r.PostFormValue("event-uid"), 128)
 
 	counts := r.PostForm["count"]
-	beginDates := r.PostForm["begin-date"]
-	beginTimes := r.PostForm["begin-time"]
-	endDates := r.PostForm["end-date"]
-	endTimes := r.PostForm["end-time"]
+	begins := r.PostForm["begin"]
+	ends := r.PostForm["end"]
 	names := r.PostForm["name"]
 	notes := r.PostForm["note"]
 
 	var errs []string
 
-	for i := 0; i < min(len(counts), len(beginDates), len(beginTimes), len(endDates), len(endTimes), len(names), len(notes)); i++ {
+	for i := 0; i < min(len(counts), len(begins), len(ends), len(names), len(notes)); i++ {
 		count, err := strconv.Atoi(counts[i])
 		if err != nil {
 			continue
 		}
-		begin, err := time.ParseInLocation("2006-01-02 15:04", beginDates[i]+" "+beginTimes[i], authpad.Location)
+		begin, err := time.ParseInLocation("2006-01-02T15:04", begins[i], authpad.Location)
 		if err != nil {
 			continue
 		}
-		end, err := time.ParseInLocation("2006-01-02 15:04", endDates[i]+" "+endTimes[i], authpad.Location)
+		end, err := time.ParseInLocation("2006-01-02T15:04", ends[i], authpad.Location)
 		if err != nil {
 			continue
 		}
@@ -631,8 +629,8 @@ func (srv *Server) shiftEditPost(w http.ResponseWriter, r *http.Request, authpad
 		return NotFound()
 	}
 
-	begin, _ := time.ParseInLocation("2006-01-02 15:04", r.PostFormValue("begin-date")+" "+r.PostFormValue("begin-time"), authpad.Location)
-	end, _ := time.ParseInLocation("2006-01-02 15:04", r.PostFormValue("end-date")+" "+r.PostFormValue("end-time"), authpad.Location)
+	begin, _ := time.ParseInLocation("2006-01-02T15:04", r.PostFormValue("begin"), authpad.Location)
+	end, _ := time.ParseInLocation("2006-01-02T15:04", r.PostFormValue("end"), authpad.Location)
 	if err := shiftpad.CheckBeginEnd(begin, end, authpad.EditRetroAlways, shiftpad.MaxFuture); err != nil {
 		return srv.shiftEditTemplate(w, r, authpad, shift, err.Error())
 	}

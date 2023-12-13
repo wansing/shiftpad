@@ -44,9 +44,9 @@ func ISODate(t time.Time) string {
 	return t.Format("2006-01-02")
 }
 
-func ISOTime(t time.Time) string {
+func ISODateTime(t time.Time) string {
 	if t.IsZero() {
 		return ""
 	}
-	return t.Format("15:04")
+	return t.Format("2006-01-02T15:04")
 }

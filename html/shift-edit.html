@@ -51,18 +51,12 @@
 													</td>
 												</tr>
 											{{end}}
-											<tr class="table-warning">
+											<tr class="table-warning" role="row"><!-- role is used in javascript functions -->
 												<td>
-													<div class="input-group">
-														<input type="date" class="form-control" name="begin-date" value="{{FmtISODate .Begin}}" min="{{$.MinDate}}" max="{{$.MaxDate}}">
-														<input type="time" class="form-control" name="begin-time" value="{{FmtISOTime .Begin}}">
-													</div>
+													<input type="datetime-local" class="form-control" name="begin" onchange="updateEnd(this)" value="{{FmtISODateTime .Begin}}" min="{{$.MinDate}}T00:00" max="{{$.MaxDate}}T24:00">
 												</td>
 												<td>
-													<div class="input-group">
-														<input type="date" class="form-control" name="end-date" value="{{FmtISODate .End}}" min="{{$.MinDate}}" max="{{$.MaxDate}}">
-														<input type="time" class="form-control" name="end-time" value="{{FmtISOTime .End}}">
-													</div>
+													<input type="datetime-local" class="form-control" name="end" onchange="updateBegin(this)" value="{{FmtISODateTime .End}}" min="{{$.MinDate}}T00:00" max="{{$.MaxDate}}T24:00">
 												</td>
 												<td>
 													<div class="input-group">

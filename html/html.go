@@ -21,7 +21,7 @@ func parse(fn ...string) *template.Template {
 		"FmtDateTime":      datefmt.DateTime,
 		"FmtDateTimeRange": datefmt.DateTimeRange,
 		"FmtISODate":       datefmt.ISODate,
-		"FmtISOTime":       datefmt.ISOTime,
+		"FmtISODateTime":   datefmt.ISODateTime,
 		"Join": func(elems []string) string {
 			return strings.Join(elems, "\r\n")
 		},
