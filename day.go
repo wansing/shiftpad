@@ -1,11 +1,11 @@
 package shiftpad
 
 import (
+	"sort"
 	"time"
 
 	"github.com/wansing/shiftpad/datefmt"
 	"github.com/wansing/shiftpad/ical"
-	"golang.org/x/exp/slices"
 )
 
 type Event struct {
@@ -205,7 +205,9 @@ func GetInterval(repo Repository, pad *Pad, from, to time.Time, location *time.L
 	}
 
 	// sort events by begin
-	slices.SortFunc(events, func(a, b Event) bool {
+	sort.Slice(events, func(i, j int) bool {
+		a := events[i]
+		b := events[j]
 		if a.Event.Start.Equal(b.Event.Start) {
 			return a.Event.Summary < b.Event.Summary
 		}

@@ -4,9 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"slices"
 	"time"
-
-	"golang.org/x/exp/slices"
 )
 
 const encodeEmptyAuth = "-" // instead of empty string, so slashes are not collapsed

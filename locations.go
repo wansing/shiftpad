@@ -2,10 +2,9 @@ package shiftpad
 
 import (
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
-
-	"golang.org/x/exp/slices"
 )
 
 var SystemLocation *time.Location = GetSystemLocation()

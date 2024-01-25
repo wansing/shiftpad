@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -19,7 +20,6 @@ import (
 	"github.com/wansing/shiftpad/html/static"
 	"github.com/wansing/shiftpad/sqlite"
 	"github.com/wansing/shiftpad/way"
-	"golang.org/x/exp/slices"
 )
 
 type HandlerFunc func(w http.ResponseWriter, r *http.Request) http.Handler
