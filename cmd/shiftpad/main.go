@@ -134,19 +134,19 @@ func InternalServerError(err error) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("internal server error: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		html.InternalServerError.Execute(w, nil)
+		html.InternalServerError.Execute(w, html.MakeLayoutData(r))
 	})
 }
 
 func NotFound() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
-		html.NotFound.Execute(w, nil)
+		html.NotFound.Execute(w, html.MakeLayoutData(r))
 	})
 }
 
 func (srv *Server) indexGet(w http.ResponseWriter, r *http.Request) http.Handler {
-	err := html.Index.Execute(w, nil)
+	err := html.Index.Execute(w, html.MakeLayoutData(r))
 	if err != nil {
 		return InternalServerError(err)
 	}
@@ -154,7 +154,7 @@ func (srv *Server) indexGet(w http.ResponseWriter, r *http.Request) http.Handler
 }
 
 func (srv *Server) createGet(w http.ResponseWriter, r *http.Request) http.Handler {
-	err := html.PadCreate.Execute(w, nil)
+	err := html.PadCreate.Execute(w, html.MakeLayoutData(r))
 	if err != nil {
 		return InternalServerError(err)
 	}
@@ -191,8 +191,9 @@ func (srv *Server) padSettingsGet(w http.ResponseWriter, r *http.Request, authpa
 
 	err := html.PadSettings.Execute(w, html.PadSettingsData{
 		PadData: html.PadData{
-			ActiveTab: "settings",
-			Pad:       authpad,
+			LayoutData: html.MakeLayoutData(r),
+			ActiveTab:  "settings",
+			Pad:        authpad,
 		},
 		Locations: shiftpad.Locations(authpad.Location.String()),
 	})
@@ -242,8 +243,9 @@ func (srv *Server) padSettingsPost(w http.ResponseWriter, r *http.Request, authp
 func (srv *Server) padShareGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
 	err := html.PadShare.Execute(w, html.PadShareData{
 		PadData: html.PadData{
-			ActiveTab: "share",
-			Pad:       authpad,
+			LayoutData: html.MakeLayoutData(r),
+			ActiveTab:  "share",
+			Pad:        authpad,
 		},
 	})
 	if err != nil {
@@ -300,7 +302,8 @@ func (srv *Server) padSharePost(w http.ResponseWriter, r *http.Request, authpad 
 
 	err := html.PadShareResult.Execute(w, html.PadShareResultData{
 		PadData: html.PadData{
-			Pad: authpad,
+			LayoutData: html.MakeLayoutData(r),
+			Pad:        authpad,
 		},
 		Host: scheme + "://" + r.Host,
 		Link: sharePad.Link(),
@@ -420,8 +423,9 @@ func (srv *Server) padViewWeek(w http.ResponseWriter, r *http.Request, authpad s
 
 	if err := html.PadViewWeek.Execute(w, html.PadViewWeekData{
 		PadData: html.PadData{
-			Pad:    authpad,
-			Errors: errs,
+			LayoutData: html.MakeLayoutData(r),
+			Pad:        authpad,
+			Errors:     errs,
 		},
 		ISOWeek:     fmt.Sprintf("%04d-W%02d", year, weekNumber),
 		Days:        week.Days,
@@ -465,7 +469,8 @@ func (srv *Server) shiftAddTemplate(w http.ResponseWriter, r *http.Request, auth
 
 	if err := html.ShiftCreate.Execute(w, html.ShiftCreateData{
 		PadData: html.PadData{
-			Pad: authpad,
+			LayoutData: html.MakeLayoutData(r),
+			Pad:        authpad,
 		},
 		Day:     day,
 		MaxDate: time.Now().Add(shiftpad.MaxFuture).Format("2006-01-02"),
@@ -565,7 +570,8 @@ func (srv *Server) shiftDeleteGet(w http.ResponseWriter, r *http.Request, authpa
 
 	if err := html.ShiftDelete.Execute(w, html.ShiftDeleteData{
 		PadData: html.PadData{
-			Pad: authpad,
+			LayoutData: html.MakeLayoutData(r),
+			Pad:        authpad,
 		},
 		Day:   day,
 		Shift: shift,
@@ -611,7 +617,8 @@ func (srv *Server) shiftEditTemplate(w http.ResponseWriter, r *http.Request, aut
 
 	if err := html.ShiftEdit.Execute(w, html.ShiftEditData{
 		PadData: html.PadData{
-			Pad: authpad,
+			LayoutData: html.MakeLayoutData(r),
+			Pad:        authpad,
 		},
 		Day:     day,
 		MaxDate: time.Now().Add(shiftpad.MaxFuture).Format("2006-01-02"),
@@ -680,7 +687,8 @@ func (srv *Server) shiftTakeTemplate(w http.ResponseWriter, r *http.Request, aut
 
 	if err := html.ShiftTake.Execute(w, html.ShiftTakeData{
 		PadData: html.PadData{
-			Pad: authpad,
+			LayoutData: html.MakeLayoutData(r),
+			Pad:        authpad,
 		},
 		Day:        day,
 		Shift:      shift,

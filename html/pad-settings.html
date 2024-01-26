@@ -5,15 +5,15 @@
 	{{with .Pad}}
 		<form class="mb-3" method="post">
 			<div class="mb-3">
-				<label class="form-label">Name</label>
+				<label class="form-label">{{$.Tr "Name"}}</label>
 				<input type="text" class="form-control" name="name" maxlength="64" value="{{.Name}}">
 			</div>
 			<div class="mb-3">
-				<label class="form-label">Description (Markdown)</label>
+				<label class="form-label">{{$.Tr "Description (Markdown)"}}</label>
 				<textarea class="form-control" name="description" maxlength="1024" rows="3">{{.Description}}</textarea>
 			</div>
 			<div class="mb-3">
-				<label class="form-label">Location</label>
+				<label class="form-label">{{$.Tr "Location"}}</label>
 				<select class="form-select" name="location">
 					{{range $.Locations}}
 						<option value="{{.}}" {{if eq . $.Pad.Location.String}}selected{{end}}>{{.}}</option>
@@ -21,15 +21,15 @@
 				</select>
 			</div>
 			<div class="mb-3">
-				<label class="form-label">Shift Names (one name per row)</label>
+				<label class="form-label">{{$.Tr "Shift Names (one name per row)"}}</label>
 				<textarea class="form-control" name="shift-names" maxlength="1024" rows="{{Max 3 (len .ShiftNames)}}">{{Join .ShiftNames}}</textarea>
 			</div>
 			<div class="mb-3">
-				<label class="form-label">ical Overlay</label>
+				<label class="form-label">{{$.Tr "ical Overlay"}}</label>
 				<input type="text" class="form-control" name="ical" maxlength="128" value="{{.ICalOverlay}}">
 			</div>
-			<button type="submit" class="btn btn-primary">Save</button>
-			<a class="btn btn-light" href="{{.Link}}">Back</a>
+			<button type="submit" class="btn btn-primary">{{$.Tr "Save"}}</button>
+			<a class="btn btn-light" href="{{.Link}}">{{$.Tr "Back"}}</a>
 		</form>
 	{{end}}
 {{end}}

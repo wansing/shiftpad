@@ -12,17 +12,17 @@
 
 	{{with .Pad}}
 		<form class="mb-3" method="post">
-			<h5>Administrate this Pad</h5>
+			<h5>{{$.Tr "Administrate this Pad"}}</h5>
 			<div class="form-check">
 				<input class="form-check-input" id="admin" type="checkbox" name="admin" value="_" onchange="console.log(this.checked); hide('toggle-admin', this.checked)" {{if not .Admin}}disabled{{end}}>
-				<label class="form-check-label" for="admin">Administrate this pad</label>
+				<label class="form-check-label" for="admin">{{$.Tr "Administrate this pad"}}</label>
 			</div>
 
 			<div id="toggle-admin">
-				<h5 class="mt-3">Create, Edit and Delete Shifts</h5>
+				<h5 class="mt-3">{{$.Tr "Create, Edit and Delete Shifts"}}</h5>
 				<div class="form-check">
 					<input class="form-check-input" id="edit-all" type="checkbox" name="edit-all" value="_" onchange="console.log(this.checked); hide('toggle-edit', this.checked)" {{if not .EditAll}}disabled{{end}}>
-					<label class="form-check-label" for="edit-all">Any shift</label>
+					<label class="form-check-label" for="edit-all">{{$.Tr "Any shift"}}</label>
 				</div>
 				<div id="toggle-edit">
 					{{range .ShiftNames}}
@@ -36,13 +36,13 @@
 				</div>
 				<div class="form-check mt-3">
 					<input class="form-check-input" id="edit-retro-always" type="checkbox" name="edit-retro-always" value="_" {{if not .EditRetroAlways}}disabled{{end}}>
-					<label class="form-check-label" for="edit-retro-always">Edit retroactively</label>
+					<label class="form-check-label" for="edit-retro-always">{{$.Tr "Edit retroactively"}}</label>
 				</div>
 
-				<h5 class="mt-3">Take Shifts</h5>
+				<h5 class="mt-3">{{$.Tr "Take Shifts"}}</h5>
 				<div class="form-check">
 					<input class="form-check-input" id="take-all" type="checkbox" name="take-all" value="_" onchange="console.log(this.checked); hide('toggle-take', this.checked)" {{if not .TakeAll}}disabled{{end}}>
-					<label class="form-check-label" for="take-all">Any shift</label>
+					<label class="form-check-label" for="take-all">{{$.Tr "Any shift"}}</label>
 				</div>
 				<div id="toggle-take">
 					{{range .ShiftNames}}
@@ -55,52 +55,52 @@
 					{{end}}
 				</div>
 				<div class="mt-2 mb-3">
-					<label class="form-label">Take deadline (cron expression, optional)</label>
+					<label class="form-label">{{$.Tr "Take deadline (cron expression, optional)"}}</label>
 					<input class="form-control" type="text" name="take-deadline" maxlength="64" {{with .TakeDeadline}}value="{{.}}" disabled{{end}}>
-					<div class="form-text">Example: <code>0 0 0 * * MON *</code></div>
+					<div class="form-text">{{$.Tr "Example"}}: <code>0 0 0 * * MON *</code></div>
 				</div>
 				<div class="form-check">
 					<input class="form-check-input" id="taker-name-all" type="checkbox" name="taker-name-all" value="_" onchange="console.log(this.checked); hide('toggle-names', this.checked)" {{if not .TakerNameAll}}disabled{{end}}>
-					<label class="form-check-label" for="taker-name-all">Any taker name</label>
+					<label class="form-check-label" for="taker-name-all">{{$.Tr "Any taker name"}}</label>
 				</div>
 				<div id="toggle-names">
 					{{if .TakerNameAll}}
 						<div class="mt-2 mb-3">
-							<label class="form-label">Taker names</label>
+							<label class="form-label">{{$.Tr "Taker names"}}</label>
 							<textarea class="form-control" rows="3" name="taker-name"></textarea>
 						</div>
 					{{else}}
 						{{range .TakerName}}
 							<div class="form-check">
 								<input class="form-check-input" id="taker-name-{{.}}" type="checkbox" name="taker-name" value="{{.}}">
-								<label class="form-check-label" for="taker-name-{{.}}">Take shifts as <kbd>{{.}}</kbd></label>
+								<label class="form-check-label" for="taker-name-{{.}}">{{$.Tr "Take shifts as"}} <kbd>{{.}}</kbd></label>
 							</div>
 						{{end}}
 					{{end}}
 				</div>
 
-				<h5 class="mt-3">View Shifts</h5>
+				<h5 class="mt-3">{{$.Tr "View Shifts"}}</h5>
 				<div class="form-check">
 					<input class="form-check-input" id="view-taker-name" type="checkbox" name="view-taker-name" value="_" {{if not .ViewTakerName}}disabled{{end}}>
-					<label class="form-check-label" for="view-taker-name">View taker name</label>
+					<label class="form-check-label" for="view-taker-name">{{$.Tr "View taker name"}}</label>
 				</div>
 				<div class="form-check">
 					<input class="form-check-input" id="view-taker-contact" type="checkbox" name="view-taker-contact" value="_" {{if not .ViewTakerContact}}disabled{{end}}>
-					<label class="form-check-label" for="view-taker-contact">View taker contact</label>
+					<label class="form-check-label" for="view-taker-contact">{{$.Tr "View taker contact"}}</label>
 				</div>
 			</div>
 
-			<h5 class="mt-3">Link Properties</h5>
+			<h5 class="mt-3">{{$.Tr "Link Properties"}}</h5>
 			<div class="input-group my-3">
-				<span class="input-group-text">Expires</span>
+				<span class="input-group-text">{{$.Tr "Expires"}}</span>
 				<input type="date" class="form-control" name="expires" {{with .Expires}}value="{{.}}" max="{{.}}"{{end}}>
 			</div>
 			<div class="input-group my-3">
-				<span class="input-group-text">Note</span>
+				<span class="input-group-text">{{$.Tr "Note"}}</span>
 				<input type="text" class="form-control" name="note" maxlength="128">
 			</div>
-			<button type="submit" class="btn btn-primary">Create share link</button>
-			<a class="btn btn-light" href="{{.Link}}">Cancel</a>
+			<button type="submit" class="btn btn-primary">{{$.Tr "Create share link"}}</button>
+			<a class="btn btn-light" href="{{.Link}}">{{$.Tr "Cancel"}}</a>
 		</form>
 	{{end}}
 {{end}}

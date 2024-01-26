@@ -28,10 +28,10 @@
 						<table class="table align-middle">
 							<thead>
 								<tr>
-									<th>Begin</th>
-									<th>End</th>
-									<th>Shift</th>
-									<th>Taker</th>
+									<th>{{$.Tr "Begin"}}</th>
+									<th>{{$.Tr "End"}}</th>
+									<th>{{$.Tr "Shift"}}</th>
+									<th>{{$.Tr "Taker"}}</th>
 								</tr>
 							</thead>
 							{{range .}}
@@ -60,7 +60,7 @@
 							<div class="form-check">
 								<input class="form-check-input" id="uid" type="radio" name="event-uid" value="" checked>
 								<label class="form-check-label" for="uid">
-									do not assign to an event
+									{{$.Tr "do not assign to an event"}}
 								</label>
 							</div>
 							{{range .}}
@@ -76,19 +76,19 @@
 					<div class="row my-3" role="row"><!-- role is used in javascript functions -->
 						<div class="col-lg-2 mb-1">
 							<div class="input-group">
-								<span class="input-group-text">Count</span>
+								<span class="input-group-text">{{$.Tr "Count"}}</span>
 								<input class="form-control" type="number" name="count" min="1" max="10" value="1">
 							</div>
 						</div>
 						<div class="col-lg-3 mb-1">
 							<div class="input-group">
-								<span class="input-group-text">Begin</span>
+								<span class="input-group-text">{{$.Tr "Begin"}}</span>
 								<input class="form-control" type="datetime-local" name="begin" onchange="updateEnd(this)" value="{{FmtISODate .Begin}}T10:00" min="{{$.MinDate}}" max="{{$.MaxDate}}">
 							</div>
 						</div>
 						<div class="col-lg-3 mb-1">
 							<div class="input-group">
-								<span class="input-group-text">End</span>
+								<span class="input-group-text">{{$.Tr "End"}}</span>
 								<input class="form-control" type="datetime-local" name="end" onchange="updateBegin(this)" value="{{FmtISODate .Begin}}T11:00" min="{{$.MinDate}}" max="{{$.MaxDate}}">
 							</div>
 						</div>
@@ -105,18 +105,18 @@
 											{{end}}
 										</select>
 									{{else}}
-										<em>no shifts available</em>
+										<em>{{$.Tr "no shifts available"}}</em>
 									{{end}}
 								{{else}}
-									<input class="form-control" type="text" name="name" maxlength="64" placeholder="Shift name" onchange="addRow(this)">
+									<input class="form-control" type="text" name="name" maxlength="64" placeholder="{{$.Tr "Shift name"}}" onchange="addRow(this)">
 								{{end}}
-								<input class="form-control" type="text" name="note" maxlength="64" placeholder="Note">
+								<input class="form-control" type="text" name="note" maxlength="64" placeholder="{{$.Tr "Note"}}">
 							</div>
 						</div>
 					</div>
 
-					<button class="btn btn-primary" type="submit">Create shifts</button>
-					<a class="btn btn-light" href="{{$.Pad.Link}}/day/{{FmtISODate .Begin}}">Cancel</a>
+					<button class="btn btn-primary" type="submit">{{$.Tr "Create shifts"}}</button>
+					<a class="btn btn-light" href="{{$.Pad.Link}}/day/{{FmtISODate .Begin}}">{{$.Tr "Cancel"}}</a>
 				</div>
 			</div>
 		{{end}}

@@ -3,11 +3,14 @@ package html
 import (
 	"embed"
 	"html/template"
+	"net/http"
 	"strings"
 
 	"github.com/wansing/shiftpad"
 	"github.com/wansing/shiftpad/datefmt"
 	"gitlab.com/golang-commonmark/markdown"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 )
 
 //go:embed *
@@ -53,7 +56,31 @@ var (
 	ShiftTake           = parse("layout.html", "pad.html", "shift-take.html")
 )
 
+type Lang language.Tag
+
+func (l Lang) Tr(key message.Reference, a ...interface{}) string {
+	return message.NewPrinter(language.Tag(l)).Sprintf(key, a...)
+}
+
+// supported languages
+var matcher = language.NewMatcher([]language.Tag{
+	message.MatchLanguage("en-US"), // The first language is used as fallback.
+	message.MatchLanguage("de-DE"),
+})
+
+type LayoutData struct {
+	Lang
+}
+
+func MakeLayoutData(r *http.Request) LayoutData {
+	tag, _ := language.MatchStrings(matcher, r.Header.Get("Accept-Language"))
+	return LayoutData{
+		Lang: Lang(tag),
+	}
+}
+
 type PadData struct {
+	LayoutData
 	ActiveTab string
 	Errors    []string
 	Pad       shiftpad.AuthPad

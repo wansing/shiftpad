@@ -4,15 +4,15 @@
 		<div class="input-group">
 			<a class="btn btn-primary" href="{{.Pad.Link}}/week/{{.EarlierYear}}/{{.EarlierWeek}}">&#8592;</a>
 			<input class="form-control" type="week" name="week" value="{{.ISOWeek}}">
-			<button class="btn btn-primary" type="submit">Go</button>
-			<a class="btn btn-primary" href="{{.Pad.Link}}/week/{{.ThisYear}}/{{.ThisWeek}}">This</a>
-			<a class="btn btn-primary" href="{{.Pad.Link}}/week/{{.NextYear}}/{{.NextWeek}}">Next</a>
+			<button class="btn btn-primary" type="submit">{{$.Tr "Go"}}</button>
+			<a class="btn btn-primary" href="{{.Pad.Link}}/week/{{.ThisYear}}/{{.ThisWeek}}">{{$.Tr "This"}}</a>
+			<a class="btn btn-primary" href="{{.Pad.Link}}/week/{{.NextYear}}/{{.NextWeek}}">{{$.Tr "Next"}}</a>
 			<a class="btn btn-primary" href="{{.Pad.Link}}/week/{{.LaterYear}}/{{.LaterWeek}}">&#8594;</a>
 		</div>
 	</form>
 
 	{{range .Errors}}
-		<div class="alert alert-danger">Error: {{.}}</div>
+		<div class="alert alert-danger">{{$.Tr "Error"}}: {{.}}</div>
 	{{end}}
 
 	{{range $day := .Days}}
@@ -23,10 +23,10 @@
 					<table class="table align-middle mb-0">
 						<thead>
 							<tr>
-								<th>Time</th>
-								<th>Shift</th>
+								<th>{{$.Tr "Time"}}</th>
+								<th>{{$.Tr "Shift"}}</th>
 								<th><!-- edit --></th>
-								<th>Taker</th>
+								<th>{{$.Tr "Taker"}}</th>
 							</tr>
 						</thead>
 						{{range .}}
@@ -51,18 +51,18 @@
 											{{if $.Pad.CanEditShift .}}
 												<a class="btn btn-sm btn-primary d-print-none" href="{{$.Pad.Link}}/edit/{{.ID}}">
 													<span class="d-inline d-lg-none">&#x270E;</span>
-													<span class="d-none d-lg-inline">Edit</span>
+													<span class="d-none d-lg-inline">{{$.Tr "Edit"}}</span>
 												</a>
 												<a class="btn btn-sm btn-primary d-print-none" href="{{$.Pad.Link}}/delete/{{.ID}}">
 													<span class="d-inline d-lg-none">X</span>
-													<span class="d-none d-lg-inline">Delete</span>
+													<span class="d-none d-lg-inline">{{$.Tr "Delete"}}</span>
 												</a>
 											{{end}}
 										</td>
 										<td>
 											{{$.Pad.TakerString .}}
 											{{if $.Pad.CanTakeShift .}}
-												<a class="btn btn-sm btn-primary d-print-none" href="{{$.Pad.Link}}/take/{{.ID}}"><!-- &#x270B; -->Take</a>
+												<a class="btn btn-sm btn-primary d-print-none" href="{{$.Pad.Link}}/take/{{.ID}}"><!-- &#x270B; -->{{$.Tr "Take"}}</a>
 											{{end}}
 										</td>
 									</tr>
@@ -72,7 +72,7 @@
 					</table>
 				{{end}}
 				{{if $.Pad.CanEditSomeShift}}
-					<a class="btn btn-sm btn-primary d-print-none mt-3" href="{{$.Pad.Link}}/add/{{FmtISODate .Begin}}">Create Shift</a>
+					<a class="btn btn-sm btn-primary d-print-none mt-3" href="{{$.Pad.Link}}/add/{{FmtISODate .Begin}}">{{$.Tr "Create shifts"}}</a>
 				{{end}}
 			</div>
 		</div>

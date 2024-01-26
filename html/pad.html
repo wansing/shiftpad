@@ -22,34 +22,34 @@
 		<nav class="navbar bg-light">
 			<div class="container">
 				<span class="navbar-brand">
-					<a href="{{.Link}}" class="text-decoration-none text-dark text-truncate me-1">{{with .Name}}{{.}}{{else}}Unnamed Pad{{end}}</a>
+					<a href="{{.Link}}" class="text-decoration-none text-dark text-truncate me-1">{{with .Name}}{{.}}{{else}}{{$.Tr "Unnamed Pad"}}{{end}}</a>
 					{{with .Note}}
 						<span class="badge bg-secondary fw-normal">{{.}}</span>
 					{{end}}
 					{{with .Expires}}
-						<span class="badge bg-secondary fw-normal">Link expires {{.}}</span>
+						<span class="badge bg-secondary fw-normal">{{$.Tr "Link expires"}} {{.}}</span>
 					{{end}}
 				</span>
 				<ul class="d-print-none ms-auto nav nav-pills">
 					<li class="nav-item">
-						<a class="nav-link" href="{{.Link}}" onclick="copyHref(event)">Copy link</a>
+						<a class="nav-link" href="{{.Link}}" onclick="copyHref(event)">{{$.Tr "Copy link"}}</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="{{.Link}}/ical" onclick="copyHref(event)">Copy iCalendar</a>
+						<a class="nav-link" href="{{.Link}}/ical" onclick="copyHref(event)">{{$.Tr "Copy iCalendar"}}</a>
 					</li>
 					{{if .Admin}}
 						<li class="nav-item">
-							<a class="nav-link {{if eq $.ActiveTab "settings"}}active{{end}}" href="{{.Link}}/settings">Settings</a>
+							<a class="nav-link {{if eq $.ActiveTab "settings"}}active{{end}}" href="{{.Link}}/settings">{{$.Tr "Settings"}}</a>
 						</li>
 					{{end}}
 					<li class="nav-item">
-						<a class="nav-link {{if eq $.ActiveTab "share"}}active{{end}}" href="{{.Link}}/share">Share</a>
+						<a class="nav-link {{if eq $.ActiveTab "share"}}active{{end}}" href="{{.Link}}/share">{{$.Tr "Share"}}</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link disabled px-2">{{.Location}}</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link disabled ps-2 pe-0">last changed {{.LastUpdated}}</a>
+						<a class="nav-link disabled ps-2 pe-0">{{$.Tr "last changed"}} {{.LastUpdated}}</a>
 					</li>
 				</ul>
 			</div>

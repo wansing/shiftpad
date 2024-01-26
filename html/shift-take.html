@@ -11,9 +11,9 @@
 						<table class="table align-middle">
 							<thead>
 								<tr>
-									<th>Time</th>
-									<th>Shift</th>
-									<th>Taker</th>
+									<th>{{$.Tr "Time"}}</th>
+									<th>{{$.Tr "Shift"}}</th>
+									<th>{{$.Tr "Taker"}}</th>
 								</tr>
 							</thead>
 							{{range .}}
@@ -42,9 +42,9 @@
 																{{end}}
 															</select>
 														{{else}}
-															<input type="text" class="form-control" name="taker-name" maxlength="64" placeholder="Name">
+															<input type="text" class="form-control" name="taker-name" maxlength="64" placeholder="{{$.Tr "Name"}}">
 														{{end}}
-														<input type="text" class="form-control" name="taker-contact" maxlength="128" placeholder="Contact">
+														<input type="text" class="form-control" name="taker-contact" maxlength="128" placeholder="{{$.Tr "Contact"}}">
 													</div>
 												</td>
 											</tr>
@@ -59,9 +59,9 @@
 								</tbody>
 							{{end}}
 						</table>
-						<button class="btn btn-primary" type="submit">Take shift</button>
+						<button class="btn btn-primary" type="submit">{{$.Tr "Take shift"}}</button>
 					{{end}}
-					<a class="btn btn-light" href="{{$.Pad.Link}}/day/{{FmtISODate .Begin}}">Cancel</a>
+					<a class="btn btn-light" href="{{$.Pad.Link}}/day/{{FmtISODate .Begin}}">{{$.Tr "Cancel"}}</a>
 				</div>
 			</div>
 		{{end}}

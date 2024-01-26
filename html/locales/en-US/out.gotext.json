@@ -1,0 +1,418 @@
+{
+    "language": "en-US",
+    "messages": [
+        {
+            "id": "Please use the full link.",
+            "message": "Please use the full link.",
+            "translation": "Please use the full link.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Sorry, internal server error",
+            "message": "Sorry, internal server error",
+            "translation": "Sorry, internal server error",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Sorry, not found",
+            "message": "Sorry, not found",
+            "translation": "Sorry, not found",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Create new Pad",
+            "message": "Create new Pad",
+            "translation": "Create new Pad",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Name",
+            "message": "Name",
+            "translation": "Name",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Description (Markdown)",
+            "message": "Description (Markdown)",
+            "translation": "Description (Markdown)",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Location",
+            "message": "Location",
+            "translation": "Location",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Shift Names (one name per row)",
+            "message": "Shift Names (one name per row)",
+            "translation": "Shift Names (one name per row)",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "ical Overlay",
+            "message": "ical Overlay",
+            "translation": "ical Overlay",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Save",
+            "message": "Save",
+            "translation": "Save",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Back",
+            "message": "Back",
+            "translation": "Back",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "This is your customized share link",
+            "message": "This is your customized share link",
+            "translation": "This is your customized share link",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Copy link",
+            "message": "Copy link",
+            "translation": "Copy link",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Administrate this Pad",
+            "message": "Administrate this Pad",
+            "translation": "Administrate this Pad",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Administrate this pad",
+            "message": "Administrate this pad",
+            "translation": "Administrate this pad",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Create, Edit and Delete Shifts",
+            "message": "Create, Edit and Delete Shifts",
+            "translation": "Create, Edit and Delete Shifts",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Any shift",
+            "message": "Any shift",
+            "translation": "Any shift",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Edit retroactively",
+            "message": "Edit retroactively",
+            "translation": "Edit retroactively",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Take Shifts",
+            "message": "Take Shifts",
+            "translation": "Take Shifts",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Take deadline (cron expression, optional)",
+            "message": "Take deadline (cron expression, optional)",
+            "translation": "Take deadline (cron expression, optional)",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Example",
+            "message": "Example",
+            "translation": "Example",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Any taker name",
+            "message": "Any taker name",
+            "translation": "Any taker name",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Taker names",
+            "message": "Taker names",
+            "translation": "Taker names",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Take shifts as",
+            "message": "Take shifts as",
+            "translation": "Take shifts as",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "View Shifts",
+            "message": "View Shifts",
+            "translation": "View Shifts",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "View taker name",
+            "message": "View taker name",
+            "translation": "View taker name",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "View taker contact",
+            "message": "View taker contact",
+            "translation": "View taker contact",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Link Properties",
+            "message": "Link Properties",
+            "translation": "Link Properties",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Expires",
+            "message": "Expires",
+            "translation": "Expires",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Note",
+            "message": "Note",
+            "translation": "Note",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Create share link",
+            "message": "Create share link",
+            "translation": "Create share link",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Cancel",
+            "message": "Cancel",
+            "translation": "Cancel",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Go",
+            "message": "Go",
+            "translation": "Go",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "This",
+            "message": "This",
+            "translation": "This",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Next",
+            "message": "Next",
+            "translation": "Next",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Error",
+            "message": "Error",
+            "translation": "Error",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Time",
+            "message": "Time",
+            "translation": "Time",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Shift",
+            "message": "Shift",
+            "translation": "Shift",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Taker",
+            "message": "Taker",
+            "translation": "Taker",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Edit",
+            "message": "Edit",
+            "translation": "Edit",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Delete",
+            "message": "Delete",
+            "translation": "Delete",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Take",
+            "message": "Take",
+            "translation": "Take",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Create shifts",
+            "message": "Create shifts",
+            "translation": "Create shifts",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Unnamed Pad",
+            "message": "Unnamed Pad",
+            "translation": "Unnamed Pad",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Link expires",
+            "message": "Link expires",
+            "translation": "Link expires",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Copy iCalendar",
+            "message": "Copy iCalendar",
+            "translation": "Copy iCalendar",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Settings",
+            "message": "Settings",
+            "translation": "Settings",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Share",
+            "message": "Share",
+            "translation": "Share",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "last changed",
+            "message": "last changed",
+            "translation": "last changed",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Begin",
+            "message": "Begin",
+            "translation": "Begin",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "End",
+            "message": "End",
+            "translation": "End",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "do not assign to an event",
+            "message": "do not assign to an event",
+            "translation": "do not assign to an event",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Count",
+            "message": "Count",
+            "translation": "Count",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "no shifts available",
+            "message": "no shifts available",
+            "translation": "no shifts available",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Shift name",
+            "message": "Shift name",
+            "translation": "Shift name",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Delete shift",
+            "message": "Delete shift",
+            "translation": "Delete shift",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Contact",
+            "message": "Contact",
+            "translation": "Contact",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Save changes",
+            "message": "Save changes",
+            "translation": "Save changes",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Take shift",
+            "message": "Take shift",
+            "translation": "Take shift",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        }
+    ]
+}

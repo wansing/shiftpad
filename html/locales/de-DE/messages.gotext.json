@@ -1,0 +1,300 @@
+{
+    "language": "de-DE",
+    "messages": [
+        {
+            "id": "Please use the full link.",
+            "message": "Please use the full link.",
+            "translation": "Bitte verwende den vollständigen Link."
+        },
+        {
+            "id": "Sorry, internal server error",
+            "message": "Sorry, internal server error",
+            "translation": "Sorry, interner Serverfehler"
+        },
+        {
+            "id": "Sorry, not found",
+            "message": "Sorry, not found",
+            "translation": "Sorry, nicht gefunden"
+        },
+        {
+            "id": "Create new Pad",
+            "message": "Create new Pad",
+            "translation": "Neues Pad anlegen"
+        },
+        {
+            "id": "Name",
+            "message": "Name",
+            "translation": "Name"
+        },
+        {
+            "id": "Description (Markdown)",
+            "message": "Description (Markdown)",
+            "translation": "Beschreibung (Markdown)"
+        },
+        {
+            "id": "Location",
+            "message": "Location",
+            "translation": "Zeitzone"
+        },
+        {
+            "id": "Shift Names (one name per row)",
+            "message": "Shift Names (one name per row)",
+            "translation": "Schicht-Typen (einer pro Zeile)"
+        },
+        {
+            "id": "ical Overlay",
+            "message": "ical Overlay",
+            "translation": "ical-Overlay"
+        },
+        {
+            "id": "Save",
+            "message": "Save",
+            "translation": "Speichern"
+        },
+        {
+            "id": "Back",
+            "message": "Back",
+            "translation": "Zurück"
+        },
+        {
+            "id": "This is your customized share link",
+            "message": "This is your customized share link",
+            "translation": "Dies ist dein gewünschter Freigabelink"
+        },
+        {
+            "id": "Copy link",
+            "message": "Copy link",
+            "translation": "Link kopieren"
+        },
+        {
+            "id": "Administrate this Pad",
+            "message": "Administrate this Pad",
+            "translation": "Dieses Pad administrieren"
+        },
+        {
+            "id": "Administrate this pad",
+            "message": "Administrate this pad",
+            "translation": "Dieses Pad administrieren"
+        },
+        {
+            "id": "Create, Edit and Delete Shifts",
+            "message": "Create, Edit and Delete Shifts",
+            "translation": "Schichten anlegen, bearbeiten und löschen"
+        },
+        {
+            "id": "Any shift",
+            "message": "Any shift",
+            "translation": "Jede Schicht"
+        },
+        {
+            "id": "Edit retroactively",
+            "message": "Edit retroactively",
+            "translation": "Rückwirkend bearbeiten"
+        },
+        {
+            "id": "Take Shifts",
+            "message": "Take Shifts",
+            "translation": "Schichten machen"
+        },
+        {
+            "id": "Take deadline (cron expression, optional)",
+            "message": "Take deadline (cron expression, optional)",
+            "translation": "Deadline zum Übernehmen (cron-expression, optional)"
+        },
+        {
+            "id": "Example",
+            "message": "Example",
+            "translation": "Beispiel"
+        },
+        {
+            "id": "Any taker name",
+            "message": "Any taker name",
+            "translation": "Jeder Name"
+        },
+        {
+            "id": "Taker names",
+            "message": "Taker names",
+            "translation": "Namen"
+        },
+        {
+            "id": "Take shifts as",
+            "message": "Take shifts as",
+            "translation": "Schichten übernehmen als"
+        },
+        {
+            "id": "View Shifts",
+            "message": "View Shifts",
+            "translation": "Schichten anzeigen"
+        },
+        {
+            "id": "View taker name",
+            "message": "View taker name",
+            "translation": "Namen anzeigen"
+        },
+        {
+            "id": "View taker contact",
+            "message": "View taker contact",
+            "translation": "Kontakt anzeigen"
+        },
+        {
+            "id": "Link Properties",
+            "message": "Link Properties",
+            "translation": "Link-Eigenschaften"
+        },
+        {
+            "id": "Expires",
+            "message": "Expires",
+            "translation": "Gültig bis"
+        },
+        {
+            "id": "Note",
+            "message": "Note",
+            "translation": "Hinweis"
+        },
+        {
+            "id": "Create share link",
+            "message": "Create share link",
+            "translation": "Freigabelink erzeugen"
+        },
+        {
+            "id": "Cancel",
+            "message": "Cancel",
+            "translation": "Abbrechen"
+        },
+        {
+            "id": "Go",
+            "message": "Go",
+            "translation": "Los"
+        },
+        {
+            "id": "This",
+            "message": "This",
+            "translation": "Diese"
+        },
+        {
+            "id": "Next",
+            "message": "Next",
+            "translation": "Nächste"
+        },
+        {
+            "id": "Error",
+            "message": "Error",
+            "translation": "Fehler"
+        },
+        {
+            "id": "Time",
+            "message": "Time",
+            "translation": "Zeit"
+        },
+        {
+            "id": "Shift",
+            "message": "Shift",
+            "translation": "Schicht"
+        },
+        {
+            "id": "Taker",
+            "message": "Taker",
+            "translation": "Name"
+        },
+        {
+            "id": "Edit",
+            "message": "Edit",
+            "translation": "Bearbeiten"
+        },
+        {
+            "id": "Delete",
+            "message": "Delete",
+            "translation": "Löschen"
+        },
+        {
+            "id": "Take",
+            "message": "Take",
+            "translation": "Machen"
+        },
+        {
+            "id": "Create shifts",
+            "message": "Create shifts",
+            "translation": "Schichten anlegen"
+        },
+        {
+            "id": "Unnamed Pad",
+            "message": "Unnamed Pad",
+            "translation": "Unbenanntes Pad"
+        },
+        {
+            "id": "Link expires",
+            "message": "Link expires",
+            "translation": "Link gültig bis"
+        },
+        {
+            "id": "Copy iCalendar",
+            "message": "Copy iCalendar",
+            "translation": "iCalendar-Link kopieren"
+        },
+        {
+            "id": "Settings",
+            "message": "Settings",
+            "translation": "Einstellungen"
+        },
+        {
+            "id": "Share",
+            "message": "Share",
+            "translation": "Teilen"
+        },
+        {
+            "id": "last changed",
+            "message": "last changed",
+            "translation": "zuletzt geändert"
+        },
+        {
+            "id": "Begin",
+            "message": "Begin",
+            "translation": "Beginn"
+        },
+        {
+            "id": "End",
+            "message": "End",
+            "translation": "Ende"
+        },
+        {
+            "id": "do not assign to an event",
+            "message": "do not assign to an event",
+            "translation": "keinem Event zugeordnet"
+        },
+        {
+            "id": "Count",
+            "message": "Count",
+            "translation": "Anzahl"
+        },
+        {
+            "id": "no shifts available",
+            "message": "no shifts available",
+            "translation": "keine Schichten vorhanden"
+        },
+        {
+            "id": "Shift name",
+            "message": "Shift name",
+            "translation": "Schicht"
+        },
+        {
+            "id": "Delete shift",
+            "message": "Delete shift",
+            "translation": "Schicht löschen"
+        },
+        {
+            "id": "Contact",
+            "message": "Contact",
+            "translation": "Kontakt"
+        },
+        {
+            "id": "Save changes",
+            "message": "Save changes",
+            "translation": "Änderungen speichern"
+        },
+        {
+            "id": "Take shift",
+            "message": "Take shift",
+            "translation": "Machen"
+        }
+    ]
+}
