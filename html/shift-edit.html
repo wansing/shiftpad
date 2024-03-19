@@ -13,6 +13,7 @@
 								<tr>
 									<th>{{$.Tr "Begin"}}</th>
 									<th>{{$.Tr "End"}}</th>
+									<th>{{$.Tr "Quantity"}}</th>
 									<th>{{$.Tr "Shift"}}</th>
 									<th>{{$.Tr "Taker"}}</th>
 								</tr>
@@ -23,7 +24,7 @@
 										<tr class="table-secondary">
 											<td>{{$.Day.FmtDateTime .Start}}</td>
 											<td>{{$.Day.FmtDateTime .End}}</td>
-											<td colspan="2">{{.Summary}}</td>
+											<td colspan="3">{{.Summary}}</td>
 										</tr>
 									{{end}}
 									{{range .Shifts}}
@@ -31,7 +32,7 @@
 											<input type="hidden" name="id" value="{{.ID}}">
 											{{with $.Day.Events}}
 												<tr class="table-warning">
-													<td colspan="4">
+													<td colspan="5">
 														<div>
 															<div class="form-check">
 																<input class="form-check-input"  id="uid" type="radio" name="event-uid" value="" {{if eq "" $.Shift.EventUID}}checked{{end}}>
@@ -59,6 +60,9 @@
 													<input type="datetime-local" class="form-control" name="end" onchange="updateBegin(this)" value="{{FmtISODateTime .End}}" min="{{$.MinDate}}T00:00" max="{{$.MaxDate}}T24:00">
 												</td>
 												<td>
+													<input type="number" class="form-control" size="3" min="1" max="64" name="quantity" value="{{.Quantity}}">
+												</td>
+												<td>
 													<div class="input-group">
 														{{$shiftname := .Name}}
 														{{if $.Pad.ShiftNames}}
@@ -81,18 +85,31 @@
 													</div>
 												</td>
 												<td>
-													<div class="input-group">
-														<input type="text" class="form-control" name="taker-name"    maxlength="64"  value="{{.TakerName}}"    placeholder="{{$.Tr "Name"}}">
-														<input type="text" class="form-control" name="taker-contact" maxlength="128" value="{{.TakerContact}}" placeholder="{{$.Tr "Contact"}}">
-													</div>
+													{{range .Takes}}
+														<div class="input-group mb-1">
+															<input type="text" class="form-control" name="taker-name-{{.ID}}"    maxlength="64"  value="{{.Name}}"    placeholder="{{$.Tr "Name"}}">
+															<input type="text" class="form-control" name="taker-contact-{{.ID}}" maxlength="128" value="{{.Contact}}" placeholder="{{$.Tr "Contact"}}">
+														</div>
+													{{end}}
+													{{range .Untaken}}
+														<div class="input-group mb-1">
+															<input type="text" class="form-control" name="new-taker-name"    maxlength="64"  placeholder="{{$.Tr "Name"}}">
+															<input type="text" class="form-control" name="new-taker-contact" maxlength="128" placeholder="{{$.Tr "Contact"}}">
+														</div>
+													{{end}}
 												</td>
 											</tr>
 										{{else}}
 											<tr>
 												<td>{{$.Day.FmtDateTime .Begin}}</td>
 												<td>{{$.Day.FmtDateTime .End}}</td>
+												<td>{{.Quantity}}</td>
 												<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
-												<td>{{.TakerName}} {{with .TakerContact}}({{.}}){{end}}</td>
+												<td>
+													{{range $.Pad.TakerStrings .}}
+														<div class="mb-1">{{.}}</div>
+													{{end}}
+												</td>
 											</tr>
 										{{end}}
 									{{end}}

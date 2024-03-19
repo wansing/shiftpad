@@ -24,6 +24,7 @@
 						<thead>
 							<tr>
 								<th>{{$.Tr "Time"}}</th>
+								<th>{{$.Tr "Quantity"}}</th>
 								<th>{{$.Tr "Shift"}}</th>
 								<th><!-- edit --></th>
 								<th>{{$.Tr "Taker"}}</th>
@@ -34,7 +35,7 @@
 								{{with .Event}}
 									<tr class="table-secondary">
 										<td>{{$day.FmtEventTime .}}</td>
-										<td colspan="3">
+										<td colspan="4">
 											{{if .URL}}
 												<a href="{{.URL}}" rel="noreferrer" target="_blank">{{.Summary}}</a>
 											{{else}}
@@ -46,6 +47,7 @@
 								{{range .Shifts}}
 									<tr>
 										<td>{{$day.FmtShiftTime .}}</td>
+										<td>{{.Quantity}}</td>
 										<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
 										<td>
 											{{if $.Pad.CanEditShift .}}
@@ -60,7 +62,9 @@
 											{{end}}
 										</td>
 										<td>
-											{{$.Pad.TakerString .}}
+											{{range $.Pad.TakerStrings .}}
+												<div class="mb-1">{{.}}</div>
+											{{end}}
 											{{if $.Pad.CanTakeShift .}}
 												<a class="btn btn-sm btn-primary d-print-none" href="{{$.Pad.Link}}/take/{{.ID}}"><!-- &#x270B; -->{{$.Tr "Take"}}</a>
 											{{end}}

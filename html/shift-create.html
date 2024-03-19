@@ -8,7 +8,7 @@
 			element.onchange = null;
 			let row = element.closest('[role="row"]');
 			let clone = row.cloneNode(true);
-			reset(clone.querySelector('[name="count"]'));
+			reset(clone.querySelector('[name="quantity"]'));
 			reset(clone.querySelector('[name="begin"]'));
 			reset(clone.querySelector('[name="end"]'));
 			reset(clone.querySelector('[name="name"]'));
@@ -30,6 +30,7 @@
 								<tr>
 									<th>{{$.Tr "Begin"}}</th>
 									<th>{{$.Tr "End"}}</th>
+									<th>{{$.Tr "Quantity"}}</th>
 									<th>{{$.Tr "Shift"}}</th>
 									<th>{{$.Tr "Taker"}}</th>
 								</tr>
@@ -40,15 +41,20 @@
 										<tr class="table-secondary">
 											<td>{{$.Day.FmtDateTime .Start}}</td>
 											<td>{{$.Day.FmtDateTime .End}}</td>
-											<td colspan="2">{{.Summary}}</td>
+											<td colspan="3">{{.Summary}}</td>
 										</tr>
 									{{end}}
 									{{range .Shifts}}
 										<tr>
 											<td>{{$.Day.FmtDateTime .Begin}}</td>
 											<td>{{$.Day.FmtDateTime .End}}</td>
+											<td>{{.Quantity}}</td>
 											<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
-											<td>{{$.Pad.TakerString .}}</td>
+											<td>
+												{{range $.Pad.TakerStrings .}}
+													<div class="mb-1">{{.}}</div>
+												{{end}}
+											</td>
 										</tr>
 									{{end}}
 								</tbody>
@@ -74,12 +80,6 @@
 						</div>
 					{{end}}
 					<div class="row my-3" role="row"><!-- role is used in javascript functions -->
-						<div class="col-lg-2 mb-1">
-							<div class="input-group">
-								<span class="input-group-text">{{$.Tr "Count"}}</span>
-								<input class="form-control" type="number" name="count" min="1" max="10" value="1">
-							</div>
-						</div>
 						<div class="col-lg-3 mb-1">
 							<div class="input-group">
 								<span class="input-group-text">{{$.Tr "Begin"}}</span>
@@ -90,6 +90,12 @@
 							<div class="input-group">
 								<span class="input-group-text">{{$.Tr "End"}}</span>
 								<input class="form-control" type="datetime-local" name="end" onchange="updateBegin(this)" value="{{FmtISODate .Begin}}T11:00" min="{{$.MinDate}}" max="{{$.MaxDate}}">
+							</div>
+						</div>
+						<div class="col-lg-2 mb-1">
+							<div class="input-group">
+								<span class="input-group-text">{{$.Tr "Quantity"}}</span>
+								<input class="form-control" type="number" name="quantity" min="1" max="64" value="1">
 							</div>
 						</div>
 						<div class="col-lg-4 mb-1">

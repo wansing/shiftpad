@@ -136,7 +136,7 @@ func (auth Auth) CanTake(shiftname string) bool {
 }
 
 func (auth Auth) CanTakeShift(shift Shift) bool {
-	return auth.CanTake(shift.Name) && !shift.Taken() && !shift.Over() && shift.AfterDeadline(auth.TakeDeadline)
+	return auth.CanTake(shift.Name) && !shift.FullyTaken() && !shift.Over() && shift.AfterDeadline(auth.TakeDeadline)
 }
 
 func (auth Auth) CanTakerName(shift Shift, name string) bool {
@@ -258,32 +258,36 @@ func (ref Auth) Restrict(input Auth) Auth {
 	return input
 }
 
-// TakerString returns a string containing the taker name and taker contact of
-// the given shift, or "taken" if auth.ViewTakerContact and auth.ViewTakerName
-// are false. If the shift is not taken, an empty string is returned.
-func (auth Auth) TakerString(shift Shift) string {
-	if !shift.Taken() {
-		return ""
-	}
+// TakerStrings returns a slice containing the name and contact of the takers of
+// the given shift, or "n × anonymous" if both auth.ViewTakerContact and
+// auth.ViewTakerName are false.
+func (auth Auth) TakerStrings(shift Shift) []string {
+	var takers []string
+	var anonymous int
+	for _, take := range shift.Takes {
+		// copy authorized data to local variables
+		var takerContact string
+		var takerName string
+		if auth.ViewTakerContact {
+			takerContact = take.Contact
+		}
+		if auth.ViewTakerName || slices.Contains(auth.TakerName, take.Name) {
+			takerName = take.Name
+		}
 
-	// copy authorized data to local variables
-	var takerContact string
-	var takerName string
-	if auth.ViewTakerContact {
-		takerContact = shift.TakerContact
+		switch {
+		case takerName != "" && takerContact != "":
+			takers = append(takers, fmt.Sprintf("%s (%s)", takerName, takerContact))
+		case takerName != "":
+			takers = append(takers, takerName)
+		case takerContact != "":
+			takers = append(takers, takerContact)
+		default:
+			anonymous++
+		}
 	}
-	if auth.ViewTakerName || slices.Contains(auth.TakerName, shift.TakerName) {
-		takerName = shift.TakerName
+	if anonymous > 0 {
+		takers = append(takers, fmt.Sprintf("%d × anonymous", anonymous))
 	}
-
-	switch {
-	case takerName != "" && takerContact != "":
-		return fmt.Sprintf("%s (%s)", takerName, takerContact)
-	case takerName != "":
-		return takerName
-	case takerContact != "":
-		return takerContact
-	default:
-		return "taken"
-	}
+	return takers
 }

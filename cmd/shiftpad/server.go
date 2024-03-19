@@ -20,7 +20,7 @@ type DB interface {
 	GetShift(pad *shiftpad.Pad, shift int) (*shiftpad.Shift, error)
 	GetShifts(pad *shiftpad.Pad, from, to int64) ([]shiftpad.Shift, error) // begin: from inclusive, to exclusive
 	GetShiftsByEvent(pad *shiftpad.Pad, eventUID string) ([]shiftpad.Shift, error)
-	TakeShift(*shiftpad.Pad, *shiftpad.Shift) error
+	TakeShift(*shiftpad.Pad, *shiftpad.Shift, shiftpad.Take) error
 	UpdatePad(*shiftpad.Pad) error
 	UpdatePadLastUpdated(pad *shiftpad.Pad, lastUpdated string) error
 	UpdateShift(*shiftpad.Pad, *shiftpad.Shift) error

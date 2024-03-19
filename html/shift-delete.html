@@ -12,6 +12,7 @@
 							<thead>
 								<tr>
 									<th>{{$.Tr "Time"}}</th>
+									<th>{{$.Tr "Quantity"}}</th>
 									<th>{{$.Tr "Shift"}}</th>
 									<th>{{$.Tr "Taker"}}</th>
 								</tr>
@@ -21,7 +22,7 @@
 									{{with .Event}}
 										<tr class="table-secondary">
 											<td>{{$.Day.FmtEventTime .}}</td>
-											<td colspan="2">{{.Summary}}</td>
+											<td colspan="3">{{.Summary}}</td>
 										</tr>
 									{{end}}
 									{{range .Shifts}}
@@ -29,14 +30,24 @@
 											<input type="hidden" name="id" value="{{.ID}}">
 											<tr class="table-danger" style="text-decoration: line-through">
 												<td>{{$.Day.FmtShiftTime .}}</td>
+												<td>{{.Quantity}}</td>
 												<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
-												<td>{{$.Pad.TakerString .}}</td>
+												<td>
+													{{range $.Pad.TakerStrings .}}
+														<div class="mb-1">{{.}}</div>
+													{{end}}
+												</td>
 											</tr>
 										{{else}}
 											<tr>
 												<td>{{$.Day.FmtShiftTime .}}</td>
+												<td>{{.Quantity}}</td>
 												<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
-												<td>{{$.Pad.TakerString .}}</td>
+												<td>
+													{{range $.Pad.TakerStrings .}}
+														<div class="mb-1">{{.}}</div>
+													{{end}}
+												</td>
 											</tr>
 										{{end}}
 									{{end}}

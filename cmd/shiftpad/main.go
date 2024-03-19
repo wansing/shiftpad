@@ -113,6 +113,7 @@ func (srv *Server) withPad(f func(http.ResponseWriter, *http.Request, shiftpad.A
 	}
 }
 
+// withShift calls handlers with a pad and a shift. It calls GetShift which ensures that the shift belongs to the pad.
 func (srv *Server) withShift(f func(http.ResponseWriter, *http.Request, shiftpad.AuthPad, *shiftpad.Shift) http.Handler) HandlerFunc {
 	return srv.withPad(func(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
 		id, _ := strconv.Atoi(way.Param(r.Context(), "shift"))
@@ -329,17 +330,24 @@ func (srv *Server) padICal(w http.ResponseWriter, r *http.Request, authpad shift
 	for _, shift := range shifts {
 		uid := fmt.Sprintf("%d@%s", shift.ID, authpad.Pad.ID)
 
-		var summary = shift.Name
+		var summary strings.Builder
+		summary.WriteString(shift.Name)
 		if shift.Note != "" {
-			summary = summary + " (" + shift.Note + ")"
+			summary.WriteString("(")
+			summary.WriteString(shift.Note)
+			summary.WriteString(")")
 		}
-		if shift.Taken() {
-			summary = summary + ": " + authpad.TakerString(shift)
+		if takers := authpad.TakerStrings(shift); len(takers) > 0 {
+			summary.WriteString(":")
+			for _, taker := range takers {
+				summary.WriteString("\n")
+				summary.WriteString(taker)
+			}
 		}
 
 		event := ical.NewEvent()
 		event.Props.SetText(ical.PropUID, uid)
-		event.Props.SetText(ical.PropSummary, summary)
+		event.Props.SetText(ical.PropSummary, summary.String())
 		// use UTC ("Z") because go-ical can't export timezone details
 		event.Props.SetDateTime(ical.PropDateTimeStamp, shift.Modified.In(time.UTC))
 		event.Props.SetDateTime(ical.PropDateTimeStart, shift.Begin.In(time.UTC))
@@ -489,7 +497,7 @@ func (srv *Server) shiftAddPost(w http.ResponseWriter, r *http.Request, authpad 
 
 	eventUID := trim(r.PostFormValue("event-uid"), 128)
 
-	counts := r.PostForm["count"]
+	quantites := r.PostForm["quantity"]
 	begins := r.PostForm["begin"]
 	ends := r.PostForm["end"]
 	names := r.PostForm["name"]
@@ -497,11 +505,18 @@ func (srv *Server) shiftAddPost(w http.ResponseWriter, r *http.Request, authpad 
 
 	var errs []string
 
-	for i := 0; i < min(len(counts), len(begins), len(ends), len(names), len(notes)); i++ {
-		count, err := strconv.Atoi(counts[i])
+	for i := 0; i < min(len(quantites), len(begins), len(ends), len(names), len(notes)); i++ {
+		quantity, err := strconv.Atoi(quantites[i])
 		if err != nil {
 			continue
 		}
+		if quantity < 1 {
+			quantity = 1
+		}
+		if quantity > 64 {
+			quantity = 64
+		}
+
 		begin, err := time.ParseInLocation("2006-01-02T15:04", begins[i], authpad.Location)
 		if err != nil {
 			continue
@@ -514,6 +529,7 @@ func (srv *Server) shiftAddPost(w http.ResponseWriter, r *http.Request, authpad 
 			errs = append(errs, fmt.Sprintf("adding row %d: %v", i+1, err))
 			continue
 		}
+
 		name := trim(names[i], 64)
 		if name == "" {
 			continue
@@ -525,6 +541,7 @@ func (srv *Server) shiftAddPost(w http.ResponseWriter, r *http.Request, authpad 
 			Note:     note,
 			Modified: time.Now().In(authpad.Location),
 			EventUID: eventUID,
+			Quantity: quantity,
 			Begin:    begin,
 			End:      end,
 		}
@@ -534,17 +551,8 @@ func (srv *Server) shiftAddPost(w http.ResponseWriter, r *http.Request, authpad 
 			continue
 		}
 
-		if count < 0 {
-			count = 0
-		}
-		if count > 10 {
-			count = 10
-		}
-
-		for i := 0; i < count; i++ {
-			if err := srv.DB.AddShift(authpad.Pad, shift); err != nil {
-				return InternalServerError(err)
-			}
+		if err := srv.DB.AddShift(authpad.Pad, shift); err != nil {
+			return InternalServerError(err)
 		}
 	}
 
@@ -642,20 +650,54 @@ func (srv *Server) shiftEditPost(w http.ResponseWriter, r *http.Request, authpad
 		return srv.shiftEditTemplate(w, r, authpad, shift, err.Error())
 	}
 
+	quantity, _ := strconv.Atoi(r.PostFormValue("quantity"))
+	quantity = min(quantity, 64)
 	name := trim(r.PostFormValue("name"), 64)
 	note := trim(r.PostFormValue("note"), 64)
 	eventUID := trim(r.PostFormValue("event-uid"), 128)
-	takerName := trim(r.PostFormValue("taker-name"), 64)
-	takerContact := trim(r.PostFormValue("taker-contact"), 128)
+
+	var takes []shiftpad.Take
+	// existing takes (take.ID must not be user input)
+	for _, take := range shift.Takes {
+		takerName := trim(r.PostFormValue(fmt.Sprintf("taker-name-%d", take.ID)), 64)
+		takerContact := trim(r.PostFormValue(fmt.Sprintf("taker-contact-%d", take.ID)), 128)
+		if takerName != "" {
+			takes = append(takes, shiftpad.Take{
+				ID:      take.ID, // keep existing id
+				Name:    takerName,
+				Contact: takerContact,
+			})
+		}
+	}
+	// new takes
+	var newNames = r.PostForm["new-taker-name"]
+	if len(newNames) > 64 {
+		newNames = newNames[:64]
+	}
+	var newContacts = r.PostForm["new-taker-contact"]
+	if len(newContacts) > 64 {
+		newContacts = newContacts[:64]
+	}
+	maxNew := min(quantity-len(takes), len(newNames), len(newContacts))
+	for i := 0; i < maxNew; i++ {
+		takerName := trim(newNames[i], 64)
+		takerContact := trim(newContacts[i], 128)
+		if takerName != "" {
+			takes = append(takes, shiftpad.Take{
+				Name:    takerName,
+				Contact: takerContact,
+			})
+		}
+	}
 
 	shift.Name = name
 	shift.Note = note
 	shift.EventUID = eventUID
+	shift.Quantity = quantity
 	shift.Begin = begin
 	shift.End = end
 	shift.Modified = time.Now()
-	shift.TakerName = takerName
-	shift.TakerContact = takerContact
+	shift.Takes = takes
 
 	if !authpad.CanEditShift(*shift) {
 		return NotFound()
@@ -715,11 +757,12 @@ func (srv *Server) shiftTakePost(w http.ResponseWriter, r *http.Request, authpad
 		return NotFound()
 	}
 
-	shift.Modified = time.Now()
-	shift.TakerName = takerName
-	shift.TakerContact = takerContact
+	take := shiftpad.Take{
+		Name:    takerName,
+		Contact: takerContact,
+	}
 
-	if err := srv.DB.TakeShift(authpad.Pad, shift); err != nil {
+	if err := srv.DB.TakeShift(authpad.Pad, shift, take); err != nil {
 		return InternalServerError(err)
 	}
 	if err := srv.UpdatePadLastUpdated(authpad.Pad); err != nil {
