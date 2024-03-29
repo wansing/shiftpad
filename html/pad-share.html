@@ -14,14 +14,14 @@
 		<form class="mb-3" method="post">
 			<h5>{{$.Tr "Administrate this Pad"}}</h5>
 			<div class="form-check">
-				<input class="form-check-input" id="admin" type="checkbox" name="admin" value="_" onchange="console.log(this.checked); hide('toggle-admin', this.checked)" {{if not .Admin}}disabled{{end}}>
+				<input class="form-check-input" id="admin" type="checkbox" name="admin" value="_" onchange="hide('toggle-admin', this.checked)" {{if not .Admin}}disabled{{end}}>
 				<label class="form-check-label" for="admin">{{$.Tr "Administrate this pad"}}</label>
 			</div>
 
 			<div id="toggle-admin">
 				<h5 class="mt-3">{{$.Tr "Create, Edit and Delete Shifts"}}</h5>
 				<div class="form-check">
-					<input class="form-check-input" id="edit-all" type="checkbox" name="edit-all" value="_" onchange="console.log(this.checked); hide('toggle-edit', this.checked)" {{if not .EditAll}}disabled{{end}}>
+					<input class="form-check-input" id="edit-all" type="checkbox" name="edit-all" value="_" onchange="hide('toggle-edit', this.checked)" {{if not .EditAll}}disabled{{end}}>
 					<label class="form-check-label" for="edit-all">{{$.Tr "Any shift"}}</label>
 				</div>
 				<div id="toggle-edit">
@@ -41,7 +41,7 @@
 
 				<h5 class="mt-3">{{$.Tr "Take Shifts"}}</h5>
 				<div class="form-check">
-					<input class="form-check-input" id="take-all" type="checkbox" name="take-all" value="_" onchange="console.log(this.checked); hide('toggle-take', this.checked)" {{if not .TakeAll}}disabled{{end}}>
+					<input class="form-check-input" id="take-all" type="checkbox" name="take-all" value="_" onchange="hide('toggle-take', this.checked)" {{if not .TakeAll}}disabled{{end}}>
 					<label class="form-check-label" for="take-all">{{$.Tr "Any shift"}}</label>
 				</div>
 				<div id="toggle-take">
@@ -57,7 +57,7 @@
 
 				<h5 class="mt-3">{{$.Tr "Apply for Shifts"}}</h5>
 				<div class="form-check">
-					<input class="form-check-input" id="apply-all" type="checkbox" name="apply-all" value="_" onchange="console.log(this.checked); hide('toggle-apply', this.checked)" {{if not .ApplyAll}}disabled{{end}}>
+					<input class="form-check-input" id="apply-all" type="checkbox" name="apply-all" value="_" onchange="hide('toggle-apply', this.checked)" {{if not .ApplyAll}}disabled{{end}}>
 					<label class="form-check-label" for="apply-all">{{$.Tr "Any shift"}}</label>
 				</div>
 				<div id="toggle-apply">
@@ -78,7 +78,7 @@
 					<div class="form-text">{{$.Tr "Cron expression, example"}}: <code>0 0 0 * * MON *</code></div>
 				</div>
 				<div class="form-check">
-					<input class="form-check-input" id="taker-name-all" type="checkbox" name="taker-name-all" value="_" onchange="console.log(this.checked); hide('toggle-names', this.checked)" {{if not .TakerNameAll}}disabled{{end}}>
+					<input class="form-check-input" id="taker-name-all" type="checkbox" name="taker-name-all" value="_" onchange="hide('toggle-names', this.checked)" {{if not .TakerNameAll}}disabled{{end}}>
 					<label class="form-check-label" for="taker-name-all">{{$.Tr "Any taker name"}}</label>
 				</div>
 				<div id="toggle-names">
