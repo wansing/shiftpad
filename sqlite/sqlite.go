@@ -1,7 +1,7 @@
 // Package sqlite stores pads and shifts in a SQLite database. Times are stored as unix timestamps, so we can easily compare them.
 //
-// Shift statements ensure that the shift belongs to the pad by requiring both pad id and shift id.
-// Taker statements however must be called with verified taker ids only (this currently affects addTakerWithID only).
+// Shift statements must be called with shift ids that are confirmed to belong to our pad (e. g. from GetShift).
+// Taker statements must be called with taker ids that are confirmed to belong to the selected shift.
 package sqlite
 
 import (
@@ -163,8 +163,7 @@ func OpenDB(dbpath string) (*DB, error) {
 	}
 	db.deleteShift, err = sqlDB.Prepare(`
 		delete from shift
-		where pad = ?
-			and id = ?`)
+		where id = ?`)
 	if err != nil {
 		return nil, err
 	}
@@ -289,16 +288,14 @@ func OpenDB(dbpath string) (*DB, error) {
 			quantity = ?,
 			begin = ?,
 			end = ?
-		where pad = ?
-			and id = ?`)
+		where id = ?`)
 	if err != nil {
 		return nil, err
 	}
 	db.updateShiftModified, err = sqlDB.Prepare(`
 		update shift
 		set modified = ?
-		where pad = ?
-			and id = ?
+		where id = ?
 	`)
 	if err != nil {
 		return nil, err
@@ -341,8 +338,8 @@ func (db *DB) DeletePads(cutoff string) error {
 	return err
 }
 
-func (db *DB) DeleteShift(pad *shiftpad.Pad, shift *shiftpad.Shift) error {
-	_, err := db.deleteShift.Exec(pad.ID, shift.ID)
+func (db *DB) DeleteShift(shift *shiftpad.Shift) error {
+	_, err := db.deleteShift.Exec(shift.ID)
 	return err
 }
 
@@ -444,7 +441,7 @@ func (db *DB) GetTakers(shift int) ([]shiftpad.Take, error) {
 	return takes, nil
 }
 
-func (db *DB) TakeShift(pad *shiftpad.Pad, shift *shiftpad.Shift, take shiftpad.Take) error {
+func (db *DB) TakeShift(shift *shiftpad.Shift, take shiftpad.Take) error {
 	tx, err := db.SQLDB.Begin()
 	if err != nil {
 		return err
@@ -453,7 +450,7 @@ func (db *DB) TakeShift(pad *shiftpad.Pad, shift *shiftpad.Shift, take shiftpad.
 	if _, err := tx.Stmt(db.addTaker).Exec(shift.ID, take.Name, take.Contact, take.Approved); err != nil {
 		return err
 	}
-	if _, err := tx.Stmt(db.updateShiftModified).Exec(time.Now().Unix(), pad.ID, shift.ID); err != nil {
+	if _, err := tx.Stmt(db.updateShiftModified).Exec(time.Now().Unix(), shift.ID); err != nil {
 		return err
 	}
 	return tx.Commit()
@@ -470,14 +467,14 @@ func (db *DB) UpdatePadLastUpdated(pad *shiftpad.Pad, lastUpdated string) error 
 	return err
 }
 
-func (db *DB) UpdateShift(pad *shiftpad.Pad, shift *shiftpad.Shift) error {
+func (db *DB) UpdateShift(shift *shiftpad.Shift) error {
 	tx, err := db.SQLDB.Begin()
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
 
-	if _, err := tx.Stmt(db.updateShift).Exec(shift.Modified.Unix(), shift.Name, shift.Note, shift.EventUID, shift.Quantity, shift.Begin.Unix(), shift.End.Unix(), pad.ID, shift.ID); err != nil {
+	if _, err := tx.Stmt(db.updateShift).Exec(shift.Modified.Unix(), shift.Name, shift.Note, shift.EventUID, shift.Quantity, shift.Begin.Unix(), shift.End.Unix(), shift.ID); err != nil {
 		return err
 	}
 	if _, err := tx.Stmt(db.deleteTakers).Exec(shift.ID); err != nil {

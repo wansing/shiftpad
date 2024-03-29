@@ -609,7 +609,7 @@ func (srv *Server) shiftDeletePost(w http.ResponseWriter, r *http.Request, authp
 		return NotFound()
 	}
 
-	if err := srv.DB.DeleteShift(authpad.Pad, shift); err != nil {
+	if err := srv.DB.DeleteShift(shift); err != nil {
 		return InternalServerError(err)
 	}
 	if err := srv.UpdatePadLastUpdated(authpad.Pad); err != nil {
@@ -726,7 +726,7 @@ func (srv *Server) shiftEditPost(w http.ResponseWriter, r *http.Request, authpad
 		return NotFound()
 	}
 
-	if err := srv.DB.UpdateShift(authpad.Pad, shift); err != nil {
+	if err := srv.DB.UpdateShift(shift); err != nil {
 		return InternalServerError(err)
 	}
 	if err := srv.UpdatePadLastUpdated(authpad.Pad); err != nil {
@@ -780,7 +780,7 @@ func (srv *Server) shiftApplyPost(w http.ResponseWriter, r *http.Request, authpa
 		Contact:  takerContact,
 		Approved: false,
 	}
-	if err := srv.DB.TakeShift(authpad.Pad, shift, take); err != nil {
+	if err := srv.DB.TakeShift(shift, take); err != nil {
 		return InternalServerError(err)
 	}
 	if err := srv.UpdatePadLastUpdated(authpad.Pad); err != nil {
@@ -873,7 +873,7 @@ func (srv *Server) shiftTakePost(w http.ResponseWriter, r *http.Request, authpad
 		Contact:  takerContact,
 		Approved: true,
 	}
-	if err := srv.DB.TakeShift(authpad.Pad, shift, take); err != nil {
+	if err := srv.DB.TakeShift(shift, take); err != nil {
 		return InternalServerError(err)
 	}
 	if err := srv.UpdatePadLastUpdated(authpad.Pad); err != nil {

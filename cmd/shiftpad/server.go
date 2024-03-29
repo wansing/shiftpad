@@ -16,15 +16,15 @@ type DB interface {
 	ApproveTake(*shiftpad.Shift, shiftpad.Take) error
 	DeletePad(shiftpad.Pad) error
 	DeletePads(string) error
-	DeleteShift(*shiftpad.Pad, *shiftpad.Shift) error
+	DeleteShift(*shiftpad.Shift) error
 	GetPad(id string) (*shiftpad.Pad, error)
 	GetShift(pad *shiftpad.Pad, shift int) (*shiftpad.Shift, error)
 	GetShifts(pad *shiftpad.Pad, from, to int64) ([]shiftpad.Shift, error) // begin: from inclusive, to exclusive
 	GetShiftsByEvent(pad *shiftpad.Pad, eventUID string) ([]shiftpad.Shift, error)
-	TakeShift(*shiftpad.Pad, *shiftpad.Shift, shiftpad.Take) error
+	TakeShift(*shiftpad.Shift, shiftpad.Take) error
 	UpdatePad(*shiftpad.Pad) error
 	UpdatePadLastUpdated(pad *shiftpad.Pad, lastUpdated string) error
-	UpdateShift(*shiftpad.Pad, *shiftpad.Shift) error
+	UpdateShift(*shiftpad.Shift) error
 }
 
 type Server struct {
