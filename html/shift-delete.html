@@ -27,7 +27,6 @@
 									{{end}}
 									{{range .Shifts}}
 										{{if eq .ID $.Shift.ID}}
-											<input type="hidden" name="id" value="{{.ID}}">
 											<tr class="table-danger" style="text-decoration: line-through">
 												<td>{{$.Day.FmtShiftTime .}}</td>
 												<td>{{.Quantity}}</td>

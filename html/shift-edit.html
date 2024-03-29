@@ -29,7 +29,6 @@
 									{{end}}
 									{{range .Shifts}}
 										{{if eq .ID $.Shift.ID}}
-											<input type="hidden" name="id" value="{{.ID}}">
 											{{with $.Day.Events}}
 												<tr class="table-warning">
 													<td colspan="5">
