@@ -38,3 +38,17 @@
 		{{template "body" .}}
 	</body>
 </html>
+
+{{define "takeviews"}}
+	{{range .}}
+		<div class="mb-1">
+			{{.Name}}
+			{{with .Contact}}
+				({{.}})
+			{{end}}
+			{{if not .Approved}}
+				<span class="badge bg-warning">not yet approved</span>
+			{{end}}
+		</div>
+	{{end}}
+{{end}}

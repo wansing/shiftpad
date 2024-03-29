@@ -1,7 +1,4 @@
 {{define "pad-content"}}
-	{{with .Error}}
-		<div class="alert alert-danger">{{.}}</div>
-	{{end}}
 	<form method="post">
 		{{with .Day}}
 			<div class="card mb-3">
@@ -33,6 +30,7 @@
 												<td>{{.Quantity}}</td>
 												<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
 												<td>
+													{{template "takeviews" .TakeViews $.Pad.Auth}}
 													<div class="input-group">
 														{{with $.TakerNames}}
 															<select class="form-select" name="taker-name">
@@ -55,18 +53,20 @@
 												<td>{{$.Day.FmtShiftTime .}}</td>
 												<td>{{.Quantity}}</td>
 												<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
-												<td>
-													{{range $.Pad.TakerStrings .}}
-														<div class="mb-1">{{.}}</div>
-													{{end}}
-												</td>
+												<td>{{template "takeviews" .TakeViews $.Pad.Auth}}</td>
 											</tr>
 										{{end}}
 									{{end}}
 								</tbody>
 							{{end}}
 						</table>
-						<button class="btn btn-primary" type="submit">{{$.Tr "Take shift"}}</button>
+						<button class="btn btn-primary" type="submit">
+							{{if $.Apply}}
+								{{$.Tr "Apply for shift"}}
+							{{else}}
+								{{$.Tr "Take shift"}}
+							{{end}}
+						</button>
 					{{end}}
 					<a class="btn btn-light" href="{{$.Pad.Link}}/day/{{FmtISODate .Begin}}">{{$.Tr "Cancel"}}</a>
 				</div>

@@ -65,6 +65,8 @@ func main() {
 	router.Handle(http.MethodPost, "/create/:key", srv.withCreateKey(srv.createPost))
 	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig", srv.withPad(srv.padViewGet))
 	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig", srv.withPad(srv.padViewPost))
+	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/apply/:shift", srv.withShift(srv.shiftApplyGet))
+	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/apply/:shift", srv.withShift(srv.shiftApplyPost))
 	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/settings", srv.withPad(srv.padSettingsGet))
 	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/settings", srv.withPad(srv.padSettingsPost))
 	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/share", srv.withPad(srv.padShareGet))
@@ -75,6 +77,8 @@ func main() {
 	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/week/:year/:week", srv.withPad(srv.padViewPost)) // same handler as without :year/:week
 	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/add/:date", srv.withPad(srv.shiftAddGet))
 	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/add/:date", srv.withPad(srv.shiftAddPost))
+	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/approve/:shift/:take", srv.withTake(srv.takeApproveGet))
+	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/approve/:shift/:take", srv.withTake(srv.takeApprovePost))
 	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/take/:shift", srv.withShift(srv.shiftTakeGet))
 	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/take/:shift", srv.withShift(srv.shiftTakePost))
 	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/edit/:shift", srv.withShift(srv.shiftEditGet))
@@ -125,6 +129,19 @@ func (srv *Server) withShift(f func(http.ResponseWriter, *http.Request, shiftpad
 	})
 }
 
+func (srv *Server) withTake(f func(http.ResponseWriter, *http.Request, shiftpad.AuthPad, *shiftpad.Shift, shiftpad.Take) http.Handler) HandlerFunc {
+	return srv.withShift(func(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift) http.Handler {
+		id, _ := strconv.Atoi(way.Param(r.Context(), "take"))
+		// linear search
+		for _, take := range shift.Takes {
+			if take.ID == id {
+				return f(w, r, authpad, shift, take)
+			}
+		}
+		return NotFound()
+	})
+}
+
 func Forbidden() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusForbidden)
@@ -172,13 +189,8 @@ func (srv *Server) createPost(w http.ResponseWriter, r *http.Request) http.Handl
 	}
 	authpad := shiftpad.AuthPad{
 		Auth: shiftpad.Auth{
-			Admin:            true,
-			EditAll:          true,
-			Note:             "Admin-Link",
-			TakeAll:          true,
-			TakerNameAll:     true,
-			ViewTakerContact: true,
-			ViewTakerName:    true,
+			Admin: true,
+			Note:  "Admin-Link",
 		},
 		Pad: &newPad,
 	}
@@ -270,12 +282,15 @@ func (srv *Server) padSharePost(w http.ResponseWriter, r *http.Request, authpad 
 		}
 	}
 
+	apply := shiftpad.Intersect(authpad.ShiftNames, r.PostForm["apply"])
 	edit := shiftpad.Intersect(authpad.ShiftNames, r.PostForm["edit"])
 	take := shiftpad.Intersect(authpad.ShiftNames, r.PostForm["take"])
 	takerName := split(r.PostFormValue("taker-name")) // taker-name is a textarea, not checkboxes
 
 	shareAuth := shiftpad.Auth{
 		Admin:            r.PostFormValue("admin") != "",
+		Apply:            apply,
+		ApplyAll:         r.PostFormValue("apply-all") != "",
 		Edit:             edit,
 		EditAll:          r.PostFormValue("edit-all") != "",
 		EditRetroAlways:  r.PostFormValue("edit-retro-always") != "",
@@ -337,11 +352,11 @@ func (srv *Server) padICal(w http.ResponseWriter, r *http.Request, authpad shift
 			summary.WriteString(shift.Note)
 			summary.WriteString(")")
 		}
-		if takers := authpad.TakerStrings(shift); len(takers) > 0 {
+		if takers := shift.TakeViews(authpad.Auth); len(takers) > 0 {
 			summary.WriteString(":")
 			for _, taker := range takers {
 				summary.WriteString("\n")
-				summary.WriteString(taker)
+				summary.WriteString(taker.String())
 			}
 		}
 
@@ -661,11 +676,13 @@ func (srv *Server) shiftEditPost(w http.ResponseWriter, r *http.Request, authpad
 	for _, take := range shift.Takes {
 		takerName := trim(r.PostFormValue(fmt.Sprintf("taker-name-%d", take.ID)), 64)
 		takerContact := trim(r.PostFormValue(fmt.Sprintf("taker-contact-%d", take.ID)), 128)
+		takeApproved := r.PostFormValue(fmt.Sprintf("take-approved-%d", take.ID)) != ""
 		if takerName != "" {
 			takes = append(takes, shiftpad.Take{
-				ID:      take.ID, // keep existing id
-				Name:    takerName,
-				Contact: takerContact,
+				ID:       take.ID, // keep existing id
+				Name:     takerName,
+				Contact:  takerContact,
+				Approved: takeApproved,
 			})
 		}
 	}
@@ -678,14 +695,20 @@ func (srv *Server) shiftEditPost(w http.ResponseWriter, r *http.Request, authpad
 	if len(newContacts) > 64 {
 		newContacts = newContacts[:64]
 	}
-	maxNew := min(quantity-len(takes), len(newNames), len(newContacts))
+	var newApproved = r.PostForm["new-take-approved"]
+	if len(newApproved) > 64 {
+		newApproved = newApproved[:64]
+	}
+	maxNew := min(quantity-len(takes), len(newNames), len(newContacts), len(newApproved))
 	for i := 0; i < maxNew; i++ {
 		takerName := trim(newNames[i], 64)
 		takerContact := trim(newContacts[i], 128)
+		takeApproved := newApproved[i] != ""
 		if takerName != "" {
 			takes = append(takes, shiftpad.Take{
-				Name:    takerName,
-				Contact: takerContact,
+				Name:     takerName,
+				Contact:  takerContact,
+				Approved: takeApproved,
 			})
 		}
 	}
@@ -713,15 +736,11 @@ func (srv *Server) shiftEditPost(w http.ResponseWriter, r *http.Request, authpad
 	return http.RedirectHandler(authpad.Link()+fmt.Sprintf("/day/%s", datefmt.ISODate(shift.Begin)), http.StatusSeeOther)
 }
 
-func (srv *Server) shiftTakeGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift) http.Handler {
-	if !authpad.CanTakeShift(*shift) {
+func (srv *Server) shiftApplyGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift) http.Handler {
+	if !authpad.CanApplyShift(*shift) {
 		return NotFound()
 	}
 
-	return srv.shiftTakeTemplate(w, r, authpad, shift, "")
-}
-
-func (srv *Server) shiftTakeTemplate(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift, errMsg string) http.Handler {
 	day, err := shiftpad.GetDay(srv, authpad.Pad, shift.Begin, authpad.Location)
 	if err != nil {
 		return InternalServerError(err)
@@ -732,10 +751,103 @@ func (srv *Server) shiftTakeTemplate(w http.ResponseWriter, r *http.Request, aut
 			LayoutData: html.MakeLayoutData(r),
 			Pad:        authpad,
 		},
+		Apply:      true,
 		Day:        day,
 		Shift:      shift,
 		TakerNames: authpad.TakerName,
-		Error:      errMsg,
+	}); err != nil {
+		return InternalServerError(err)
+	}
+	return nil
+}
+
+func (srv *Server) shiftApplyPost(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift) http.Handler {
+	if !authpad.CanApplyShift(*shift) {
+		return NotFound()
+	}
+
+	takerName := trim(r.PostFormValue("taker-name"), 64)
+	takerContact := trim(r.PostFormValue("taker-contact"), 128)
+	if takerName == "" {
+		return http.RedirectHandler(authpad.Link()+fmt.Sprintf("/day/%s", datefmt.ISODate(shift.Begin)), http.StatusSeeOther)
+	}
+	if !authpad.CanApplyName(*shift, takerName) {
+		return NotFound()
+	}
+
+	take := shiftpad.Take{
+		Name:     takerName,
+		Contact:  takerContact,
+		Approved: false,
+	}
+	if err := srv.DB.TakeShift(authpad.Pad, shift, take); err != nil {
+		return InternalServerError(err)
+	}
+	if err := srv.UpdatePadLastUpdated(authpad.Pad); err != nil {
+		return InternalServerError(err)
+	}
+
+	return http.RedirectHandler(authpad.Link()+fmt.Sprintf("/day/%s", datefmt.ISODate(shift.Begin)), http.StatusSeeOther)
+}
+
+func (srv *Server) takeApproveGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift, take shiftpad.Take) http.Handler {
+	if !authpad.CanTakerName(*shift, take.Name) {
+		return NotFound()
+	}
+
+	day, err := shiftpad.GetDay(srv, authpad.Pad, shift.Begin, authpad.Location)
+	if err != nil {
+		return InternalServerError(err)
+	}
+
+	if err := html.TakeApprove.Execute(w, html.TakeApproveData{
+		PadData: html.PadData{
+			LayoutData: html.MakeLayoutData(r),
+			Pad:        authpad,
+		},
+		Day:   day,
+		Shift: shift,
+		Take:  take,
+	}); err != nil {
+		return InternalServerError(err)
+	}
+	return nil
+}
+
+func (srv *Server) takeApprovePost(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift, take shiftpad.Take) http.Handler {
+	if !authpad.CanTakerName(*shift, take.Name) {
+		return NotFound()
+	}
+
+	if err := srv.DB.ApproveTake(shift, take); err != nil {
+		return InternalServerError(err)
+	}
+	if err := srv.UpdatePadLastUpdated(authpad.Pad); err != nil {
+		return InternalServerError(err)
+	}
+
+	return http.RedirectHandler(authpad.Link()+fmt.Sprintf("/day/%s", datefmt.ISODate(shift.Begin)), http.StatusSeeOther)
+}
+
+func (srv *Server) shiftTakeGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift) http.Handler {
+	if !authpad.CanTakeShift(*shift) {
+		return NotFound()
+	}
+
+	day, err := shiftpad.GetDay(srv, authpad.Pad, shift.Begin, authpad.Location)
+	if err != nil {
+		return InternalServerError(err)
+	}
+
+	if err := html.ShiftTake.Execute(w, html.ShiftTakeData{
+		PadData: html.PadData{
+			LayoutData: html.MakeLayoutData(r),
+			Pad:        authpad,
+		},
+		Apply:      false,
+		Day:        day,
+		Shift:      shift,
+		TakerNames: authpad.TakerName,
 	}); err != nil {
 		return InternalServerError(err)
 	}
@@ -749,19 +861,18 @@ func (srv *Server) shiftTakePost(w http.ResponseWriter, r *http.Request, authpad
 
 	takerName := trim(r.PostFormValue("taker-name"), 64)
 	takerContact := trim(r.PostFormValue("taker-contact"), 128)
-	if len(takerName) < 2 {
-		return srv.shiftTakeTemplate(w, r, authpad, shift, "name must have at least two characters")
+	if takerName == "" {
+		return http.RedirectHandler(authpad.Link()+fmt.Sprintf("/day/%s", datefmt.ISODate(shift.Begin)), http.StatusSeeOther)
 	}
-
 	if !authpad.CanTakerName(*shift, takerName) {
 		return NotFound()
 	}
 
 	take := shiftpad.Take{
-		Name:    takerName,
-		Contact: takerContact,
+		Name:     takerName,
+		Contact:  takerContact,
+		Approved: true,
 	}
-
 	if err := srv.DB.TakeShift(authpad.Pad, shift, take); err != nil {
 		return InternalServerError(err)
 	}

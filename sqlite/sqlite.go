@@ -23,6 +23,7 @@ type DB struct {
 	addShift             *sql.Stmt
 	addTaker             *sql.Stmt
 	addTakerWithID       *sql.Stmt
+	approveTake          *sql.Stmt
 	deletePad            *sql.Stmt
 	deletePads           *sql.Stmt
 	deleteShift          *sql.Stmt
@@ -73,10 +74,11 @@ func OpenDB(dbpath string) (*DB, error) {
 			foreign key (pad) references pad(id) on update cascade on delete cascade
 		);
 		create table if not exists taker (
-			id      integer primary key,
-			shift   integer not null,
-			name    text    not null,
-			contact text    not null,
+			id       integer primary key,
+			shift    integer not null,
+			name     text    not null,
+			contact  text    not null,
+			approved boolean not null,
 			foreign key (shift) references shift(id) on update cascade on delete cascade
 		);
 
@@ -121,8 +123,9 @@ func OpenDB(dbpath string) (*DB, error) {
 		insert into taker (
 			shift,
 			name,
-			contact
-		) values (?, ?, ?)`)
+			contact,
+			approved
+		) values (?, ?, ?, ?)`)
 	if err != nil {
 		return nil, err
 	}
@@ -131,8 +134,18 @@ func OpenDB(dbpath string) (*DB, error) {
 			id,
 			shift,
 			name,
-			contact
-		) values (?, ?, ?, ?)`)
+			contact,
+			approved
+		) values (?, ?, ?, ?, ?)`)
+	if err != nil {
+		return nil, err
+	}
+	db.approveTake, err = sqlDB.Prepare(`
+		update taker
+		set approved = true
+		where id = ?
+			and shift = ?
+	`)
 	if err != nil {
 		return nil, err
 	}
@@ -239,7 +252,8 @@ func OpenDB(dbpath string) (*DB, error) {
 		select
 			id,
 			name,
-			contact
+			contact,
+			approved
 		from taker
 		where shift = ?
 	`)
@@ -301,6 +315,11 @@ func (db *DB) AddPad(pad shiftpad.Pad) error {
 
 func (db *DB) AddShift(pad *shiftpad.Pad, shift shiftpad.Shift) error {
 	_, err := db.addShift.Exec(pad.ID, shift.Modified.Unix(), shift.Name, shift.Note, shift.EventUID, shift.Quantity, shift.Begin.Unix(), shift.End.Unix())
+	return err
+}
+
+func (db *DB) ApproveTake(shift *shiftpad.Shift, take shiftpad.Take) error {
+	_, err := db.approveTake.Exec(take.ID, shift.ID)
 	return err
 }
 
@@ -417,7 +436,7 @@ func (db *DB) GetTakers(shift int) ([]shiftpad.Take, error) {
 	var takes []shiftpad.Take
 	for rows.Next() {
 		var take shiftpad.Take
-		if err := rows.Scan(&take.ID, &take.Name, &take.Contact); err != nil {
+		if err := rows.Scan(&take.ID, &take.Name, &take.Contact, &take.Approved); err != nil {
 			return nil, err
 		}
 		takes = append(takes, take)
@@ -431,7 +450,7 @@ func (db *DB) TakeShift(pad *shiftpad.Pad, shift *shiftpad.Shift, take shiftpad.
 		return err
 	}
 	defer tx.Rollback()
-	if _, err := tx.Stmt(db.addTaker).Exec(shift.ID, take.Name, take.Contact); err != nil {
+	if _, err := tx.Stmt(db.addTaker).Exec(shift.ID, take.Name, take.Contact, take.Approved); err != nil {
 		return err
 	}
 	if _, err := tx.Stmt(db.updateShiftModified).Exec(time.Now().Unix(), pad.ID, shift.ID); err != nil {
@@ -466,9 +485,9 @@ func (db *DB) UpdateShift(pad *shiftpad.Pad, shift *shiftpad.Shift) error {
 	}
 	for _, take := range shift.Takes {
 		if take.ID > 0 {
-			_, err = tx.Stmt(db.addTakerWithID).Exec(take.ID, shift.ID, take.Name, take.Contact)
+			_, err = tx.Stmt(db.addTakerWithID).Exec(take.ID, shift.ID, take.Name, take.Contact, take.Approved)
 		} else {
-			_, err = tx.Stmt(db.addTaker).Exec(shift.ID, take.Name, take.Contact)
+			_, err = tx.Stmt(db.addTaker).Exec(shift.ID, take.Name, take.Contact, take.Approved)
 		}
 		if err != nil {
 			return err

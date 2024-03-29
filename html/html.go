@@ -54,6 +54,7 @@ var (
 	ShiftDelete         = parse("layout.html", "pad.html", "shift-delete.html")
 	ShiftEdit           = parse("layout.html", "pad.html", "shift-edit.html")
 	ShiftTake           = parse("layout.html", "pad.html", "shift-take.html")
+	TakeApprove         = parse("layout.html", "pad.html", "take-approve.html")
 )
 
 type Lang language.Tag
@@ -116,6 +117,13 @@ type PadViewWeekData struct {
 	NextWeek    int
 }
 
+type TakeApproveData struct {
+	PadData
+	Day   shiftpad.Day
+	Shift *shiftpad.Shift
+	Take  shiftpad.Take
+}
+
 type ShiftCreateData struct {
 	PadData
 	Day     shiftpad.Day
@@ -142,8 +150,8 @@ type ShiftEditData struct {
 
 type ShiftTakeData struct {
 	PadData
+	Apply      bool
 	Day        shiftpad.Day
 	Shift      *shiftpad.Shift
 	TakerNames []string
-	Error      string
 }

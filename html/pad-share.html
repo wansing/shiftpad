@@ -54,10 +54,28 @@
 						{{end}}
 					{{end}}
 				</div>
+
+				<h5 class="mt-3">{{$.Tr "Apply for Shifts"}}</h5>
+				<div class="form-check">
+					<input class="form-check-input" id="apply-all" type="checkbox" name="apply-all" value="_" onchange="console.log(this.checked); hide('toggle-apply', this.checked)" {{if not .ApplyAll}}disabled{{end}}>
+					<label class="form-check-label" for="apply-all">{{$.Tr "Any shift"}}</label>
+				</div>
+				<div id="toggle-apply">
+					{{range .ShiftNames}}
+						{{if $.Pad.CanApply .}}
+							<div class="form-check">
+								<input class="form-check-input" id="apply-{{.}}" type="checkbox" name="apply" value="{{.}}">
+								<label class="form-check-label" for="apply-{{.}}"><kbd>{{.}}</kbd></label>
+							</div>
+						{{end}}
+					{{end}}
+				</div>
+
+				<h5 class="mt-3">{{$.Tr "Take and Apply"}}</h5>
 				<div class="mt-2 mb-3">
-					<label class="form-label">{{$.Tr "Take deadline (cron expression, optional)"}}</label>
+					<label class="form-label">{{$.Tr "Deadline (optional)"}}</label>
 					<input class="form-control" type="text" name="take-deadline" maxlength="64" {{with .TakeDeadline}}value="{{.}}" disabled{{end}}>
-					<div class="form-text">{{$.Tr "Example"}}: <code>0 0 0 * * MON *</code></div>
+					<div class="form-text">{{$.Tr "Cron expression, example"}}: <code>0 0 0 * * MON *</code></div>
 				</div>
 				<div class="form-check">
 					<input class="form-check-input" id="taker-name-all" type="checkbox" name="taker-name-all" value="_" onchange="console.log(this.checked); hide('toggle-names', this.checked)" {{if not .TakerNameAll}}disabled{{end}}>

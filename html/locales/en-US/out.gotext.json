@@ -135,16 +135,30 @@
             "fuzzy": true
         },
         {
-            "id": "Take deadline (cron expression, optional)",
-            "message": "Take deadline (cron expression, optional)",
-            "translation": "Take deadline (cron expression, optional)",
+            "id": "Apply for Shifts",
+            "message": "Apply for Shifts",
+            "translation": "Apply for Shifts",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Example",
-            "message": "Example",
-            "translation": "Example",
+            "id": "Take and Apply",
+            "message": "Take and Apply",
+            "translation": "Take and Apply",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Deadline (optional)",
+            "message": "Deadline (optional)",
+            "translation": "Deadline (optional)",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Cron expression, example",
+            "message": "Cron expression, example",
+            "translation": "Cron expression, example",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -261,6 +275,13 @@
             "fuzzy": true
         },
         {
+            "id": "Quantity",
+            "message": "Quantity",
+            "translation": "Quantity",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
             "id": "Shift",
             "message": "Shift",
             "translation": "Shift",
@@ -289,9 +310,30 @@
             "fuzzy": true
         },
         {
+            "id": "not yet approved",
+            "message": "not yet approved",
+            "translation": "not yet approved",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Approve",
+            "message": "Approve",
+            "translation": "Approve",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
             "id": "Take",
             "message": "Take",
             "translation": "Take",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Apply",
+            "message": "Apply",
+            "translation": "Apply",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -366,13 +408,6 @@
             "fuzzy": true
         },
         {
-            "id": "Count",
-            "message": "Count",
-            "translation": "Count",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
             "id": "no shifts available",
             "message": "no shifts available",
             "translation": "no shifts available",
@@ -394,6 +429,13 @@
             "fuzzy": true
         },
         {
+            "id": "Taker and Approvement",
+            "message": "Taker and Approvement",
+            "translation": "Taker and Approvement",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
             "id": "Contact",
             "message": "Contact",
             "translation": "Contact",
@@ -408,9 +450,23 @@
             "fuzzy": true
         },
         {
+            "id": "Apply for shift",
+            "message": "Apply for shift",
+            "translation": "Apply for shift",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
             "id": "Take shift",
             "message": "Take shift",
             "translation": "Take shift",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Approve take",
+            "message": "Approve take",
+            "translation": "Approve take",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         }

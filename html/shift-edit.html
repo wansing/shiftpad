@@ -15,7 +15,7 @@
 									<th>{{$.Tr "End"}}</th>
 									<th>{{$.Tr "Quantity"}}</th>
 									<th>{{$.Tr "Shift"}}</th>
-									<th>{{$.Tr "Taker"}}</th>
+									<th>{{$.Tr "Taker and Approvement"}}</th>
 								</tr>
 							</thead>
 							{{range .}}
@@ -85,10 +85,14 @@
 													</div>
 												</td>
 												<td>
+													<!-- use Takes (not TakeViews) because edit must view everything -->
 													{{range .Takes}}
 														<div class="input-group mb-1">
 															<input type="text" class="form-control" name="taker-name-{{.ID}}"    maxlength="64"  value="{{.Name}}"    placeholder="{{$.Tr "Name"}}">
 															<input type="text" class="form-control" name="taker-contact-{{.ID}}" maxlength="128" value="{{.Contact}}" placeholder="{{$.Tr "Contact"}}">
+															<div class="input-group-text">
+																<input type="checkbox" class="form-check-input mt-0" name="take-approved-{{.ID}}" value="_" {{if .Approved}}checked{{end}}>
+															</div>
 														</div>
 													{{end}}
 													{{range .Untaken}}
@@ -105,11 +109,7 @@
 												<td>{{$.Day.FmtDateTime .End}}</td>
 												<td>{{.Quantity}}</td>
 												<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
-												<td>
-													{{range $.Pad.TakerStrings .}}
-														<div class="mb-1">{{.}}</div>
-													{{end}}
-												</td>
+												<td>{{template "takeviews" .TakeViews $.Pad.Auth}}</td>
 											</tr>
 										{{end}}
 									{{end}}

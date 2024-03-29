@@ -1,6 +1,8 @@
 package shiftpad
 
 import (
+	"fmt"
+	"slices"
 	"time"
 
 	"github.com/gorhill/cronexpr"
@@ -30,7 +32,72 @@ func (shift Shift) AfterDeadline(deadline string) bool {
 }
 
 func (shift Shift) FullyTaken() bool {
-	return len(shift.Takes) == shift.Quantity
+	var approved = 0
+	for _, take := range shift.Takes {
+		if take.Approved {
+			approved++
+		}
+	}
+	return approved >= shift.Quantity
+}
+
+func (shift Shift) String() string {
+	var s = shift.Name
+	if shift.Note != "" {
+		s = s + " " + shift.Note
+	}
+	return s
+}
+
+// TakeViews returns shift.Takes with auth.ViewTakerName and auth.ViewTakerContact applied.
+// Anonymous takes are summarized to "n × anonymous".
+func (shift Shift) TakeViews(auth Auth) []Take {
+	var takers []Take
+	var anonymousApplied int
+	var anonymousApproved int
+	for _, take := range shift.Takes {
+		// copy authorized data to local variables
+		var takerName string
+		var takerContact string
+		if auth.ViewTakerName || slices.Contains(auth.TakerName, take.Name) {
+			takerName = take.Name
+		}
+		if auth.ViewTakerContact {
+			takerContact = take.Contact
+		}
+
+		if takerName == "" && takerContact == "" {
+			if take.Approved {
+				anonymousApproved++
+			} else {
+				anonymousApplied++
+			}
+			continue
+		}
+
+		if takerName == "" {
+			takerName = "anonymous"
+		}
+		takers = append(takers, Take{
+			ID:       take.ID,
+			Name:     takerName,
+			Contact:  takerContact,
+			Approved: take.Approved,
+		})
+	}
+	if anonymousApproved > 0 {
+		takers = append(takers, Take{
+			Name:     fmt.Sprintf("%d × anonymous", anonymousApproved),
+			Approved: true,
+		})
+	}
+	if anonymousApplied > 0 {
+		takers = append(takers, Take{
+			Name:     fmt.Sprintf("%d × anonymous", anonymousApplied),
+			Approved: false,
+		})
+	}
+	return takers
 }
 
 func (shift Shift) Untaken() []struct{} {
@@ -46,7 +113,19 @@ func (shift Shift) Over() bool {
 }
 
 type Take struct {
-	ID      int
-	Name    string
-	Contact string
+	ID       int
+	Name     string
+	Contact  string
+	Approved bool
+}
+
+func (take Take) String() string {
+	var s = take.Name
+	if take.Contact != "" {
+		s = s + " (" + take.Contact + ")"
+	}
+	if !take.Approved {
+		s = s + " (applied)"
+	}
+	return s
 }

@@ -51,9 +51,7 @@
 											<td>{{.Quantity}}</td>
 											<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
 											<td>
-												{{range $.Pad.TakerStrings .}}
-													<div class="mb-1">{{.}}</div>
-												{{end}}
+												{{template "takeviews" .TakeViews $.Pad.Auth}}
 											</td>
 										</tr>
 									{{end}}

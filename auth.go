@@ -2,10 +2,11 @@ package shiftpad
 
 import (
 	"errors"
-	"fmt"
 	"net/url"
 	"slices"
 	"time"
+
+	"golang.org/x/exp/maps"
 )
 
 const encodeEmptyAuth = "-" // instead of empty string, so slashes are not collapsed
@@ -28,8 +29,28 @@ func Intersect(as, bs []string) []string {
 	return result
 }
 
+func Union(as, bs []string) []string {
+	if len(as) == 0 {
+		return bs
+	}
+	if len(bs) == 0 {
+		return as
+	}
+
+	var result = make(map[string]any)
+	for _, a := range as {
+		result[a] = struct{}{}
+	}
+	for _, b := range bs {
+		result[b] = struct{}{}
+	}
+	return maps.Keys(result)
+}
+
 type Auth struct {
 	Admin            bool
+	Apply            []string
+	ApplyAll         bool
 	Edit             []string
 	EditAll          bool
 	EditRetroAlways  bool
@@ -37,9 +58,9 @@ type Auth struct {
 	Note             string
 	Take             []string
 	TakeAll          bool
-	TakeDeadline     string // cronexpr
-	TakerName        []string
-	TakerNameAll     bool
+	TakeDeadline     string   // apply and take, cronexpr
+	TakerName        []string // apply and take
+	TakerNameAll     bool     // apply and take
 	ViewTakerContact bool
 	ViewTakerName    bool // also visible if contained in Auth.TakerName
 }
@@ -56,6 +77,7 @@ func DecodeAuth(s string) (Auth, error) {
 	}
 	if values.Get("admin") != "" {
 		auth.Admin = true
+		auth.ApplyAll = true
 		auth.EditAll = true
 		auth.EditRetroAlways = true
 		auth.TakeAll = true
@@ -63,7 +85,13 @@ func DecodeAuth(s string) (Auth, error) {
 		auth.ViewTakerContact = true
 		auth.ViewTakerName = true
 	} else {
+		if values.Get("apply-all") != "" {
+			auth.ApplyAll = true
+		} else {
+			auth.Apply = values["apply"]
+		}
 		if values.Get("edit-all") != "" {
+			auth.ApplyAll = true
 			auth.EditAll = true
 			auth.TakeAll = true
 			auth.TakerNameAll = true
@@ -94,6 +122,10 @@ func DecodeAuth(s string) (Auth, error) {
 		if values.Get("view-taker-name") != "" {
 			auth.ViewTakerName = true
 		}
+
+		// edit -> take, take -> apply
+		auth.Take = Union(auth.Take, auth.Edit)
+		auth.Apply = Union(auth.Apply, auth.Take)
 	}
 	if exp := values.Get("expires"); exp != "" {
 		auth.Expires = exp
@@ -116,6 +148,18 @@ func (auth Auth) Active() bool {
 	}
 	exp = exp.AddDate(0, 0, 1)
 	return time.Now().Before(exp)
+}
+
+func (auth Auth) CanApply(shiftname string) bool {
+	return auth.ApplyAll || slices.Contains(auth.Apply, shiftname)
+}
+
+func (auth Auth) CanApplyShift(shift Shift) bool {
+	return auth.CanApply(shift.Name) && !shift.FullyTaken() && !shift.Over() && shift.AfterDeadline(auth.TakeDeadline)
+}
+
+func (auth Auth) CanApplyName(shift Shift, name string) bool {
+	return auth.CanApplyShift(shift) && (auth.TakerNameAll || slices.Contains(auth.TakerName, name))
 }
 
 func (auth Auth) CanEdit(shiftname string) bool {
@@ -183,6 +227,11 @@ func (auth Auth) Encode() ([]byte, error) {
 	if auth.Admin {
 		values.Set("admin", "1")
 	} else {
+		if auth.ApplyAll {
+			values.Set("apply-all", "1")
+		} else {
+			values["apply"] = auth.Apply
+		}
 		if auth.EditAll {
 			values.Set("edit-all", "1")
 		} else {
@@ -229,6 +278,7 @@ func (auth Auth) Encode() ([]byte, error) {
 func (ref Auth) Restrict(input Auth) Auth {
 	// && bool
 	input.Admin = input.Admin && ref.Admin
+	input.ApplyAll = input.ApplyAll && ref.ApplyAll
 	input.EditAll = input.EditAll && ref.EditAll
 	input.EditRetroAlways = input.EditRetroAlways && ref.EditRetroAlways
 	input.TakeAll = input.TakeAll && ref.TakeAll
@@ -236,6 +286,9 @@ func (ref Auth) Restrict(input Auth) Auth {
 	input.ViewTakerContact = input.ViewTakerContact && ref.ViewTakerContact
 	input.ViewTakerName = input.ViewTakerName && ref.ViewTakerName
 	// intersect []string
+	if !ref.ApplyAll && !input.ApplyAll {
+		input.Apply = Intersect(input.Apply, ref.Apply)
+	}
 	if !ref.EditAll && !input.EditAll {
 		input.Edit = Intersect(input.Edit, ref.Edit)
 	}
@@ -256,38 +309,4 @@ func (ref Auth) Restrict(input Auth) Auth {
 		input.TakeDeadline = ref.TakeDeadline
 	}
 	return input
-}
-
-// TakerStrings returns a slice containing the name and contact of the takers of
-// the given shift, or "n × anonymous" if both auth.ViewTakerContact and
-// auth.ViewTakerName are false.
-func (auth Auth) TakerStrings(shift Shift) []string {
-	var takers []string
-	var anonymous int
-	for _, take := range shift.Takes {
-		// copy authorized data to local variables
-		var takerContact string
-		var takerName string
-		if auth.ViewTakerContact {
-			takerContact = take.Contact
-		}
-		if auth.ViewTakerName || slices.Contains(auth.TakerName, take.Name) {
-			takerName = take.Name
-		}
-
-		switch {
-		case takerName != "" && takerContact != "":
-			takers = append(takers, fmt.Sprintf("%s (%s)", takerName, takerContact))
-		case takerName != "":
-			takers = append(takers, takerName)
-		case takerContact != "":
-			takers = append(takers, takerContact)
-		default:
-			anonymous++
-		}
-	}
-	if anonymous > 0 {
-		takers = append(takers, fmt.Sprintf("%d × anonymous", anonymous))
-	}
-	return takers
 }

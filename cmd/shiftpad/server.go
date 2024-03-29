@@ -13,6 +13,7 @@ import (
 type DB interface {
 	AddPad(shiftpad.Pad) error
 	AddShift(*shiftpad.Pad, shiftpad.Shift) error
+	ApproveTake(*shiftpad.Shift, shiftpad.Take) error
 	DeletePad(shiftpad.Pad) error
 	DeletePads(string) error
 	DeleteShift(*shiftpad.Pad, *shiftpad.Shift) error

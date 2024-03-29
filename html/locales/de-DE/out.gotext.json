@@ -94,17 +94,27 @@
         {
             "id": "Take Shifts",
             "message": "Take Shifts",
-            "translation": "Schichten machen"
+            "translation": "Für Schichten eintragen"
         },
         {
-            "id": "Take deadline (cron expression, optional)",
-            "message": "Take deadline (cron expression, optional)",
-            "translation": "Deadline zum Übernehmen (cron-expression, optional)"
+            "id": "Apply for Shifts",
+            "message": "Apply for Shifts",
+            "translation": "Für Schichten bewerben"
         },
         {
-            "id": "Example",
-            "message": "Example",
-            "translation": "Beispiel"
+            "id": "Take and Apply",
+            "message": "Take and Apply",
+            "translation": "Für Schichten eintragen und bewerben"
+        },
+        {
+            "id": "Deadline (optional)",
+            "message": "Deadline (optional)",
+            "translation": "Deadline (optional)"
+        },
+        {
+            "id": "Cron expression, example",
+            "message": "Cron expression, example",
+            "translation": "Cron-Ausdruck, beispielweise"
         },
         {
             "id": "Any taker name",
@@ -187,6 +197,11 @@
             "translation": "Zeit"
         },
         {
+            "id": "Quantity",
+            "message": "Quantity",
+            "translation": "Anzahl"
+        },
+        {
             "id": "Shift",
             "message": "Shift",
             "translation": "Schicht"
@@ -207,9 +222,24 @@
             "translation": "Löschen"
         },
         {
+            "id": "not yet approved",
+            "message": "not yet approved",
+            "translation": "noch nicht angenommen"
+        },
+        {
+            "id": "Approve",
+            "message": "Approve",
+            "translation": "Annehmen"
+        },
+        {
             "id": "Take",
             "message": "Take",
-            "translation": "Machen"
+            "translation": "Eintragen"
+        },
+        {
+            "id": "Apply",
+            "message": "Apply",
+            "translation": "Bewerben"
         },
         {
             "id": "Create shifts",
@@ -262,11 +292,6 @@
             "translation": "keinem Event zugeordnet"
         },
         {
-            "id": "Count",
-            "message": "Count",
-            "translation": "Anzahl"
-        },
-        {
             "id": "no shifts available",
             "message": "no shifts available",
             "translation": "keine Schichten vorhanden"
@@ -282,6 +307,11 @@
             "translation": "Schicht löschen"
         },
         {
+            "id": "Taker and Approvement",
+            "message": "Taker and Approvement",
+            "translation": "Namen und Annahme"
+        },
+        {
             "id": "Contact",
             "message": "Contact",
             "translation": "Kontakt"
@@ -292,9 +322,19 @@
             "translation": "Änderungen speichern"
         },
         {
+            "id": "Apply for shift",
+            "message": "Apply for shift",
+            "translation": "Auf Schicht bewerben"
+        },
+        {
             "id": "Take shift",
             "message": "Take shift",
-            "translation": "Machen"
+            "translation": "Für Schicht eintragen"
+        },
+        {
+            "id": "Approve take",
+            "message": "Approve take",
+            "translation": "Bewerbung annehmen"
         }
     ]
 }

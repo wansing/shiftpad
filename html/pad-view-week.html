@@ -62,11 +62,36 @@
 											{{end}}
 										</td>
 										<td>
-											{{range $.Pad.TakerStrings .}}
-												<div class="mb-1">{{.}}</div>
+											<!-- copied from template "takeviews" -->
+											{{$shift := .}}
+											{{range .TakeViews $.Pad.Auth}}
+												<div class="mb-1">
+													{{.Name}}
+													{{with .Contact}}
+														({{.}})
+													{{end}}
+													{{if not .Approved}}
+														<span class="badge bg-warning">{{$.Tr "not yet approved"}}</span>
+														{{if $.Pad.CanTakeShift $shift}}
+															<a class="btn btn-sm btn-primary d-print-none" href="{{$.Pad.Link}}/approve/{{$shift.ID}}/{{.ID}}">
+																<span class="d-inline d-lg-none">&#x2713;</span>
+																<span class="d-none d-lg-inline">{{$.Tr "Approve"}}</span>
+															</a>
+														{{end}}
+													{{end}}
+												</div>
 											{{end}}
 											{{if $.Pad.CanTakeShift .}}
-												<a class="btn btn-sm btn-primary d-print-none" href="{{$.Pad.Link}}/take/{{.ID}}"><!-- &#x270B; -->{{$.Tr "Take"}}</a>
+												<a class="btn btn-sm btn-primary d-print-none" href="{{$.Pad.Link}}/take/{{.ID}}">
+													<span class="d-inline d-lg-none">&#x1F91D;</span>
+													<span class="d-none d-lg-inline">{{$.Tr "Take"}}</span>
+												</a>
+											{{end}}
+											{{if $.Pad.CanApplyShift .}}
+												<a class="btn btn-sm btn-primary d-print-none" href="{{$.Pad.Link}}/apply/{{.ID}}">
+													<span class="d-inline d-lg-none">&#x270B;</span>
+													<span class="d-none d-lg-inline">{{$.Tr "Apply"}}</span>
+												</a>
 											{{end}}
 										</td>
 									</tr>

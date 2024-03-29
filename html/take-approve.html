@@ -1,7 +1,4 @@
 {{define "pad-content"}}
-	{{with .Error}}
-		<div class="alert alert-danger">{{.}}</div>
-	{{end}}
 	<form method="post">
 		{{with .Day}}
 			<div class="card mb-3">
@@ -26,27 +23,29 @@
 										</tr>
 									{{end}}
 									{{range .Shifts}}
-										{{if eq .ID $.Shift.ID}}
-											<input type="hidden" name="id" value="{{.ID}}">
-											<tr class="table-danger" style="text-decoration: line-through">
-												<td>{{$.Day.FmtShiftTime .}}</td>
-												<td>{{.Quantity}}</td>
-												<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
-												<td>{{template "takeviews" .TakeViews $.Pad.Auth}}</td>
-											</tr>
-										{{else}}
-											<tr>
-												<td>{{$.Day.FmtShiftTime .}}</td>
-												<td>{{.Quantity}}</td>
-												<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
-												<td>{{template "takeviews" .TakeViews $.Pad.Auth}}</td>
-											</tr>
-										{{end}}
+										<tr>
+											<td>{{$.Day.FmtShiftTime .}}</td>
+											<td>{{.Quantity}}</td>
+											<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
+											<td>
+												{{range .TakeViews $.Pad.Auth}}
+													<div class="{{if eq .ID $.Take.ID}}bg-success bg-opacity-25 my-2 p-2 rounded{{end}}">
+														{{.Name}}
+														{{with .Contact}}
+															({{.}})
+														{{end}}
+														{{if not .Approved}}
+															<span class="badge bg-warning">{{$.Tr "not yet approved"}}</span>
+														{{end}}
+													</div>
+												{{end}}
+											</td>
+										</tr>
 									{{end}}
 								</tbody>
 							{{end}}
 						</table>
-						<button class="btn btn-primary" type="submit">{{$.Tr "Delete shift"}}</button>
+						<button class="btn btn-primary" type="submit">{{$.Tr "Approve take"}}</button>
 					{{end}}
 					<a class="btn btn-light" href="{{$.Pad.Link}}/day/{{FmtISODate .Begin}}">{{$.Tr "Cancel"}}</a>
 				</div>
