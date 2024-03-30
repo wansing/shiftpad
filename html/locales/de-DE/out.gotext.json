@@ -292,14 +292,14 @@
             "translation": "keinem Event zugeordnet"
         },
         {
-            "id": "no shifts available",
-            "message": "no shifts available",
-            "translation": "keine Schichten vorhanden"
-        },
-        {
             "id": "Shift name",
             "message": "Shift name",
             "translation": "Schicht"
+        },
+        {
+            "id": "no shifts available",
+            "message": "no shifts available",
+            "translation": "keine Schichten vorhanden"
         },
         {
             "id": "Delete shift",

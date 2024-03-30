@@ -408,16 +408,16 @@
             "fuzzy": true
         },
         {
-            "id": "no shifts available",
-            "message": "no shifts available",
-            "translation": "no shifts available",
+            "id": "Shift name",
+            "message": "Shift name",
+            "translation": "Shift name",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Shift name",
-            "message": "Shift name",
-            "translation": "Shift name",
+            "id": "no shifts available",
+            "message": "no shifts available",
+            "translation": "no shifts available",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },

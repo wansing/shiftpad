@@ -15,14 +15,10 @@ type AuthPad struct {
 	*Pad
 }
 
-// EditShiftNames returns the shift names that auth can edit.
-// You must check len(Pad.ShiftNames) > 0 separately.
+// EditShiftNames returns the shift names that may be edited explicitly.
+// You must check EditAll separately.
 func (ap AuthPad) EditShiftNames() []string {
-	if ap.Auth.EditAll {
-		return ap.Pad.ShiftNames
-	} else {
-		return Intersect(ap.Auth.Edit, ap.Pad.ShiftNames)
-	}
+	return Intersect(ap.Auth.Edit, ap.Pad.ShiftNames)
 }
 
 func (ap AuthPad) Link() string {

@@ -83,7 +83,7 @@ var messageKeyToIndex = map[string]int{
 	"Share":                              53,
 	"Shift":                              40,
 	"Shift Names (one name per row)":     7,
-	"Shift name":                         59,
+	"Shift name":                         58,
 	"Sorry, internal server error":       1,
 	"Sorry, not found":                   2,
 	"Take":                               46,
@@ -104,7 +104,7 @@ var messageKeyToIndex = map[string]int{
 	"do not assign to an event":          57,
 	"ical Overlay":                       8,
 	"last changed":                       54,
-	"no shifts available":                58,
+	"no shifts available":                59,
 	"not yet approved":                   44,
 }
 
@@ -125,7 +125,7 @@ var de_DEIndex = []uint32{ // 68 elements
 	0x00000300, 0x00000316, 0x0000031f, 0x00000329,
 	0x00000332, 0x00000344, 0x00000354, 0x00000365,
 	0x0000037d, 0x0000038b, 0x00000392, 0x000003a4,
-	0x000003ab, 0x000003b0, 0x000003c8, 0x000003e2,
+	0x000003ab, 0x000003b0, 0x000003c8, 0x000003d0,
 	0x000003ea, 0x000003fb, 0x0000040d, 0x00000415,
 	// Entry 40 - 5F
 	0x0000042b, 0x00000440, 0x00000457, 0x0000046a,
@@ -147,8 +147,8 @@ const de_DEData string = "" + // Size: 1130 bytes
 	"ame\x02Bearbeiten\x02Löschen\x02noch nicht angenommen\x02Annehmen\x02Ein" +
 	"tragen\x02Bewerben\x02Schichten anlegen\x02Unbenanntes Pad\x02Link gülti" +
 	"g bis\x02iCalendar-Link kopieren\x02Einstellungen\x02Teilen\x02zuletzt g" +
-	"eändert\x02Beginn\x02Ende\x02keinem Event zugeordnet\x02keine Schichten " +
-	"vorhanden\x02Schicht\x02Schicht löschen\x02Namen und Annahme\x02Kontakt" +
+	"eändert\x02Beginn\x02Ende\x02keinem Event zugeordnet\x02Schicht\x02keine" +
+	" Schichten vorhanden\x02Schicht löschen\x02Namen und Annahme\x02Kontakt" +
 	"\x02Änderungen speichern\x02Auf Schicht bewerben\x02Für Schicht eintrage" +
 	"n\x02Bewerbung annehmen"
 
@@ -169,7 +169,7 @@ var en_USIndex = []uint32{ // 68 elements
 	0x00000268, 0x00000279, 0x00000281, 0x00000286,
 	0x0000028c, 0x0000029a, 0x000002a6, 0x000002b3,
 	0x000002c2, 0x000002cb, 0x000002d1, 0x000002de,
-	0x000002e4, 0x000002e8, 0x00000302, 0x00000316,
+	0x000002e4, 0x000002e8, 0x00000302, 0x0000030d,
 	0x00000321, 0x0000032e, 0x00000344, 0x0000034c,
 	// Entry 40 - 5F
 	0x00000359, 0x00000369, 0x00000374, 0x00000381,
@@ -189,8 +189,8 @@ const en_USData string = "" + // Size: 897 bytes
 	"ft\x02Taker\x02Edit\x02Delete\x02not yet approved\x02Approve\x02Take\x02" +
 	"Apply\x02Create shifts\x02Unnamed Pad\x02Link expires\x02Copy iCalendar" +
 	"\x02Settings\x02Share\x02last changed\x02Begin\x02End\x02do not assign t" +
-	"o an event\x02no shifts available\x02Shift name\x02Delete shift\x02Taker" +
+	"o an event\x02Shift name\x02no shifts available\x02Delete shift\x02Taker" +
 	" and Approvement\x02Contact\x02Save changes\x02Apply for shift\x02Take s" +
 	"hift\x02Approve take"
 
-	// Total table size 2619 bytes (2KiB); checksum: ED95B374
+	// Total table size 2619 bytes (2KiB); checksum: F29BED45

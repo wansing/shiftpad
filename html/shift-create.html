@@ -98,7 +98,14 @@
 						</div>
 						<div class="col-lg-4 mb-1">
 							<div class="input-group">
-								{{if $.Pad.ShiftNames}}
+								{{if $.Pad.EditAll}}
+									<datalist id="shiftnames">
+										{{range $.Pad.ShiftNames}}
+											<option value="{{.}}">
+										{{end}}
+									</datalist>
+									<input class="form-control" type="text" name="name" list="shiftnames" maxlength="64" placeholder="{{$.Tr "Shift name"}}" onchange="addRow(this)">
+								{{else}}
 									{{with $.Pad.EditShiftNames}}
 										<select class="form-select" name="name" onchange="addRow(this)">
 											{{if gt (len .) 1}}
@@ -111,8 +118,6 @@
 									{{else}}
 										<em>{{$.Tr "no shifts available"}}</em>
 									{{end}}
-								{{else}}
-									<input class="form-control" type="text" name="name" maxlength="64" placeholder="{{$.Tr "Shift name"}}" onchange="addRow(this)">
 								{{end}}
 								<input class="form-control" type="text" name="note" maxlength="64" placeholder="{{$.Tr "Note"}}">
 							</div>

@@ -63,22 +63,27 @@
 												</td>
 												<td>
 													<div class="input-group">
-														{{$shiftname := .Name}}
-														{{if $.Pad.ShiftNames}}
+														{{$shift := .}}
+														{{if $.Pad.EditAll}}
+															<datalist id="shiftnames">
+																{{range $.Pad.ShiftNames}}
+																	<option value="{{.}}">
+																{{end}}
+															</datalist>
+															<input class="form-control" type="text" name="name" maxlength="64" value="{{.Name}}" list="shiftnames" placeholder="{{$.Tr "Shift name"}}">
+														{{else}}
 															{{with $.Pad.EditShiftNames}}
 																<select class="form-select" name="name">
 																	{{if gt (len .) 1}}
 																		<option></option>
 																	{{end}}
 																	{{range .}}
-																		<option value="{{.}}" {{if eq . $shiftname}}selected{{end}}>{{.}}</option>
+																		<option value="{{.}}" {{if eq . $shift.Name}}selected{{end}}>{{.}}</option>
 																	{{end}}
 																</select>
 															{{else}}
 																<em>{{$.Tr "no shifts available"}}</em>
 															{{end}}
-														{{else}}
-															<input class="form-control" type="text" name="name" maxlength="64" value="{{.Name}}" placeholder="{{$.Tr "Shift name"}}">
 														{{end}}
 														<input class="form-control" type="text" name="note" maxlength="64" value="{{.Note}}" placeholder="{{$.Tr "Note"}}">
 													</div>
