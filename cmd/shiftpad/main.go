@@ -485,9 +485,9 @@ func (srv *Server) shiftAddTemplate(w http.ResponseWriter, r *http.Request, auth
 		return InternalServerError(err)
 	}
 
-	var minDate = time.Date(2000, time.January, 1, 0, 0, 0, 0, authpad.Location)
+	var minDate = time.Now()
 	if authpad.EditRetroAlways {
-		minDate = time.Now()
+		minDate = time.Date(2000, time.January, 1, 0, 0, 0, 0, authpad.Location)
 	}
 
 	if err := html.ShiftCreate.Execute(w, html.ShiftCreateData{
@@ -633,9 +633,9 @@ func (srv *Server) shiftEditTemplate(w http.ResponseWriter, r *http.Request, aut
 		return InternalServerError(err)
 	}
 
-	var minDate = time.Date(2000, time.January, 1, 0, 0, 0, 0, authpad.Location)
+	var minDate = time.Now()
 	if authpad.EditRetroAlways {
-		minDate = time.Now()
+		minDate = time.Date(2000, time.January, 1, 0, 0, 0, 0, authpad.Location)
 	}
 
 	if err := html.ShiftEdit.Execute(w, html.ShiftEditData{
