@@ -1,6 +1,6 @@
 module github.com/wansing/shiftpad
 
-go 1.21
+go 1.22
 
 require (
 	github.com/alexedwards/scs/v2 v2.7.0

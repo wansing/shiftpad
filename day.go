@@ -9,21 +9,15 @@ import (
 )
 
 type Event struct {
-	ical.Event
+	*ical.Event
 	Shifts []Shift
-}
-
-// Group is used for displaying. It can represent an event or a bunch of independent shifts.
-type Group struct {
-	*ical.Event // can be nil
-	Shifts      []Shift
 }
 
 type Day struct {
 	Begin  time.Time // inclusive
 	End    time.Time // exclusive
-	Events []Event   // both with and without shifts
-	Shifts []Shift   // without an event
+	Events []Event
+	Shifts []Shift // shifts without an event
 }
 
 type Repository interface {
@@ -50,24 +44,6 @@ func GetDay(repo Repository, pad *Pad, date time.Time, location *time.Location) 
 	}, nil
 }
 
-// Groups returns the events plus an event with empty UID, which contains all shifts without an event.
-func (day Day) Groups() []Group {
-	var groups []Group
-	if len(day.Shifts) > 0 {
-		groups = append(groups, Group{
-			Shifts: day.Shifts,
-		})
-	}
-	for _, event := range day.Events {
-		event := event // see https://github.com/golang/go/discussions/56010
-		groups = append(groups, Group{
-			Event:  &event.Event,
-			Shifts: event.Shifts,
-		})
-	}
-	return groups
-}
-
 func (day Day) FmtDateTime(t time.Time) string {
 	return datefmt.DateTime(t, day.Begin)
 }
@@ -82,6 +58,15 @@ func (day Day) FmtEventTime(event ical.Event) string {
 
 func (day Day) FmtShiftTime(shift Shift) string {
 	return datefmt.DateTimeRange(shift.Begin, shift.End, day.Begin)
+}
+
+func (day Day) Groups() []Event {
+	var groups []Event
+	if len(day.Shifts) > 0 {
+		groups = append(groups, Event{Shifts: day.Shifts})
+	}
+	groups = append(groups, day.Events...)
+	return groups
 }
 
 type Week struct {
@@ -171,7 +156,7 @@ func GetInterval(repo Repository, pad *Pad, from, to time.Time, location *time.L
 	for _, icalEvent := range icalEvents {
 		if _, ok := eventUIDs[icalEvent.UID]; ok || overlaps(icalEvent.Start, icalEvent.End, from, to) {
 			events = append(events, Event{
-				Event: icalEvent,
+				Event: &icalEvent,
 			})
 			delete(eventUIDs, icalEvent.UID)
 		}
@@ -180,7 +165,7 @@ func GetInterval(repo Repository, pad *Pad, from, to time.Time, location *time.L
 	// create dummies for remaining event uids
 	for uid := range eventUIDs {
 		events = append(events, Event{
-			Event: ical.Event{
+			Event: &ical.Event{
 				UID:     uid,
 				Summary: "Unknown event " + uid,
 			},
