@@ -166,8 +166,8 @@ func GetInterval(repo Repository, pad *Pad, from, to time.Time, location *time.L
 	for uid := range eventUIDs {
 		events = append(events, Event{
 			Event: &ical.Event{
-				UID:     uid,
-				Summary: "Unknown event " + uid,
+				UID: uid,
+				// summary empty
 			},
 		})
 	}

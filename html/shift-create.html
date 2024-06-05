@@ -41,7 +41,7 @@
 										<tr class="table-secondary">
 											<td>{{$.Day.FmtDateTime .Start}}</td>
 											<td>{{$.Day.FmtDateTime .End}}</td>
-											<td colspan="3">{{.Summary}}</td>
+											<td colspan="3">{{with .Summary}}{{.}}{{else}}{{$.Tr "Unknown event"}} {{.UID}}{{end}}</td>
 										</tr>
 									{{end}}
 									{{range .Shifts}}
@@ -71,7 +71,7 @@
 								<div class="form-check">
 									<input class="form-check-input"  id="uid-{{.UID}}" type="radio" name="event-uid" value="{{.UID}}">
 									<label class="form-check-label" for="uid-{{.UID}}">
-										{{$.Day.FmtDateTimeRange .Start .End}}: {{.Summary}}
+										{{$.Day.FmtDateTimeRange .Start .End}}: {{with .Summary}}{{.}}{{else}}{{$.Tr "Unknown event"}} {{.UID}}{{end}}
 									</label>
 								</div>
 							{{end}}

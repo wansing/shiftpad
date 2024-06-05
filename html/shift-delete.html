@@ -22,7 +22,7 @@
 									{{with .Event}}
 										<tr class="table-secondary">
 											<td>{{$.Day.FmtEventTime .}}</td>
-											<td colspan="3">{{.Summary}}</td>
+											<td colspan="3">{{with .Summary}}{{.}}{{else}}{{$.Tr "Unknown event"}} {{.UID}}{{end}}</td>
 										</tr>
 									{{end}}
 									{{range .Shifts}}

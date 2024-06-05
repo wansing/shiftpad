@@ -37,9 +37,11 @@
 										<td>{{$day.FmtEventTime .}}</td>
 										<td colspan="4">
 											{{if .URL}}
-												<a href="{{.URL}}" rel="noreferrer" target="_blank">{{.Summary}}</a>
-											{{else}}
-												{{.Summary}}
+												<a href="{{.URL}}" rel="noreferrer" target="_blank">
+											{{end}}
+											{{with .Summary}}{{.}}{{else}}{{$.Tr "Unknown event"}} {{.UID}}{{end}}
+											{{if .URL}}
+												</a>
 											{{end}}
 										</td>
 									</tr>
