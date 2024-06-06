@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/wansing/shiftpad"
 	"github.com/wansing/shiftpad/datefmt"
@@ -23,8 +24,12 @@ func parse(fn ...string) *template.Template {
 		"FmtDate":          datefmt.Date,
 		"FmtDateTime":      datefmt.DateTime,
 		"FmtDateTimeRange": datefmt.DateTimeRange,
-		"FmtISODate":       t.Format("2006-01-02"),
-		"FmtISODateTime":   t.Format("2006-01-02T15:04"),
+		"FmtISODate": func(t time.Time) string {
+			return t.Format("2006-01-02")
+		},
+		"FmtISODateTime": func(t time.Time) string {
+			return t.Format("2006-01-02T15:04")
+		},
 		"Join": func(elems []string) string {
 			return strings.Join(elems, "\r\n")
 		},
@@ -32,11 +37,7 @@ func parse(fn ...string) *template.Template {
 			return template.HTML(md.RenderToString([]byte(input)))
 		},
 		"Max": func(a, b int) int {
-			if a > b {
-				return a
-			} else {
-				return b
-			}
+			return max(a, b)
 		},
 	}).ParseFS(files, fn...))
 }

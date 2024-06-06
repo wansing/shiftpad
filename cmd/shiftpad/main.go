@@ -15,7 +15,6 @@ import (
 	"github.com/emersion/go-ical"
 	"github.com/gorhill/cronexpr"
 	"github.com/wansing/shiftpad"
-	"github.com/wansing/shiftpad/datefmt"
 	"github.com/wansing/shiftpad/html"
 	"github.com/wansing/shiftpad/html/static"
 	"github.com/wansing/shiftpad/sqlite"
@@ -90,7 +89,7 @@ func main() {
 	http.ListenAndServe("127.0.0.1:8200", srv.sessionManager.LoadAndSave(router))
 }
 
-func linkDay(authpad *shiftpad.AuthPad, t time.Time) string {
+func linkDay(authpad shiftpad.AuthPad, t time.Time) string {
 	return fmt.Sprintf("%s/day/%s", authpad.Link(), t.Format("2006-01-02"))
 }
 
@@ -620,7 +619,7 @@ func (srv *Server) shiftDeletePost(w http.ResponseWriter, r *http.Request, authp
 		return InternalServerError(err)
 	}
 
-	return http.RedirectHandler(linkDay(authpad, shift.Begin))
+	return http.RedirectHandler(linkDay(authpad, shift.Begin), http.StatusSeeOther)
 }
 
 func (srv *Server) shiftEditGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift) http.Handler {
@@ -737,7 +736,7 @@ func (srv *Server) shiftEditPost(w http.ResponseWriter, r *http.Request, authpad
 		return InternalServerError(err)
 	}
 
-	return http.RedirectHandler(linkDay(authpad, shift.Begin))
+	return http.RedirectHandler(linkDay(authpad, shift.Begin), http.StatusSeeOther)
 }
 
 func (srv *Server) shiftApplyGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift) http.Handler {
@@ -773,7 +772,7 @@ func (srv *Server) shiftApplyPost(w http.ResponseWriter, r *http.Request, authpa
 	takerName := trim(r.PostFormValue("taker-name"), 64)
 	takerContact := trim(r.PostFormValue("taker-contact"), 128)
 	if takerName == "" {
-		return http.RedirectHandler(linkDay(authpad, shift.Begin))
+		return http.RedirectHandler(linkDay(authpad, shift.Begin), http.StatusSeeOther)
 	}
 	if !authpad.CanApplyName(*shift, takerName) {
 		return NotFound()
@@ -791,7 +790,7 @@ func (srv *Server) shiftApplyPost(w http.ResponseWriter, r *http.Request, authpa
 		return InternalServerError(err)
 	}
 
-	return http.RedirectHandler(linkDay(authpad, shift.Begin))
+	return http.RedirectHandler(linkDay(authpad, shift.Begin), http.StatusSeeOther)
 }
 
 func (srv *Server) takeApproveGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift, take shiftpad.Take) http.Handler {
@@ -830,7 +829,7 @@ func (srv *Server) takeApprovePost(w http.ResponseWriter, r *http.Request, authp
 		return InternalServerError(err)
 	}
 
-	return http.RedirectHandler(linkDay(authpad, shift.Begin))
+	return http.RedirectHandler(linkDay(authpad, shift.Begin), http.StatusSeeOther)
 }
 
 func (srv *Server) shiftTakeGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift) http.Handler {
@@ -866,7 +865,7 @@ func (srv *Server) shiftTakePost(w http.ResponseWriter, r *http.Request, authpad
 	takerName := trim(r.PostFormValue("taker-name"), 64)
 	takerContact := trim(r.PostFormValue("taker-contact"), 128)
 	if takerName == "" {
-		return http.RedirectHandler(linkDay(authpad, shift.Begin))
+		return http.RedirectHandler(linkDay(authpad, shift.Begin), http.StatusSeeOther)
 	}
 	if !authpad.CanTakerName(*shift, takerName) {
 		return NotFound()
@@ -884,5 +883,5 @@ func (srv *Server) shiftTakePost(w http.ResponseWriter, r *http.Request, authpad
 		return InternalServerError(err)
 	}
 
-	return http.RedirectHandler(linkDay(authpad, shift.Begin))
+	return http.RedirectHandler(linkDay(authpad, shift.Begin), http.StatusSeeOther)
 }
