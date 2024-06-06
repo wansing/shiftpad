@@ -21,7 +21,9 @@ var md = markdown.New(markdown.HTML(true), markdown.Linkify(false))
 
 func parse(fn ...string) *template.Template {
 	return template.Must(template.New(fn[0]).Funcs(template.FuncMap{
-		"FmtDate":          datefmt.Date,
+		"FmtDate": func(t time.Time) string {
+			return t.Format("Monday 2. Jan 2006")
+		},
 		"FmtDateTime":      datefmt.DateTime,
 		"FmtDateTimeRange": datefmt.DateTimeRange,
 		"FmtISODate": func(t time.Time) string {
