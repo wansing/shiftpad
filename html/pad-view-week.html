@@ -34,7 +34,7 @@
 							<tbody class="table-group-divider">
 								{{with .Event}}
 									<tr class="table-secondary">
-										<td>{{$day.FmtEventTime .}}</td>
+										<td>{{FmtDateTimeRangeRef .Start .End $day.Begin}}</td>
 										<td colspan="4">
 											{{if .URL}}
 												<a href="{{.URL}}" rel="noreferrer" target="_blank">
@@ -48,7 +48,7 @@
 								{{end}}
 								{{range .Shifts}}
 									<tr>
-										<td>{{$day.FmtShiftTime .}}</td>
+										<td>{{FmtDateTimeRangeRef .Begin .End $day.Begin}}</td>
 										<td>{{.Quantity}}</td>
 										<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
 										<td>

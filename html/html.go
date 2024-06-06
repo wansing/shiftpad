@@ -2,13 +2,13 @@ package html
 
 import (
 	"embed"
+	"fmt"
 	"html/template"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/wansing/shiftpad"
-	"github.com/wansing/shiftpad/datefmt"
 	"gitlab.com/golang-commonmark/markdown"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
@@ -19,13 +19,22 @@ var files embed.FS
 
 var md = markdown.New(markdown.HTML(true), markdown.Linkify(false))
 
+func dateTimeRef(t, reference time.Time) string {
+	if t.Format(time.DateOnly) == reference.Format(time.DateOnly) {
+		return t.Format("15:04")
+	}
+	return t.Format("2. Jan 2006 15:04")
+}
+
 func parse(fn ...string) *template.Template {
 	return template.Must(template.New(fn[0]).Funcs(template.FuncMap{
 		"FmtDate": func(t time.Time) string {
 			return t.Format("Monday 2. Jan 2006")
 		},
-		"FmtDateTime":      datefmt.DateTime,
-		"FmtDateTimeRange": datefmt.DateTimeRange,
+		"FmtDateTimeRef": dateTimeRef,
+		"FmtDateTimeRangeRef": func(begin, end, reference time.Time) string {
+			return fmt.Sprintf("%s – %s", dateTimeRef(begin, reference), dateTimeRef(end, reference))
+		},
 		"FmtISODate": func(t time.Time) string {
 			return t.Format("2006-01-02")
 		},

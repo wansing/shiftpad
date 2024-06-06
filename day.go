@@ -4,7 +4,6 @@ import (
 	"sort"
 	"time"
 
-	"github.com/wansing/shiftpad/datefmt"
 	"github.com/wansing/shiftpad/ical"
 )
 
@@ -42,22 +41,6 @@ func GetDay(repo Repository, pad *Pad, date time.Time, location *time.Location) 
 		Events: events,
 		Shifts: shifts,
 	}, nil
-}
-
-func (day Day) FmtDateTime(t time.Time) string {
-	return datefmt.DateTime(t, day.Begin)
-}
-
-func (day Day) FmtDateTimeRange(begin, end time.Time) string {
-	return datefmt.DateTimeRange(begin, end, day.Begin)
-}
-
-func (day Day) FmtEventTime(event ical.Event) string {
-	return datefmt.DateTimeRange(event.Start, event.End, day.Begin)
-}
-
-func (day Day) FmtShiftTime(shift Shift) string {
-	return datefmt.DateTimeRange(shift.Begin, shift.End, day.Begin)
 }
 
 func (day Day) Groups() []Event {

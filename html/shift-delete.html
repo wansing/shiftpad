@@ -21,21 +21,21 @@
 								<tbody class="table-group-divider">
 									{{with .Event}}
 										<tr class="table-secondary">
-											<td>{{$.Day.FmtEventTime .}}</td>
+											<td>{{FmtDateTimeRangeRef .Start .End $.Day.Begin}}</td>
 											<td colspan="3">{{with .Summary}}{{.}}{{else}}{{$.Tr "Unknown event"}} {{.UID}}{{end}}</td>
 										</tr>
 									{{end}}
 									{{range .Shifts}}
 										{{if eq .ID $.Shift.ID}}
 											<tr class="table-danger" style="text-decoration: line-through">
-												<td>{{$.Day.FmtShiftTime .}}</td>
+												<td>{{FmtDateTimeRangeRef .Begin .End $.Day.Begin}}</td>
 												<td>{{.Quantity}}</td>
 												<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
 												<td>{{template "takeviews" .TakeViews $.Pad.Auth}}</td>
 											</tr>
 										{{else}}
 											<tr>
-												<td>{{$.Day.FmtShiftTime .}}</td>
+												<td>{{FmtDateTimeRangeRef .Begin .End $.Day.Begin}}</td>
 												<td>{{.Quantity}}</td>
 												<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
 												<td>{{template "takeviews" .TakeViews $.Pad.Auth}}</td>
