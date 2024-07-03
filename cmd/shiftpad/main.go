@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/emersion/go-ical"
+	goical "github.com/emersion/go-ical"
 	"github.com/gorhill/cronexpr"
 	"github.com/wansing/shiftpad"
 	"github.com/wansing/shiftpad/html"
@@ -334,9 +334,9 @@ func (srv *Server) padSharePost(w http.ResponseWriter, r *http.Request, authpad 
 }
 
 func (srv *Server) padICal(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
-	cal := ical.NewCalendar()
-	cal.Props.SetText(ical.PropVersion, "2.0")
-	cal.Props.SetText(ical.PropProductID, "shiftpad")
+	cal := goical.NewCalendar()
+	cal.Props.SetText(goical.PropVersion, "2.0")
+	cal.Props.SetText(goical.PropProductID, "shiftpad")
 
 	from := time.Now().Add(-24 * time.Hour) // hardcoded, for shifts that have begun shortly before and have no end time
 	to := time.Now().Add(shiftpad.MaxFuture)
@@ -363,19 +363,19 @@ func (srv *Server) padICal(w http.ResponseWriter, r *http.Request, authpad shift
 			}
 		}
 
-		event := ical.NewEvent()
-		event.Props.SetText(ical.PropUID, uid)
-		event.Props.SetText(ical.PropSummary, summary.String())
+		event := goical.NewEvent()
+		event.Props.SetText(goical.PropUID, uid)
+		event.Props.SetText(goical.PropSummary, summary.String())
 		// use UTC ("Z") because go-ical can't export timezone details
-		event.Props.SetDateTime(ical.PropDateTimeStamp, shift.Modified.In(time.UTC))
-		event.Props.SetDateTime(ical.PropDateTimeStart, shift.Begin.In(time.UTC))
-		event.Props.SetDateTime(ical.PropDateTimeEnd, shift.End.In(time.UTC))
+		event.Props.SetDateTime(goical.PropDateTimeStamp, shift.Modified.In(time.UTC))
+		event.Props.SetDateTime(goical.PropDateTimeStart, shift.Begin.In(time.UTC))
+		event.Props.SetDateTime(goical.PropDateTimeEnd, shift.End.In(time.UTC))
 		cal.Children = append(cal.Children, event.Component)
 	}
 
 	w.Header().Add("Content-Type", "text/calendar")
 
-	err = ical.NewEncoder(w).Encode(cal)
+	err = goical.NewEncoder(w).Encode(cal)
 	switch {
 	case err == nil:
 		return nil
