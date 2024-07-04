@@ -26,21 +26,24 @@
 										</tr>
 									{{end}}
 									{{range .Shifts}}
-										{{if eq .ID $.Shift.ID}}
-											<tr class="table-danger" style="text-decoration: line-through">
-												<td>{{FmtDateTimeRangeRef .Begin .End $.Day.Begin}}</td>
-												<td>{{.Quantity}}</td>
-												<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
-												<td>{{template "takeviews" .TakeViews $.Pad.Auth}}</td>
-											</tr>
-										{{else}}
-											<tr>
-												<td>{{FmtDateTimeRangeRef .Begin .End $.Day.Begin}}</td>
-												<td>{{.Quantity}}</td>
-												<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
-												<td>{{template "takeviews" .TakeViews $.Pad.Auth}}</td>
-											</tr>
-										{{end}}
+										<tr {{if eq .ID $.Shift.ID}}class="table-danger" style="text-decoration: line-through"{{end}}>
+											<td>{{FmtDateTimeRangeRef .Begin .End $.Day.Begin}}</td>
+											<td>{{.Quantity}}</td>
+											<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
+											<td>
+												{{range .TakeViews $.Pad.Auth}}
+													<div class="mb-1">
+														{{.Name}}
+														{{with .Contact}}
+															({{.}})
+														{{end}}
+														{{if not .Approved}}
+															<span class="badge bg-warning">not yet approved</span>
+														{{end}}
+													</div>
+												{{end}}
+											</td>
+										</tr>
 									{{end}}
 								</tbody>
 							{{end}}

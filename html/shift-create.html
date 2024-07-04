@@ -51,7 +51,17 @@
 											<td>{{.Quantity}}</td>
 											<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
 											<td>
-												{{template "takeviews" .TakeViews $.Pad.Auth}}
+												{{range .TakeViews $.Pad.Auth}}
+													<div class="mb-1">
+														{{.Name}}
+														{{with .Contact}}
+															({{.}})
+														{{end}}
+														{{if not .Approved}}
+															<span class="badge bg-warning">not yet approved</span>
+														{{end}}
+													</div>
+												{{end}}
 											</td>
 										</tr>
 									{{end}}

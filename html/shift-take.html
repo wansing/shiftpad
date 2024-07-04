@@ -29,7 +29,17 @@
 												<td>{{.Quantity}}</td>
 												<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
 												<td>
-													{{template "takeviews" .TakeViews $.Pad.Auth}}
+													{{range .TakeViews $.Pad.Auth}}
+														<div class="mb-1">
+															{{.Name}}
+															{{with .Contact}}
+																({{.}})
+															{{end}}
+															{{if not .Approved}}
+																<span class="badge bg-warning">not yet approved</span>
+															{{end}}
+														</div>
+													{{end}}
 													<div class="input-group">
 														{{with $.TakerNames}}
 															<select class="form-select" name="taker-name">
@@ -52,7 +62,19 @@
 												<td>{{FmtDateTimeRangeRef .Begin .End $.Day.Begin}}</td>
 												<td>{{.Quantity}}</td>
 												<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
-												<td>{{template "takeviews" .TakeViews $.Pad.Auth}}</td>
+												<td>
+													{{range .TakeViews $.Pad.Auth}}
+														<div class="mb-1">
+															{{.Name}}
+															{{with .Contact}}
+																({{.}})
+															{{end}}
+															{{if not .Approved}}
+																<span class="badge bg-warning">not yet approved</span>
+															{{end}}
+														</div>
+													{{end}}
+												</td>
 											</tr>
 										{{end}}
 									{{end}}
