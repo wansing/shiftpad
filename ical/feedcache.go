@@ -105,6 +105,21 @@ func (fc *FeedCache) Get(location *time.Location) ([]Event, error) {
 			if err != nil {
 				return nil, fmt.Errorf("getting url: %w", err)
 			}
+
+			// remove TZIDs which can't be loaded by time.LoadLocation (workaround for https://github.com/emersion/go-ical/issues/10)
+			for _, propid := range []string{ical.PropDateTimeStart, ical.PropDateTimeEnd} {
+				prop := event.Props.Get(propid)
+				if prop != nil {
+					// similar to https://github.com/emersion/go-ical/blob/fc1c9d8fb2b6/ical.go#L149C6-L149C58
+					if tzid := prop.Params.Get(ical.PropTimezoneID); tzid != "" {
+						_, err := time.LoadLocation(tzid)
+						if err != nil {
+							prop.Params.Del(ical.PropTimezoneID)
+						}
+					}
+				}
+			}
+
 			// go-ical: "Use the TZID location, if available."
 			start, err := event.DateTimeStart(location)
 			if err != nil {
