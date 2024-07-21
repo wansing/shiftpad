@@ -33,7 +33,7 @@ type DB struct {
 	getShift             *sql.Stmt
 	getShifts            *sql.Stmt
 	getShiftsByEvent     *sql.Stmt
-	getTakers            *sql.Stmt
+	getTakersByShift     *sql.Stmt
 	updatePad            *sql.Stmt
 	updatePadLastUpdated *sql.Stmt
 	updateShift          *sql.Stmt
@@ -247,7 +247,7 @@ func OpenDB(dbpath string) (*DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	db.getTakers, err = sqlDB.Prepare(`
+	db.getTakersByShift, err = sqlDB.Prepare(`
 		select
 			id,
 			name,
@@ -371,7 +371,7 @@ func (db *DB) GetShift(pad *shiftpad.Pad, id int) (*shiftpad.Shift, error) {
 	shift.Begin = time.Unix(begin, 0).In(pad.Location)
 	shift.End = time.Unix(end, 0).In(pad.Location)
 
-	if takes, err := db.GetTakers(shift.ID); err == nil {
+	if takes, err := db.GetTakersByShift(shift.ID); err == nil {
 		shift.Takes = takes
 	} else {
 		return nil, err
@@ -412,7 +412,7 @@ func (db *DB) readShifts(rows *sql.Rows, location *time.Location) ([]shiftpad.Sh
 		shift.Begin = time.Unix(begin, 0).In(location)
 		shift.End = time.Unix(end, 0).In(location)
 
-		if takes, err := db.GetTakers(shift.ID); err == nil {
+		if takes, err := db.GetTakersByShift(shift.ID); err == nil {
 			shift.Takes = takes
 		} else {
 			return nil, err
@@ -423,8 +423,8 @@ func (db *DB) readShifts(rows *sql.Rows, location *time.Location) ([]shiftpad.Sh
 	return shifts, nil
 }
 
-func (db *DB) GetTakers(shift int) ([]shiftpad.Take, error) {
-	rows, err := db.getTakers.Query(shift)
+func (db *DB) GetTakersByShift(shift int) ([]shiftpad.Take, error) {
+	rows, err := db.getTakersByShift.Query(shift)
 	if err != nil {
 		return nil, err
 	}
