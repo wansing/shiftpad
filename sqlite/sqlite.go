@@ -13,6 +13,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/wansing/shiftpad"
+	"golang.org/x/exp/maps"
 )
 
 var ErrUnauthorized = errors.New("unauthorized")
@@ -33,7 +34,10 @@ type DB struct {
 	getShift             *sql.Stmt
 	getShifts            *sql.Stmt
 	getShiftsByEvent     *sql.Stmt
+	getTakerNames        *sql.Stmt
 	getTakersByShift     *sql.Stmt
+	getTakesByName       *sql.Stmt
+	setPaidOut           *sql.Stmt
 	updatePad            *sql.Stmt
 	updatePadLastUpdated *sql.Stmt
 	updateShift          *sql.Stmt
@@ -52,7 +56,7 @@ func OpenDB(dbpath string) (*DB, error) {
 
 	if _, err := sqlDB.Exec(`
 		create table if not exists pad (
-			id           text not null primary key,
+			id           text primary key,
 			description  text not null,
 			ical_overlay text not null,
 			last_updated text not null,
@@ -67,6 +71,7 @@ func OpenDB(dbpath string) (*DB, error) {
 			modified      integer not null,
 			name          text    not null,
 			note          text    not null,
+			paid          boolean not null,
 			event         text    not null,
 			quantity      integer not null,
 			begin         integer not null,
@@ -75,10 +80,12 @@ func OpenDB(dbpath string) (*DB, error) {
 		);
 		create table if not exists taker (
 			id       integer primary key,
+			pad      text    not null, -- for easy select
 			shift    integer not null,
 			name     text    not null,
 			contact  text    not null,
 			approved boolean not null,
+			paid_out boolean not null,
 			foreign key (shift) references shift(id) on update cascade on delete cascade
 		);
 
@@ -111,32 +118,37 @@ func OpenDB(dbpath string) (*DB, error) {
 			modified,
 			name,
 			note,
+			paid,
 			event,
 			quantity,
 			begin,
 			end
-		) values (?, ?, ?, ?, ?, ?, ?, ?)`)
+		) values (?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		return nil, err
 	}
 	db.addTaker, err = sqlDB.Prepare(`
 		insert into taker (
+			pad,
 			shift,
 			name,
 			contact,
-			approved
-		) values (?, ?, ?, ?)`)
+			approved,
+			paid_out
+		) values (?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		return nil, err
 	}
 	db.addTakerWithID, err = sqlDB.Prepare(`
 		insert into taker (
 			id,
+			pad,
 			shift,
 			name,
 			contact,
-			approved
-		) values (?, ?, ?, ?, ?)`)
+			approved,
+			paid_out
+		) values (?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		return nil, err
 	}
@@ -201,6 +213,7 @@ func OpenDB(dbpath string) (*DB, error) {
 			modified,
 			name,
 			note,
+			paid,
 			event,
 			quantity,
 			begin,
@@ -217,6 +230,7 @@ func OpenDB(dbpath string) (*DB, error) {
 			modified,
 			name,
 			note,
+			paid,
 			event,
 			quantity,
 			begin,
@@ -237,6 +251,7 @@ func OpenDB(dbpath string) (*DB, error) {
 			modified,
 			name,
 			note,
+			paid,
 			event,
 			quantity,
 			begin,
@@ -247,14 +262,45 @@ func OpenDB(dbpath string) (*DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	db.getTakerNames, err = sqlDB.Prepare(`
+		select distinct name
+		from taker
+		where pad = ?`)
+	if err != nil {
+		return nil, err
+	}
 	db.getTakersByShift, err = sqlDB.Prepare(`
 		select
 			id,
 			name,
 			contact,
-			approved
+			approved,
+			paid_out
 		from taker
 		where shift = ?
+	`)
+	if err != nil {
+		return nil, err
+	}
+	db.getTakesByName, err = sqlDB.Prepare(`
+		select
+			taker.id,
+			taker.shift,
+			taker.name,
+			taker.contact,
+			taker.approved,
+			taker.paid_out
+		from taker
+		where taker.pad = ?
+			and taker.name = ?
+	`)
+	if err != nil {
+		return nil, err
+	}
+	db.setPaidOut, err = sqlDB.Prepare(`
+		update taker
+		set paid_out = ?
+		where id = ?
 	`)
 	if err != nil {
 		return nil, err
@@ -284,6 +330,7 @@ func OpenDB(dbpath string) (*DB, error) {
 			modified = ?,
 			name = ?,
 			note = ?,
+			paid = ?,
 			event = ?,
 			quantity = ?,
 			begin = ?,
@@ -311,7 +358,7 @@ func (db *DB) AddPad(pad shiftpad.Pad) error {
 }
 
 func (db *DB) AddShift(pad *shiftpad.Pad, shift shiftpad.Shift) error {
-	_, err := db.addShift.Exec(pad.ID, shift.Modified.Unix(), shift.Name, shift.Note, shift.EventUID, shift.Quantity, shift.Begin.Unix(), shift.End.Unix())
+	_, err := db.addShift.Exec(pad.ID, shift.Modified.Unix(), shift.Name, shift.Note, shift.Paid, shift.EventUID, shift.Quantity, shift.Begin.Unix(), shift.End.Unix())
 	return err
 }
 
@@ -360,52 +407,54 @@ func (db *DB) GetPad(id string) (*shiftpad.Pad, error) {
 }
 
 func (db *DB) GetShift(pad *shiftpad.Pad, id int) (*shiftpad.Shift, error) {
+	return db.readShift(pad, id, true)
+}
+
+func (db *DB) readShift(pad *shiftpad.Pad, id int, loadTakers bool) (*shiftpad.Shift, error) {
 	var shift = &shiftpad.Shift{}
 	var modified int64
 	var begin int64
 	var end int64
-	if err := db.getShift.QueryRow(pad.ID, id).Scan(&shift.ID, &modified, &shift.Name, &shift.Note, &shift.EventUID, &shift.Quantity, &begin, &end); err != nil {
+	if err := db.getShift.QueryRow(pad.ID, id).Scan(&shift.ID, &modified, &shift.Name, &shift.Note, &shift.Paid, &shift.EventUID, &shift.Quantity, &begin, &end); err != nil {
 		return nil, err
 	}
 	shift.Modified = time.Unix(modified, 0).In(pad.Location)
 	shift.Begin = time.Unix(begin, 0).In(pad.Location)
 	shift.End = time.Unix(end, 0).In(pad.Location)
 
-	if takes, err := db.GetTakersByShift(shift.ID); err == nil {
-		shift.Takes = takes
-	} else {
-		return nil, err
+	if loadTakers {
+		if takes, err := db.GetTakersByShift(shift.ID); err == nil {
+			shift.Takes = takes
+		} else {
+			return nil, err
+		}
 	}
 
 	return shift, nil
 }
 
 func (db *DB) GetShifts(pad *shiftpad.Pad, from, to int64) ([]shiftpad.Shift, error) {
-	rows, err := db.getShifts.Query(pad.ID, from, to, from, to, from, to)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	return db.readShifts(rows, pad.Location)
+	return db.readShifts(pad.Location, db.getShifts, pad.ID, from, to, from, to, from, to)
 }
 
 func (db *DB) GetShiftsByEvent(pad *shiftpad.Pad, eventUID string) ([]shiftpad.Shift, error) {
-	rows, err := db.getShiftsByEvent.Query(pad.ID, eventUID)
+	return db.readShifts(pad.Location, db.getShiftsByEvent, pad.ID, eventUID)
+}
+
+func (db *DB) readShifts(location *time.Location, stmt *sql.Stmt, args ...any) ([]shiftpad.Shift, error) {
+	rows, err := stmt.Query(args...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	return db.readShifts(rows, pad.Location)
-}
 
-func (db *DB) readShifts(rows *sql.Rows, location *time.Location) ([]shiftpad.Shift, error) {
 	var shifts []shiftpad.Shift
 	for rows.Next() {
 		var shift shiftpad.Shift
 		var modified int64
 		var begin int64
 		var end int64
-		if err := rows.Scan(&shift.ID, &modified, &shift.Name, &shift.Note, &shift.EventUID, &shift.Quantity, &begin, &end); err != nil {
+		if err := rows.Scan(&shift.ID, &modified, &shift.Name, &shift.Note, &shift.Paid, &shift.EventUID, &shift.Quantity, &begin, &end); err != nil {
 			return nil, err
 		}
 		shift.Modified = time.Unix(modified, 0).In(location)
@@ -423,6 +472,54 @@ func (db *DB) readShifts(rows *sql.Rows, location *time.Location) ([]shiftpad.Sh
 	return shifts, nil
 }
 
+// returned shifts contain only takes with the given taker name
+func (db *DB) GetTakesByTaker(pad *shiftpad.Pad, name string) ([]shiftpad.Shift, error) {
+	rows, err := db.getTakesByName.Query(pad.ID, name)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var takes = make(map[int][]shiftpad.Take) // key: shift id
+	for rows.Next() {
+		var take shiftpad.Take
+		var shiftID int
+		if err := rows.Scan(&take.ID, &shiftID, &take.Name, &take.Contact, &take.Approved, &take.PaidOut); err != nil {
+			return nil, err
+		}
+		takes[shiftID] = append(takes[shiftID], take)
+	}
+
+	var shifts []shiftpad.Shift
+	for _, shiftID := range maps.Keys(takes) {
+		shift, err := db.readShift(pad, shiftID, false)
+		if err != nil {
+			return nil, err
+		}
+		shift.Takes = takes[shift.ID]
+		shifts = append(shifts, *shift)
+	}
+	return shifts, nil
+}
+
+func (db *DB) GetTakerNames(pad *shiftpad.Pad) ([]string, error) {
+	rows, err := db.getTakerNames.Query(pad.ID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var takerNames []string
+	for rows.Next() {
+		var takerName string
+		if err := rows.Scan(&takerName); err != nil {
+			return nil, err
+		}
+		takerNames = append(takerNames, takerName)
+	}
+	return takerNames, nil
+}
+
 func (db *DB) GetTakersByShift(shift int) ([]shiftpad.Take, error) {
 	rows, err := db.getTakersByShift.Query(shift)
 	if err != nil {
@@ -433,7 +530,7 @@ func (db *DB) GetTakersByShift(shift int) ([]shiftpad.Take, error) {
 	var takes []shiftpad.Take
 	for rows.Next() {
 		var take shiftpad.Take
-		if err := rows.Scan(&take.ID, &take.Name, &take.Contact, &take.Approved); err != nil {
+		if err := rows.Scan(&take.ID, &take.Name, &take.Contact, &take.Approved, &take.PaidOut); err != nil {
 			return nil, err
 		}
 		takes = append(takes, take)
@@ -441,13 +538,30 @@ func (db *DB) GetTakersByShift(shift int) ([]shiftpad.Take, error) {
 	return takes, nil
 }
 
-func (db *DB) TakeShift(shift *shiftpad.Shift, take shiftpad.Take) error {
+// SetPaidOut writes take.PaidOut to the database.
+// Alternatively, we could delete and re-add the takes.
+func (db *DB) SetPaidOut(takes []shiftpad.Take) error {
 	tx, err := db.SQLDB.Begin()
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
-	if _, err := tx.Stmt(db.addTaker).Exec(shift.ID, take.Name, take.Contact, take.Approved); err != nil {
+
+	for _, take := range takes {
+		if _, err := tx.Stmt(db.setPaidOut).Exec(take.PaidOut, take.ID); err != nil {
+			return err
+		}
+	}
+	return tx.Commit()
+}
+
+func (db *DB) TakeShift(pad *shiftpad.Pad, shift *shiftpad.Shift, take shiftpad.Take) error {
+	tx, err := db.SQLDB.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	if _, err := tx.Stmt(db.addTaker).Exec(pad.ID, shift.ID, take.Name, take.Contact, take.Approved, take.PaidOut); err != nil {
 		return err
 	}
 	if _, err := tx.Stmt(db.updateShiftModified).Exec(time.Now().Unix(), shift.ID); err != nil {
@@ -467,14 +581,14 @@ func (db *DB) UpdatePadLastUpdated(pad *shiftpad.Pad, lastUpdated string) error 
 	return err
 }
 
-func (db *DB) UpdateShift(shift *shiftpad.Shift) error {
+func (db *DB) UpdateShift(pad *shiftpad.Pad, shift *shiftpad.Shift) error {
 	tx, err := db.SQLDB.Begin()
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
 
-	if _, err := tx.Stmt(db.updateShift).Exec(shift.Modified.Unix(), shift.Name, shift.Note, shift.EventUID, shift.Quantity, shift.Begin.Unix(), shift.End.Unix(), shift.ID); err != nil {
+	if _, err := tx.Stmt(db.updateShift).Exec(shift.Modified.Unix(), shift.Name, shift.Note, shift.Paid, shift.EventUID, shift.Quantity, shift.Begin.Unix(), shift.End.Unix(), shift.ID); err != nil {
 		return err
 	}
 	if _, err := tx.Stmt(db.deleteTakers).Exec(shift.ID); err != nil {
@@ -482,9 +596,9 @@ func (db *DB) UpdateShift(shift *shiftpad.Shift) error {
 	}
 	for _, take := range shift.Takes {
 		if take.ID > 0 {
-			_, err = tx.Stmt(db.addTakerWithID).Exec(take.ID, shift.ID, take.Name, take.Contact, take.Approved)
+			_, err = tx.Stmt(db.addTakerWithID).Exec(take.ID, pad.ID, shift.ID, take.Name, take.Contact, take.Approved, take.PaidOut)
 		} else {
-			_, err = tx.Stmt(db.addTaker).Exec(shift.ID, take.Name, take.Contact, take.Approved)
+			_, err = tx.Stmt(db.addTaker).Exec(pad.ID, shift.ID, take.Name, take.Contact, take.Approved, take.PaidOut)
 		}
 		if err != nil {
 			return err

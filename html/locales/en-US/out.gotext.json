@@ -30,6 +30,90 @@
             "fuzzy": true
         },
         {
+            "id": "These shifts have been marked as paid out for",
+            "message": "These shifts have been marked as paid out for",
+            "translation": "These shifts have been marked as paid out for",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Time",
+            "message": "Time",
+            "translation": "Time",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Shift",
+            "message": "Shift",
+            "translation": "Shift",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Taker",
+            "message": "Taker",
+            "translation": "Taker",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Paid out",
+            "message": "Paid out",
+            "translation": "Paid out",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Unknown event",
+            "message": "Unknown event",
+            "translation": "Unknown event",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "paid",
+            "message": "paid",
+            "translation": "paid",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "hours",
+            "message": "hours",
+            "translation": "hours",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "No shifts.",
+            "message": "No shifts.",
+            "translation": "No shifts.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Paid shifts taken by",
+            "message": "Paid shifts taken by",
+            "translation": "Paid shifts taken by",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "not yet approved",
+            "message": "not yet approved",
+            "translation": "not yet approved",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Mark as paid out",
+            "message": "Mark as paid out",
+            "translation": "Mark as paid out",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
             "id": "Name",
             "message": "Name",
             "translation": "Name",
@@ -124,6 +208,20 @@
             "id": "Edit retroactively",
             "message": "Edit retroactively",
             "translation": "Edit retroactively",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Payout",
+            "message": "Payout",
+            "translation": "Payout",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Mark any shift as paid out",
+            "message": "Mark any shift as paid out",
+            "translation": "Mark any shift as paid out",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -268,30 +366,9 @@
             "fuzzy": true
         },
         {
-            "id": "Time",
-            "message": "Time",
-            "translation": "Time",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
             "id": "Quantity",
             "message": "Quantity",
             "translation": "Quantity",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Shift",
-            "message": "Shift",
-            "translation": "Shift",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Taker",
-            "message": "Taker",
-            "translation": "Taker",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -310,16 +387,23 @@
             "fuzzy": true
         },
         {
-            "id": "not yet approved",
-            "message": "not yet approved",
-            "translation": "not yet approved",
+            "id": "Approve",
+            "message": "Approve",
+            "translation": "Approve",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Approve",
-            "message": "Approve",
-            "translation": "Approve",
+            "id": "paid out",
+            "message": "paid out",
+            "translation": "paid out",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "not paid out yet",
+            "message": "not paid out yet",
+            "translation": "not paid out yet",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },

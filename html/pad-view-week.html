@@ -1,5 +1,4 @@
 {{define "pad-content"}}
-
 	<form method="post" class="d-inline-block d-print-none mb-3">
 		<div class="input-group">
 			<a class="btn btn-primary" href="{{.Pad.Link}}/week/{{.EarlierYear}}/{{.EarlierWeek}}">&#8592;</a>
@@ -50,7 +49,7 @@
 									<tr>
 										<td>{{FmtDateTimeRangeRef .Begin .End $day.Begin}}</td>
 										<td>{{.Quantity}}</td>
-										<td>{{.Name}} {{with .Note}}({{.}}){{end}}</td>
+										<td>{{.Name}} {{with .Note}}({{.}}){{end}} {{if .Paid}}<span class="badge bg-secondary">{{$.Tr "paid"}}</span>{{end}}</td>
 										<td>
 											{{if $.Pad.CanEditShift .}}
 												<a class="btn btn-sm btn-primary d-print-none" href="{{$.Pad.Link}}/edit/{{.ID}}">
@@ -79,6 +78,9 @@
 																<span class="d-none d-lg-inline">{{$.Tr "Approve"}}</span>
 															</a>
 														{{end}}
+													{{end}}
+													{{if or $shift.Paid .PaidOut}}
+														{{if .PaidOut}}<span class="badge bg-primary">{{$.Tr "paid out"}}</span>{{else}}<span class="badge bg-info">{{$.Tr "not paid out yet"}}</span>{{end}}
 													{{end}}
 												</div>
 											{{end}}

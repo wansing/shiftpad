@@ -22,6 +22,66 @@
             "translation": "Neues Pad anlegen"
         },
         {
+            "id": "These shifts have been marked as paid out for",
+            "message": "These shifts have been marked as paid out for",
+            "translation": "Diese Schichten wurden als ausbezahlt markiert für"
+        },
+        {
+            "id": "Time",
+            "message": "Time",
+            "translation": "Zeit"
+        },
+        {
+            "id": "Shift",
+            "message": "Shift",
+            "translation": "Schicht"
+        },
+        {
+            "id": "Taker",
+            "message": "Taker",
+            "translation": "Name"
+        },
+        {
+            "id": "Paid out",
+            "message": "Paid out",
+            "translation": "Ausbezahlt"
+        },
+        {
+            "id": "Unknown event",
+            "message": "Unknown event",
+            "translation": "Unbekanntes Event"
+        },
+        {
+            "id": "paid",
+            "message": "paid",
+            "translation": "bezahlt"
+        },
+        {
+            "id": "hours",
+            "message": "hours",
+            "translation": "Stunden"
+        },
+        {
+            "id": "No shifts.",
+            "message": "No shifts.",
+            "translation": "Keine Schichten."
+        },
+        {
+            "id": "Paid shifts taken by",
+            "message": "Paid shifts taken by",
+            "translation": "Bezahlte Schichten von"
+        },
+        {
+            "id": "not yet approved",
+            "message": "not yet approved",
+            "translation": "noch nicht angenommen"
+        },
+        {
+            "id": "Mark as paid out",
+            "message": "Mark as paid out",
+            "translation": "Als ausbezahlt markieren"
+        },
+        {
             "id": "Name",
             "message": "Name",
             "translation": "Name"
@@ -90,6 +150,16 @@
             "id": "Edit retroactively",
             "message": "Edit retroactively",
             "translation": "Rückwirkend bearbeiten"
+        },
+        {
+            "id": "Payout",
+            "message": "Payout",
+            "translation": "Auszahlung"
+        },
+        {
+            "id": "Mark any shift as paid out",
+            "message": "Mark any shift as paid out",
+            "translation": "Jede Schicht als ausgezahlt markieren"
         },
         {
             "id": "Take Shifts",
@@ -192,24 +262,9 @@
             "translation": "Fehler"
         },
         {
-            "id": "Time",
-            "message": "Time",
-            "translation": "Zeit"
-        },
-        {
             "id": "Quantity",
             "message": "Quantity",
             "translation": "Anzahl"
-        },
-        {
-            "id": "Shift",
-            "message": "Shift",
-            "translation": "Schicht"
-        },
-        {
-            "id": "Taker",
-            "message": "Taker",
-            "translation": "Name"
         },
         {
             "id": "Edit",
@@ -222,14 +277,19 @@
             "translation": "Löschen"
         },
         {
-            "id": "not yet approved",
-            "message": "not yet approved",
-            "translation": "noch nicht angenommen"
-        },
-        {
             "id": "Approve",
             "message": "Approve",
             "translation": "Annehmen"
+        },
+        {
+            "id": "paid out",
+            "message": "paid out",
+            "translation": "ausbezahlt"
+        },
+        {
+            "id": "not paid out yet",
+            "message": "not paid out yet",
+            "translation": "noch nicht ausbezahlt"
         },
         {
             "id": "Take",

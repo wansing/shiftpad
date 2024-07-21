@@ -32,6 +32,9 @@ func parse(fn ...string) *template.Template {
 			return t.Format("Monday 2. Jan 2006")
 		},
 		"FmtDateTimeRef": dateTimeRef,
+		"FmtDateTimeRange": func(begin, end time.Time) string {
+			return fmt.Sprintf("%s – %s", begin.Format("2. Jan 2006 15:04"), dateTimeRef(end, begin)) // begin always contains day, end contains day only if it differs
+		},
 		"FmtDateTimeRangeRef": func(begin, end, reference time.Time) string {
 			return fmt.Sprintf("%s – %s", dateTimeRef(begin, reference), dateTimeRef(end, reference))
 		},
@@ -54,19 +57,22 @@ func parse(fn ...string) *template.Template {
 }
 
 var (
-	Index               = parse("layout.html", "index.html")
-	InternalServerError = parse("layout.html", "internal-server-error.html")
-	NotFound            = parse("layout.html", "not-found.html")
-	PadCreate           = parse("layout.html", "pad-create.html")
-	PadSettings         = parse("layout.html", "pad.html", "pad-settings.html")
-	PadShare            = parse("layout.html", "pad.html", "pad-share.html")
-	PadShareResult      = parse("layout.html", "pad.html", "pad-share-result.html")
-	PadViewWeek         = parse("layout.html", "pad.html", "pad-view-week.html")
-	ShiftCreate         = parse("layout.html", "pad.html", "shift-create.html")
-	ShiftDelete         = parse("layout.html", "pad.html", "shift-delete.html")
-	ShiftEdit           = parse("layout.html", "pad.html", "shift-edit.html")
-	ShiftTake           = parse("layout.html", "pad.html", "shift-take.html")
-	TakeApprove         = parse("layout.html", "pad.html", "take-approve.html")
+	Index                = parse("layout.html", "index.html")
+	InternalServerError  = parse("layout.html", "internal-server-error.html")
+	NotFound             = parse("layout.html", "not-found.html")
+	PadCreate            = parse("layout.html", "pad-create.html")
+	PadPayout            = parse("layout.html", "pad.html", "pad-payout.html")
+	PadPayoutTaker       = parse("layout.html", "pad.html", "pad-payout-taker.html")
+	PadPayoutTakerResult = parse("layout.html", "pad.html", "pad-payout-taker-result.html")
+	PadSettings          = parse("layout.html", "pad.html", "pad-settings.html")
+	PadShare             = parse("layout.html", "pad.html", "pad-share.html")
+	PadShareResult       = parse("layout.html", "pad.html", "pad-share-result.html")
+	PadViewWeek          = parse("layout.html", "pad.html", "pad-view-week.html")
+	ShiftCreate          = parse("layout.html", "pad.html", "shift-create.html")
+	ShiftDelete          = parse("layout.html", "pad.html", "shift-delete.html")
+	ShiftEdit            = parse("layout.html", "pad.html", "shift-edit.html")
+	ShiftTake            = parse("layout.html", "pad.html", "shift-take.html")
+	TakeApprove          = parse("layout.html", "pad.html", "take-approve.html")
 )
 
 type Lang language.Tag
@@ -98,6 +104,19 @@ type PadData struct {
 	Errors    []string
 	Pad       shiftpad.AuthPad
 }
+
+type PadPayoutData struct {
+	PadData
+	TakerNames []string
+}
+
+type PadPayoutTakerData struct {
+	PadData
+	Name   string
+	Events []shiftpad.Event
+}
+
+type PadPayoutTakerResultData PadPayoutTakerData
 
 type PadSettingsData struct {
 	PadData

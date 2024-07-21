@@ -18,6 +18,7 @@ type Auth struct {
 	EditRetroAlways  bool
 	Expires          string // yyyy-mm-dd
 	Note             string
+	PayoutAll        bool
 	Take             []string
 	TakeAll          bool
 	TakeDeadline     string   // apply and take, cronexpr
@@ -42,6 +43,7 @@ func DecodeAuth(s string) (Auth, error) {
 		auth.ApplyAll = true
 		auth.EditAll = true
 		auth.EditRetroAlways = true
+		auth.PayoutAll = true
 		auth.TakeAll = true
 		auth.TakerNameAll = true
 		auth.ViewTakerContact = true
@@ -64,6 +66,9 @@ func DecodeAuth(s string) (Auth, error) {
 		}
 		if values.Get("edit-retro-always") != "" {
 			auth.EditRetroAlways = true
+		}
+		if values.Get("payout-all") != "" {
+			auth.PayoutAll = true
 		}
 		if values.Get("take-all") != "" {
 			auth.TakeAll = true
@@ -137,6 +142,14 @@ func (auth Auth) CanEditSomeShift() bool {
 	return auth.EditAll || len(auth.Edit) > 0
 }
 
+func (auth Auth) CanPayout() bool {
+	return auth.PayoutAll // || slices.Contains(auth.Payout, shiftname)
+}
+
+func (auth Auth) CanPayoutTake(shift Shift, take Take) bool {
+	return auth.CanPayout() && shift.Over() && take.Name != "" && take.Approved && !take.PaidOut
+}
+
 func (auth Auth) CanTake(shiftname string) bool {
 	return auth.TakeAll || slices.Contains(auth.Take, shiftname)
 }
@@ -202,6 +215,9 @@ func (auth Auth) Encode() ([]byte, error) {
 		if auth.EditRetroAlways {
 			values.Set("edit-retro-always", "1")
 		}
+		if auth.PayoutAll {
+			values.Set("payout-all", "1")
+		}
 		if auth.TakeAll {
 			values.Set("take-all", "1")
 		} else {
@@ -243,6 +259,7 @@ func (ref Auth) Restrict(input Auth) Auth {
 	input.ApplyAll = input.ApplyAll && ref.ApplyAll
 	input.EditAll = input.EditAll && ref.EditAll
 	input.EditRetroAlways = input.EditRetroAlways && ref.EditRetroAlways
+	input.PayoutAll = input.PayoutAll && ref.PayoutAll
 	input.TakeAll = input.TakeAll && ref.TakeAll
 	input.TakerNameAll = input.TakerNameAll && ref.TakerNameAll
 	input.ViewTakerContact = input.ViewTakerContact && ref.ViewTakerContact

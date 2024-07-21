@@ -17,6 +17,7 @@ import (
 	"github.com/wansing/shiftpad"
 	"github.com/wansing/shiftpad/html"
 	"github.com/wansing/shiftpad/html/static"
+	"github.com/wansing/shiftpad/ical"
 	"github.com/wansing/shiftpad/sqlite"
 	"github.com/wansing/shiftpad/way"
 )
@@ -66,6 +67,10 @@ func main() {
 	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig", srv.withPad(srv.padViewPost))
 	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/apply/:shift", srv.withShift(srv.shiftApplyGet))
 	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/apply/:shift", srv.withShift(srv.shiftApplyPost))
+	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/payout", srv.withPad(srv.padPayoutGet))
+	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/payout/:taker", srv.withPad(srv.padPayoutTakerGet))
+	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/payout/:taker", srv.withPad(srv.padPayoutTakerPost))
+	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/payout/:taker/result", srv.withPad(srv.padPayoutTakerResultGet))
 	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/settings", srv.withPad(srv.padSettingsGet))
 	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/settings", srv.withPad(srv.padSettingsPost))
 	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/share", srv.withPad(srv.padShareGet))
@@ -200,6 +205,207 @@ func (srv *Server) createPost(w http.ResponseWriter, r *http.Request) http.Handl
 	return http.RedirectHandler(authpad.Link(), http.StatusSeeOther)
 }
 
+func (srv *Server) padPayoutGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
+	if !authpad.CanPayout() {
+		return NotFound()
+	}
+
+	takerNames, err := srv.DB.GetTakerNames(authpad.Pad)
+	if err != nil {
+		return InternalServerError(err)
+	}
+
+	err = html.PadPayout.Execute(w, html.PadPayoutData{
+		PadData: html.PadData{
+			LayoutData: html.MakeLayoutData(r),
+			ActiveTab:  "payout",
+			Pad:        authpad,
+		},
+		TakerNames: takerNames,
+	})
+	if err != nil {
+		return InternalServerError(err)
+	}
+	return nil
+}
+
+func (srv *Server) padPayoutTakerGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
+	if !authpad.CanPayout() {
+		return NotFound()
+	}
+
+	takerName := way.Param(r.Context(), "taker")
+	shifts, err := srv.DB.GetTakesByTaker(authpad.Pad, takerName)
+	if err != nil {
+		return InternalServerError(err)
+	}
+	// don't filter by CanPayoutTake because we also list takes which are paid out
+	// don't restrict to paid shifts because shift.paid may have been changed after payout
+
+	// group consecutive shifts by event
+	var events []shiftpad.Event
+	var lastUID string
+	for _, shift := range shifts {
+		if !shift.Paid && !shift.HasPayouts() {
+			continue
+		}
+
+		if shift.EventUID != "" && shift.EventUID == lastUID {
+			events[len(events)-1].Shifts = append(events[len(events)-1].Shifts, shift)
+		} else {
+			events = append(events, shiftpad.Event{
+				Shifts: []shiftpad.Shift{shift},
+			})
+		}
+		lastUID = shift.EventUID
+	}
+
+	// collect ical events if exist
+	icalEvents, _ := srv.GetICalFeedCache(authpad.ICalOverlay).Get(authpad.Location)
+	var icalMap = make(map[string]*ical.Event)
+	for _, icalEvent := range icalEvents {
+		icalMap[icalEvent.UID] = &icalEvent
+	}
+	for i, event := range events {
+		uid := event.Shifts[0].EventUID
+		if icalEvent, ok := icalMap[uid]; ok {
+			events[i].Event = icalEvent
+		}
+	}
+
+	err = html.PadPayoutTaker.Execute(w, html.PadPayoutTakerData{
+		PadData: html.PadData{
+			LayoutData: html.MakeLayoutData(r),
+			ActiveTab:  "payout",
+			Pad:        authpad,
+		},
+		Name:   takerName,
+		Events: events,
+	})
+	if err != nil {
+		return InternalServerError(err)
+	}
+	return nil
+}
+
+func (srv *Server) padPayoutTakerPost(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
+	if !authpad.CanPayout() {
+		return NotFound()
+	}
+
+	// collect input
+	if err := r.ParseForm(); err != nil {
+		return InternalServerError(err)
+	}
+	var setPaidOut = make(map[int]any)
+	for _, idstr := range r.PostForm["take"] {
+		id, _ := strconv.Atoi(idstr)
+		setPaidOut[id] = struct{}{}
+	}
+
+	// validate input by iterating over GetTakesByTaker and checking CanPayoutTake
+	takerName := way.Param(r.Context(), "taker")
+	shifts, err := srv.DB.GetTakesByTaker(authpad.Pad, takerName)
+	if err != nil {
+		return InternalServerError(err)
+	}
+	var updateTakes []shiftpad.Take
+	for _, shift := range shifts {
+		for _, take := range shift.Takes {
+			if authpad.CanPayoutTake(shift, take) {
+				if _, ok := setPaidOut[take.ID]; ok {
+					take.PaidOut = true
+					updateTakes = append(updateTakes, take)
+				}
+			}
+		}
+	}
+	if err := srv.DB.SetPaidOut(updateTakes); err != nil {
+		return InternalServerError(err)
+	}
+	if err := srv.UpdatePadLastUpdated(authpad.Pad); err != nil {
+		return InternalServerError(err)
+	}
+
+	if len(updateTakes) > 0 {
+		var query = make(url.Values)
+		for _, updated := range updateTakes {
+			query.Add("paid_out", strconv.Itoa(updated.ID))
+		}
+		var u = *r.URL // copy struct
+		u.Path += "/result"
+		u.RawQuery = query.Encode()
+		return http.RedirectHandler(u.String(), http.StatusSeeOther)
+	} else {
+		return http.RedirectHandler(r.URL.String(), http.StatusSeeOther) // no shift checked, redirect to payoutTaker
+	}
+}
+
+func (srv *Server) padPayoutTakerResultGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
+	if !authpad.CanPayout() {
+		return NotFound()
+	}
+
+	// ids from url query
+	var takeIDs = make(map[int]any)
+	for _, s := range r.URL.Query()["paid_out"] {
+		if id, err := strconv.Atoi(s); err == nil {
+			takeIDs[id] = struct{}{}
+		}
+	}
+
+	// collect input by iterating over GetTakesByTaker, don't check CanPayoutTake because displayed takes are already paid out
+	takerName := way.Param(r.Context(), "taker")
+	shifts, err := srv.DB.GetTakesByTaker(authpad.Pad, takerName)
+	if err != nil {
+		return InternalServerError(err)
+	}
+	for i := range shifts {
+		// filter takes
+		n := 0
+		for _, take := range shifts[i].Takes {
+			if _, ok := takeIDs[take.ID]; ok {
+				shifts[i].Takes[n] = take
+				n++
+			}
+		}
+		shifts[i].Takes = shifts[i].Takes[:n]
+	}
+
+	// filter empty shifts so they don't disturb the table
+	shifts = slices.DeleteFunc(shifts, func(shift shiftpad.Shift) bool {
+		return !shift.Paid && !shift.HasPayouts()
+	})
+
+	// group consecutive shifts by event (copied from above)
+	var events []shiftpad.Event
+	var lastUID string
+	for _, shift := range shifts {
+		if shift.EventUID != "" && shift.EventUID == lastUID {
+			events[len(events)-1].Shifts = append(events[len(events)-1].Shifts, shift)
+		} else {
+			events = append(events, shiftpad.Event{
+				Shifts: []shiftpad.Shift{shift},
+			})
+		}
+		lastUID = shift.EventUID
+	}
+
+	err = html.PadPayoutTakerResult.Execute(w, html.PadPayoutTakerResultData{
+		PadData: html.PadData{
+			LayoutData: html.MakeLayoutData(r),
+			ActiveTab:  "payout",
+			Pad:        authpad,
+		},
+		Name:   takerName,
+		Events: events,
+	})
+	if err != nil {
+		return InternalServerError(err)
+	}
+	return nil
+}
+
 func (srv *Server) padSettingsGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
 	if !authpad.Admin {
 		return NotFound()
@@ -299,6 +505,7 @@ func (srv *Server) padSharePost(w http.ResponseWriter, r *http.Request, authpad 
 		EditRetroAlways:  r.PostFormValue("edit-retro-always") != "",
 		Expires:          expires,
 		Note:             trim(r.PostFormValue("note"), 128),
+		PayoutAll:        r.PostFormValue("payout-all") != "",
 		Take:             take,
 		TakeAll:          r.PostFormValue("take-all") != "",
 		TakeDeadline:     takeDeadline,
@@ -520,9 +727,9 @@ func (srv *Server) shiftAddPost(w http.ResponseWriter, r *http.Request, authpad 
 	ends := r.PostForm["end"]
 	names := r.PostForm["name"]
 	notes := r.PostForm["note"]
+	paids := r.PostForm["paid"]
 
 	var errs []string
-
 	for i := 0; i < min(len(quantites), len(begins), len(ends), len(names), len(notes)); i++ {
 		quantity, err := strconv.Atoi(quantites[i])
 		if err != nil {
@@ -553,10 +760,12 @@ func (srv *Server) shiftAddPost(w http.ResponseWriter, r *http.Request, authpad 
 			continue
 		}
 		note := trim(notes[i], 64)
+		paid := slices.Contains(paids, strconv.Itoa(i)) // Checkbox form input is sparse, so we can't use its indices. Instead we have submitted the form row indices.
 
 		shift := shiftpad.Shift{
 			Name:     name,
 			Note:     note,
+			Paid:     paid,
 			Modified: time.Now().In(authpad.Location),
 			EventUID: eventUID,
 			Quantity: quantity,
@@ -573,12 +782,11 @@ func (srv *Server) shiftAddPost(w http.ResponseWriter, r *http.Request, authpad 
 			return InternalServerError(err)
 		}
 	}
+	srv.sessionManager.Put(r.Context(), "errs", errs)
 
 	if err := srv.UpdatePadLastUpdated(authpad.Pad); err != nil {
 		return InternalServerError(err)
 	}
-
-	srv.sessionManager.Put(r.Context(), "errs", errs)
 
 	redirectDate := way.Param(r.Context(), "date") // alternative: min shift or event begin time
 	return http.RedirectHandler(authpad.Link()+fmt.Sprintf("/day/%s", redirectDate), http.StatusSeeOther)
@@ -672,6 +880,7 @@ func (srv *Server) shiftEditPost(w http.ResponseWriter, r *http.Request, authpad
 	quantity = min(quantity, 64)
 	name := trim(r.PostFormValue("name"), 64)
 	note := trim(r.PostFormValue("note"), 64)
+	paid := r.PostFormValue("paid") != ""
 	eventUID := trim(r.PostFormValue("event-uid"), 128)
 
 	var takes []shiftpad.Take
@@ -686,6 +895,7 @@ func (srv *Server) shiftEditPost(w http.ResponseWriter, r *http.Request, authpad
 				Name:     takerName,
 				Contact:  takerContact,
 				Approved: takeApproved,
+				PaidOut:  take.PaidOut, // keep existing payments
 			})
 		}
 	}
@@ -702,11 +912,11 @@ func (srv *Server) shiftEditPost(w http.ResponseWriter, r *http.Request, authpad
 	if len(newApproved) > 64 {
 		newApproved = newApproved[:64]
 	}
-	maxNew := min(quantity-len(takes), len(newNames), len(newContacts), len(newApproved))
+	maxNew := min(quantity-len(takes), len(newNames), len(newContacts))
 	for i := 0; i < maxNew; i++ {
 		takerName := trim(newNames[i], 64)
 		takerContact := trim(newContacts[i], 128)
-		takeApproved := newApproved[i] != ""
+		takeApproved := slices.Contains(newApproved, strconv.Itoa(i)) // Checkbox form input is sparse, so we can't use its indices. Instead we have submitted the form row indices.
 		if takerName != "" {
 			takes = append(takes, shiftpad.Take{
 				Name:     takerName,
@@ -718,6 +928,7 @@ func (srv *Server) shiftEditPost(w http.ResponseWriter, r *http.Request, authpad
 
 	shift.Name = name
 	shift.Note = note
+	shift.Paid = paid
 	shift.EventUID = eventUID
 	shift.Quantity = quantity
 	shift.Begin = begin
@@ -729,7 +940,7 @@ func (srv *Server) shiftEditPost(w http.ResponseWriter, r *http.Request, authpad
 		return NotFound()
 	}
 
-	if err := srv.DB.UpdateShift(shift); err != nil {
+	if err := srv.DB.UpdateShift(authpad.Pad, shift); err != nil {
 		return InternalServerError(err)
 	}
 	if err := srv.UpdatePadLastUpdated(authpad.Pad); err != nil {
@@ -783,7 +994,7 @@ func (srv *Server) shiftApplyPost(w http.ResponseWriter, r *http.Request, authpa
 		Contact:  takerContact,
 		Approved: false,
 	}
-	if err := srv.DB.TakeShift(shift, take); err != nil {
+	if err := srv.DB.TakeShift(authpad.Pad, shift, take); err != nil {
 		return InternalServerError(err)
 	}
 	if err := srv.UpdatePadLastUpdated(authpad.Pad); err != nil {
@@ -876,7 +1087,7 @@ func (srv *Server) shiftTakePost(w http.ResponseWriter, r *http.Request, authpad
 		Contact:  takerContact,
 		Approved: true,
 	}
-	if err := srv.DB.TakeShift(shift, take); err != nil {
+	if err := srv.DB.TakeShift(authpad.Pad, shift, take); err != nil {
 		return InternalServerError(err)
 	}
 	if err := srv.UpdatePadLastUpdated(authpad.Pad); err != nil {

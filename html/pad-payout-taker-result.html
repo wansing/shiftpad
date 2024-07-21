@@ -1,0 +1,56 @@
+{{define "pad-content"}}
+	<div class="alert alert-success text-center">{{$.Tr "These shifts have been marked as paid out for"}} {{.Name}}:</div>
+	<!-- like pad-payout-taker but without "paid out" column -->
+	{{with .Events}}
+		<table class="table align-middle mb-0">
+			<thead>
+				<tr>
+					<th>{{$.Tr "Time"}}</th>
+					<th>{{$.Tr "Shift"}}</th>
+					<th>{{$.Tr "Taker"}}</th>
+					<th>{{$.Tr "Paid out"}}</th>
+				</tr>
+			</thead>
+			{{range .}}
+				<tbody class="table-group-divider">
+					{{with .Event}}
+						<tr class="table-secondary">
+							<td>{{FmtDateTimeRange .Start .End}}</td>
+							<td colspan="2">
+								{{if .URL}}
+									<a href="{{.URL}}" rel="noreferrer" target="_blank">
+								{{end}}
+								{{with .Summary}}{{.}}{{else}}{{$.Tr "Unknown event"}} {{.UID}}{{end}}
+								{{if .URL}}
+									</a>
+								{{end}}
+							</td>
+						</tr>
+					{{end}}
+					{{range .Shifts}}
+						{{$shift := .}}
+						{{range $i, $take := .Takes}}
+							<tr>
+								{{if eq $i 0}}
+									<td rowspan="{{len $shift.Takes}}">{{FmtDateTimeRange $shift.Begin $shift.End}}</td>
+									<td rowspan="{{len $shift.Takes}}">{{$shift.Name}} {{with $shift.Note}}({{.}}){{end}} {{if $shift.Paid}}<span class="badge bg-secondary">{{$.Tr "paid"}}</span>{{end}}</td>
+								{{end}}
+								<td>
+									{{.Name}}
+									{{with .Contact}}
+										({{.}})
+									{{end}}
+								</td>
+								<td>
+									{{$shift.Hours}} {{$.Tr "hours"}}
+								</td>
+							</tr>
+						{{end}}
+					{{end}}
+				</tbody>
+			{{end}}
+		</table>
+	{{else}}
+		<p>{{$.Tr "No shifts."}}</p>
+	{{end}}
+{{end}}

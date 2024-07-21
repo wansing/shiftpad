@@ -1,0 +1,62 @@
+{{define "pad-content"}}
+	<p>{{$.Tr "Paid shifts taken by"}} {{.Name}}:</p>
+	{{with .Events}}
+		<form method="post">
+			<table class="table align-middle mb-0">
+				<thead>
+					<tr>
+						<th>{{$.Tr "Time"}}</th>
+						<th>{{$.Tr "Shift"}}</th>
+						<th>{{$.Tr "Taker"}}</th>
+						<th>{{$.Tr "Paid out"}}</th>
+					</tr>
+				</thead>
+				{{range .}}
+					<tbody class="table-group-divider">
+						{{with .Event}}
+							<tr class="table-secondary">
+								<td>{{FmtDateTimeRange .Start .End}}</td>
+								<td colspan="3">
+									{{if .URL}}
+										<a href="{{.URL}}" rel="noreferrer" target="_blank">
+									{{end}}
+									{{with .Summary}}{{.}}{{else}}{{$.Tr "Unknown event"}} {{.UID}}{{end}}
+									{{if .URL}}
+										</a>
+									{{end}}
+								</td>
+							</tr>
+						{{end}}
+						{{range .Shifts}}
+							{{$shift := .}}
+							{{range $i, $take := .Takes}}
+								<tr>
+									{{if eq $i 0}}
+										<td rowspan="{{len $shift.Takes}}">{{FmtDateTimeRange $shift.Begin $shift.End}}</td>
+										<td rowspan="{{len $shift.Takes}}">{{$shift.Name}} {{with $shift.Note}}({{.}}){{end}} {{if $shift.Paid}}<span class="badge bg-secondary">{{$.Tr "paid"}}</span>{{end}}</td>
+									{{end}}
+									<td>
+										{{.Name}}
+										{{with .Contact}}
+											({{.}})
+										{{end}}
+										{{if not .Approved}}<span class="badge bg-warning">{{$.Tr "not yet approved"}}</span>{{end}}
+									</td>
+									<td>
+										<div class="form-check">
+											<input class="form-check-input" type="checkbox" name="take" value="{{.ID}}" id="take-{{.ID}}" {{if .PaidOut}}checked{{end}} {{if not ($.Pad.CanPayoutTake $shift $take)}}disabled{{end}}>
+											<label class="form-check-label" for="take-{{.ID}}">{{$shift.Hours}} {{$.Tr "hours"}}</label>
+										</div>
+									</td>
+								</tr>
+							{{end}}
+						{{end}}
+					</tbody>
+				{{end}}
+			</table>
+			<button type="submit" class="btn btn-primary d-print-none my-3">{{$.Tr "Mark as paid out"}}</button>
+		</form>
+	{{else}}
+		<p>{{$.Tr "No shifts."}}</p>
+	{{end}}
+{{end}}

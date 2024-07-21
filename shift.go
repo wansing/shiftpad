@@ -16,6 +16,7 @@ type Shift struct {
 	Modified time.Time // used in ical export
 	Name     string    // matched against Pad.ShiftNames
 	Note     string
+	Paid     bool
 	EventUID string
 	Quantity int
 	Begin    time.Time // required
@@ -39,6 +40,19 @@ func (shift Shift) FullyTaken() bool {
 		}
 	}
 	return approved >= shift.Quantity
+}
+
+func (shift Shift) HasPayouts() bool {
+	for _, take := range shift.Takes {
+		if take.PaidOut {
+			return true
+		}
+	}
+	return false
+}
+
+func (shift Shift) Hours() float64 {
+	return shift.End.Sub(shift.Begin).Hours()
 }
 
 func (shift Shift) String() string {
@@ -83,6 +97,7 @@ func (shift Shift) TakeViews(auth Auth) []Take {
 			Name:     takerName,
 			Contact:  takerContact,
 			Approved: take.Approved,
+			PaidOut:  take.PaidOut,
 		})
 	}
 	if anonymousApproved > 0 {
@@ -117,6 +132,7 @@ type Take struct {
 	Name     string
 	Contact  string
 	Approved bool
+	PaidOut  bool // not PaymentDue (although the zero value would be a good default) because its meaning would change if shift.Paid is changed, and because keeping track of payments is important
 }
 
 func (take Take) String() string {

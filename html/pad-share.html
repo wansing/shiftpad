@@ -39,6 +39,12 @@
 					<label class="form-check-label" for="edit-retro-always">{{$.Tr "Edit retroactively"}}</label>
 				</div>
 
+				<h5 class="mt-3">{{$.Tr "Payout"}}</h5>
+				<div class="form-check">
+					<input class="form-check-input" id="payout-all" type="checkbox" name="payout-all" value="_" {{if not .PayoutAll}}disabled{{end}}>
+					<label class="form-check-label" for="payout-all">{{$.Tr "Mark any shift as paid out"}}</label>
+				</div>
+
 				<h5 class="mt-3">{{$.Tr "Take Shifts"}}</h5>
 				<div class="form-check">
 					<input class="form-check-input" id="take-all" type="checkbox" name="take-all" value="_" onchange="hide('toggle-take', this.checked)" {{if not .TakeAll}}disabled{{end}}>

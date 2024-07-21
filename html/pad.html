@@ -37,6 +37,11 @@
 					<li class="nav-item">
 						<a class="nav-link" href="{{.Link}}/ical" onclick="copyHref(event)">{{$.Tr "Copy iCalendar"}}</a>
 					</li>
+					{{if .CanPayout}}
+						<li class="nav-item">
+							<a class="nav-link {{if eq $.ActiveTab "payout"}}active{{end}}" href="{{.Link}}/payout">{{$.Tr "Payout"}}</a>
+						</li>
+					{{end}}
 					{{if .Admin}}
 						<li class="nav-item">
 							<a class="nav-link {{if eq $.ActiveTab "settings"}}active{{end}}" href="{{.Link}}/settings">{{$.Tr "Settings"}}</a>
