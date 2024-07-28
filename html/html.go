@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -37,6 +38,9 @@ func parse(fn ...string) *template.Template {
 		},
 		"FmtDateTimeRangeRef": func(begin, end, reference time.Time) string {
 			return fmt.Sprintf("%s – %s", dateTimeRef(begin, reference), dateTimeRef(end, reference))
+		},
+		"FmtFloat2": func(f float64) string {
+			return strconv.FormatFloat(f, 'f', 2, 64)
 		},
 		"FmtISODate": func(t time.Time) string {
 			return t.Format("2006-01-02")
@@ -116,7 +120,10 @@ type PadPayoutTakerData struct {
 	Events []shiftpad.Event
 }
 
-type PadPayoutTakerResultData PadPayoutTakerData
+type PadPayoutTakerResultData struct {
+	PadPayoutTakerData
+	SumHours float64
+}
 
 type PadSettingsData struct {
 	PadData

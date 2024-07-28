@@ -62,6 +62,11 @@
             "translation": "Stunden"
         },
         {
+            "id": "Sum",
+            "message": "Sum",
+            "translation": "Summe"
+        },
+        {
             "id": "No shifts.",
             "message": "No shifts.",
             "translation": "Keine Schichten."

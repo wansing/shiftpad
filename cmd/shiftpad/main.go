@@ -391,14 +391,27 @@ func (srv *Server) padPayoutTakerResultGet(w http.ResponseWriter, r *http.Reques
 		lastUID = shift.EventUID
 	}
 
+	// sum hours (as in html template)
+	var sumHours float64
+	for _, event := range events {
+		for _, shift := range event.Shifts {
+			for _ = range shift.Takes { // if someone has multiple takes of a shift, the hours are also added multiple times
+				sumHours += shift.Hours()
+			}
+		}
+	}
+
 	err = html.PadPayoutTakerResult.Execute(w, html.PadPayoutTakerResultData{
-		PadData: html.PadData{
-			LayoutData: html.MakeLayoutData(r),
-			ActiveTab:  "payout",
-			Pad:        authpad,
+		PadPayoutTakerData: html.PadPayoutTakerData{
+			PadData: html.PadData{
+				LayoutData: html.MakeLayoutData(r),
+				ActiveTab:  "payout",
+				Pad:        authpad,
+			},
+			Name:   takerName,
+			Events: events,
 		},
-		Name:   takerName,
-		Events: events,
+		SumHours: sumHours,
 	})
 	if err != nil {
 		return InternalServerError(err)

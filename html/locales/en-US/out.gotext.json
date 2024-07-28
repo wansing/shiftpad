@@ -86,6 +86,13 @@
             "fuzzy": true
         },
         {
+            "id": "Sum",
+            "message": "Sum",
+            "translation": "Sum",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
             "id": "No shifts.",
             "message": "No shifts.",
             "translation": "No shifts.",

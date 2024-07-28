@@ -2,7 +2,7 @@
 	<div class="alert alert-success text-center">{{$.Tr "These shifts have been marked as paid out for"}} {{.Name}}:</div>
 	<!-- like pad-payout-taker but without "paid out" column -->
 	{{with .Events}}
-		<table class="table align-middle mb-0">
+		<table class="table align-middle">
 			<thead>
 				<tr>
 					<th>{{$.Tr "Time"}}</th>
@@ -42,7 +42,7 @@
 									{{end}}
 								</td>
 								<td>
-									{{$shift.Hours}} {{$.Tr "hours"}}
+									{{FmtFloat2 $shift.Hours}} {{$.Tr "hours"}}
 								</td>
 							</tr>
 						{{end}}
@@ -50,6 +50,7 @@
 				</tbody>
 			{{end}}
 		</table>
+		<p>{{$.Tr "Sum"}}: {{FmtFloat2 $.SumHours}} {{$.Tr "hours"}}</p>
 	{{else}}
 		<p>{{$.Tr "No shifts."}}</p>
 	{{end}}
