@@ -19,44 +19,49 @@
 	</script>
 
 	{{with .Pad}}
-		<nav class="navbar bg-light">
+		<nav class="navbar navbar-expand-xxl navbar-light bg-light">
 			<div class="container">
 				<span class="navbar-brand">
 					<a href="{{.Link}}" class="text-decoration-none text-dark text-truncate me-1">{{with .Name}}{{.}}{{else}}{{$.Tr "Unnamed Pad"}}{{end}}</a>
 					{{with .Note}}
-						<span class="badge bg-secondary fw-normal">{{.}}</span>
+						<span class="badge bg-secondary fw-normal d-print-none">{{.}}</span>
 					{{end}}
 					{{with .Expires}}
-						<span class="badge bg-secondary fw-normal">{{$.Tr "Link expires"}} {{.}}</span>
+						<span class="badge bg-secondary fw-normal d-print-none">{{$.Tr "Link expires"}} {{.}}</span>
 					{{end}}
 				</span>
-				<ul class="d-print-none ms-auto nav nav-pills">
-					<li class="nav-item">
-						<a class="nav-link" href="{{.Link}}" onclick="copyHref(event)">{{$.Tr "Copy link"}}</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="{{.Link}}/ical" onclick="copyHref(event)">{{$.Tr "Copy iCalendar"}}</a>
-					</li>
-					{{if .CanPayout}}
+				<button class="navbar-toggler d-print-none" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse d-print-none" id="menu">
+					<ul class="navbar-nav ms-auto">
 						<li class="nav-item">
-							<a class="nav-link {{if eq $.ActiveTab "payout"}}active{{end}}" href="{{.Link}}/payout">{{$.Tr "Payout"}}</a>
+							<a class="nav-link" href="{{.Link}}" onclick="copyHref(event)">{{$.Tr "Copy link"}}</a>
 						</li>
-					{{end}}
-					{{if .Admin}}
 						<li class="nav-item">
-							<a class="nav-link {{if eq $.ActiveTab "settings"}}active{{end}}" href="{{.Link}}/settings">{{$.Tr "Settings"}}</a>
+							<a class="nav-link" href="{{.Link}}/ical" onclick="copyHref(event)">{{$.Tr "Copy iCalendar"}}</a>
 						</li>
-					{{end}}
-					<li class="nav-item">
-						<a class="nav-link {{if eq $.ActiveTab "share"}}active{{end}}" href="{{.Link}}/share">{{$.Tr "Share"}}</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link disabled px-2">{{.Location}}</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link disabled ps-2 pe-0">{{$.Tr "last changed"}} {{.LastUpdated}}</a>
-					</li>
-				</ul>
+						{{if .CanPayout}}
+							<li class="nav-item">
+								<a class="nav-link {{if eq $.ActiveTab "payout"}}active{{end}}" href="{{.Link}}/payout">{{$.Tr "Payout"}}</a>
+							</li>
+						{{end}}
+						{{if .Admin}}
+							<li class="nav-item">
+								<a class="nav-link {{if eq $.ActiveTab "settings"}}active{{end}}" href="{{.Link}}/settings">{{$.Tr "Settings"}}</a>
+							</li>
+						{{end}}
+						<li class="nav-item">
+							<a class="nav-link {{if eq $.ActiveTab "share"}}active{{end}}" href="{{.Link}}/share">{{$.Tr "Share"}}</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link disabled">{{.Location}}</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link disabled">{{$.Tr "last changed"}} {{.LastUpdated}}</a>
+						</li>
+					</ul>
+				</div>
 			</div>
 		</nav>
 		{{with .Description}}
