@@ -138,7 +138,7 @@ func (auth Auth) CanEditShift(shift Shift) bool {
 	return auth.CanEdit(shift.Name) && CheckBeginEnd(shift.Begin, shift.End, auth.EditRetroAlways, MaxFuture) == nil
 }
 
-func (auth Auth) CanEditSomeShift() bool {
+func (auth Auth) CanEditAnyShift() bool {
 	return auth.EditAll || len(auth.Edit) > 0
 }
 

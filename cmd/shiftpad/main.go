@@ -690,7 +690,7 @@ func (srv *Server) padViewWeek(w http.ResponseWriter, r *http.Request, authpad s
 }
 
 func (srv *Server) shiftAddGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
-	if !authpad.CanEditSomeShift() {
+	if !authpad.CanEditAnyShift() {
 		return NotFound()
 	}
 
@@ -729,7 +729,7 @@ func (srv *Server) shiftAddTemplate(w http.ResponseWriter, r *http.Request, auth
 }
 
 func (srv *Server) shiftAddPost(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
-	if !authpad.CanEditSomeShift() {
+	if !authpad.CanEditAnyShift() {
 		return NotFound()
 	}
 

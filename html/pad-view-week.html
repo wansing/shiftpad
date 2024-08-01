@@ -103,7 +103,7 @@
 						{{end}}
 					</table>
 				{{end}}
-				{{if $.Pad.CanEditSomeShift}}
+				{{if $.Pad.CanEditAnyShift}}
 					<a class="btn btn-sm btn-primary d-print-none mt-3" href="{{$.Pad.Link}}/add/{{FmtISODate .Begin}}">{{$.Tr "Create shifts"}}</a>
 				{{end}}
 			</div>
