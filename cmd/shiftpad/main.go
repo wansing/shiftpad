@@ -1092,7 +1092,7 @@ func (srv *Server) shiftTakePost(w http.ResponseWriter, r *http.Request, authpad
 		return http.RedirectHandler(linkDay(authpad, shift.Begin), http.StatusSeeOther)
 	}
 	if !authpad.CanTakerName(*shift, takerName) {
-		return NotFound()
+		return Forbidden()
 	}
 
 	take := shiftpad.Take{

@@ -151,7 +151,7 @@ func (auth Auth) CanPayoutTake(shift Shift, take Take) bool {
 }
 
 func (auth Auth) CanTake(shiftname string) bool {
-	return auth.TakeAll || slices.Contains(auth.Take, shiftname)
+	return (auth.TakerNameAll || len(auth.TakerName) > 0) && (auth.TakeAll || slices.Contains(auth.Take, shiftname))
 }
 
 func (auth Auth) CanTakeShift(shift Shift) bool {
