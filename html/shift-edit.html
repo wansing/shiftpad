@@ -4,64 +4,66 @@
 	{{end}}
 	<form method="post">
 		{{with .Day}}
-			<div class="card mb-3">
-				<div class="card-body">
-					<h5 class="card-title">{{FmtDate .Begin}}</h5>
-					{{with .Groups}}
-						<table class="table align-middle">
-							<thead>
-								<tr>
-									<th>{{$.Tr "Begin"}}</th>
-									<th>{{$.Tr "End"}}</th>
-									<th>{{$.Tr "Quantity"}}</th>
-									<th>{{$.Tr "Shift"}}</th>
-									<th>{{$.Tr "Taker and Approvement"}}</th>
+			<h5>{{FmtDate .Begin}}</h5>
+			{{with .Groups}}
+				<table class="table align-middle">
+					<thead>
+						<tr>
+							<th>{{$.Tr "Time"}}</th>
+							<th>{{$.Tr "Shift"}}</th>
+							<th>{{$.Tr "Taker"}}</th>
+						</tr>
+					</thead>
+					{{range .}}
+						<tbody class="table-group-divider">
+							{{with .Event}}
+								<tr class="table-secondary">
+									<td>{{FmtDateTimeRangeRef .Start .End $.Day.Begin}}</td>
+									<td colspan="2">{{with .Summary}}{{.}}{{else}}{{$.Tr "Unknown event"}} {{.UID}}{{end}}</td>
 								</tr>
-							</thead>
-							{{range .}}
-								<tbody class="table-group-divider">
-									{{with .Event}}
-										<tr class="table-secondary">
-											<td>{{FmtDateTimeRef .Start $.Day.Begin}}</td>
-											<td>{{FmtDateTimeRef .End   $.Day.Begin}}</td>
-											<td colspan="3">{{with .Summary}}{{.}}{{else}}{{$.Tr "Unknown event"}} {{.UID}}{{end}}</td>
-										</tr>
-									{{end}}
-									{{range .Shifts}}
-										{{if eq .ID $.Shift.ID}}
+							{{end}}
+							{{range .Shifts}}
+								{{if eq .ID $.Shift.ID}}
+									<tr class="table-primary" id="shift"><!-- #shift -->
+										<td colspan="3">
 											{{with $.Day.Events}}
-												<tr class="table-warning">
-													<td colspan="5">
-														<div>
-															<div class="form-check">
-																<input class="form-check-input"  id="uid" type="radio" name="event-uid" value="" {{if eq "" $.Shift.EventUID}}checked{{end}}>
-																<label class="form-check-label" for="uid">
-																	{{$.Tr "do not assign to an event"}}
-																</label>
-															</div>
-															{{range .}}
-																<div class="form-check">
-																	<input class="form-check-input"  id="uid-{{.UID}}" type="radio" name="event-uid" value="{{.UID}}" {{if eq .UID $.Shift.EventUID}}checked{{end}}>
-																	<label class="form-check-label" for="uid-{{.UID}}">
-																		{{FmtDateTimeRangeRef .Start .End $.Day.Begin}}: {{with .Summary}}{{.}}{{else}}{{$.Tr "Unknown event"}} {{.UID}}{{end}}
-																	</label>
-																</div>
-															{{end}}
+												<div class="mb-2">
+													<div class="form-check">
+														<input class="form-check-input"  id="uid" type="radio" name="event-uid" value="" {{if eq "" $.Shift.EventUID}}checked{{end}}>
+														<label class="form-check-label" for="uid">
+															{{$.Tr "do not assign to an event"}}
+														</label>
+													</div>
+													{{range .}}
+														<div class="form-check">
+															<input class="form-check-input"  id="uid-{{.UID}}" type="radio" name="event-uid" value="{{.UID}}" {{if eq .UID $.Shift.EventUID}}checked{{end}}>
+															<label class="form-check-label" for="uid-{{.UID}}">
+																{{FmtDateTimeRangeRef .Start .End $.Day.Begin}}: {{with .Summary}}{{.}}{{else}}{{$.Tr "Unknown event"}} {{.UID}}{{end}}
+															</label>
 														</div>
-													</td>
-												</tr>
+													{{end}}
+												</div>
 											{{end}}
-											<tr class="table-warning" role="row"><!-- role is used in javascript functions -->
-												<td>
-													<input type="datetime-local" class="form-control" name="begin" onchange="updateEnd(this)" value="{{FmtISODateTime .Begin}}" min="{{$.MinDate}}T00:00" max="{{$.MaxDate}}T24:00">
-												</td>
-												<td>
-													<input type="datetime-local" class="form-control" name="end" onchange="updateBegin(this)" value="{{FmtISODateTime .End}}" min="{{$.MinDate}}T00:00" max="{{$.MaxDate}}T24:00">
-												</td>
-												<td>
-													<input type="number" class="form-control" size="3" min="1" max="64" name="quantity" value="{{.Quantity}}">
-												</td>
-												<td>
+											<div class="row" role="row"><!-- role is used in javascript functions -->
+												<div class="col-lg-3 mb-1">
+													<div class="input-group">
+														<span class="input-group-text">{{$.Tr "Begin"}}</span>
+														<input type="datetime-local" class="form-control" name="begin" onchange="updateEnd(this)" value="{{FmtISODateTime .Begin}}" min="{{$.MinDate}}T00:00" max="{{$.MaxDate}}T24:00">
+													</div>
+												</div>
+												<div class="col-lg-3 mb-1">
+													<div class="input-group">
+														<span class="input-group-text">{{$.Tr "End"}}</span>
+														<input type="datetime-local" class="form-control" name="end" onchange="updateBegin(this)" value="{{FmtISODateTime .End}}" min="{{$.MinDate}}T00:00" max="{{$.MaxDate}}T24:00">
+													</div>
+												</div>
+												<div class="col-lg-2 mb-1">
+													<div class="input-group">
+														<span class="input-group-text">{{$.Tr "Quantity"}}</span>
+														<input type="number" class="form-control" min="1" max="64" name="quantity" value="{{.Quantity}}">
+													</div>
+												</div>
+												<div class="col-lg-4 mb-1">
 													<div class="input-group">
 														{{$shift := .}}
 														{{if $.Pad.EditAll}}
@@ -91,8 +93,8 @@
 															<label class="form-check-label ms-2" for="paid">{{$.Tr "paid"}}</label>
 														</div>
 													</div>
-												</td>
-												<td>
+												</div>
+												<div class="TODO">
 													<!-- use Takes (not TakeViews) because edit must view everything -->
 													{{range .Takes}}
 														<div class="input-group mb-1">
@@ -112,42 +114,26 @@
 															</div>
 														</div>
 													{{end}}
-												</td>
-											</tr>
-										{{else}}
-											<tr>
-												<td>{{FmtDateTimeRef .Begin $.Day.Begin}}</td>
-												<td>{{FmtDateTimeRef .End   $.Day.Begin}}</td>
-												<td>{{.Quantity}}</td>
-												<td>{{.Name}} {{with .Note}}({{.}}){{end}} {{if .Paid}}<span class="badge bg-secondary">{{$.Tr "paid"}}</span>{{end}}</td>
-												<td>
-													{{$shift := .}}
-													{{range .TakeViews $.Pad.Auth}}
-														<div class="mb-1">
-															{{.Name}}
-															{{with .Contact}}
-																({{.}})
-															{{end}}
-															{{if not .Approved}}
-																<span class="badge bg-warning">not yet approved</span>
-															{{end}}
-															{{if or $shift.Paid .PaidOut}}
-																{{if .PaidOut}}<span class="badge bg-primary">{{$.Tr "paid out"}}</span>{{else}}<span class="badge bg-info">{{$.Tr "not paid out yet"}}</span0>{{end}}
-															{{end}}
-														</div>
-													{{end}}
-												</td>
-											</tr>
-										{{end}}
-									{{end}}
-								</tbody>
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td colspan="3">
+											<button class="btn btn-primary" type="submit">{{$.Tr "Save changes"}}</button>
+											<a class="btn btn-light" href="{{$.Pad.Link}}/day/{{FmtISODate .Begin}}">{{$.Tr "Cancel"}}</a>
+										</td>
+									</tr>
+								{{else}}
+									<tr>
+										{{template "shift-cells" (MakeShiftCellsData $.Lang $.Pad $.Day .)}}
+									</tr>
+								{{end}}
 							{{end}}
-						</table>
-						<button class="btn btn-primary" type="submit">{{$.Tr "Save changes"}}</button>
+						</tbody>
 					{{end}}
-					<a class="btn btn-light" href="{{$.Pad.Link}}/day/{{FmtISODate .Begin}}">{{$.Tr "Cancel"}}</a>
-				</div>
-			</div>
+				</table>
+			{{end}}
 		{{end}}
 	</form>
 {{end}}

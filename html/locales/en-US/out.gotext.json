@@ -345,13 +345,6 @@
             "fuzzy": true
         },
         {
-            "id": "Go",
-            "message": "Go",
-            "translation": "Go",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
             "id": "This",
             "message": "This",
             "translation": "This",
@@ -373,44 +366,9 @@
             "fuzzy": true
         },
         {
-            "id": "Quantity",
-            "message": "Quantity",
-            "translation": "Quantity",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Edit",
-            "message": "Edit",
-            "translation": "Edit",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Delete",
-            "message": "Delete",
-            "translation": "Delete",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Approve",
-            "message": "Approve",
-            "translation": "Approve",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "paid out",
-            "message": "paid out",
-            "translation": "paid out",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "not paid out yet",
-            "message": "not paid out yet",
-            "translation": "not paid out yet",
+            "id": "Create shifts",
+            "message": "Create shifts",
+            "translation": "Create shifts",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -429,9 +387,23 @@
             "fuzzy": true
         },
         {
-            "id": "Create shifts",
-            "message": "Create shifts",
-            "translation": "Create shifts",
+            "id": "Edit",
+            "message": "Edit",
+            "translation": "Edit",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Delete",
+            "message": "Delete",
+            "translation": "Delete",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "No shifts or events yet.",
+            "message": "No shifts or events yet.",
+            "translation": "No shifts or events yet.",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -478,6 +450,27 @@
             "fuzzy": true
         },
         {
+            "id": "applied",
+            "message": "applied",
+            "translation": "applied",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "paid out",
+            "message": "paid out",
+            "translation": "paid out",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "do not assign to an event",
+            "message": "do not assign to an event",
+            "translation": "do not assign to an event",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
             "id": "Begin",
             "message": "Begin",
             "translation": "Begin",
@@ -492,9 +485,9 @@
             "fuzzy": true
         },
         {
-            "id": "do not assign to an event",
-            "message": "do not assign to an event",
-            "translation": "do not assign to an event",
+            "id": "Quantity",
+            "message": "Quantity",
+            "translation": "Quantity",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -520,13 +513,6 @@
             "fuzzy": true
         },
         {
-            "id": "Taker and Approvement",
-            "message": "Taker and Approvement",
-            "translation": "Taker and Approvement",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
             "id": "Contact",
             "message": "Contact",
             "translation": "Contact",
@@ -537,6 +523,13 @@
             "id": "Save changes",
             "message": "Save changes",
             "translation": "Save changes",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "not paid out yet",
+            "message": "not paid out yet",
+            "translation": "not paid out yet",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },

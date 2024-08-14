@@ -19,13 +19,14 @@
 		<div class="d-flex align-items-center justify-content-between">
 			<h5 id="{{FmtISODate .Begin}}">{{FmtDate .Begin}}</h5>
 			{{if $.Pad.CanEditAnyShift}}
-				<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/add/{{FmtISODate .Begin}}">
+				<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/add/{{FmtISODate .Begin}}#shift">
 					<i class="fa-solid fa-plus"></i>
+					<span class="d-none d-md-inline">{{$.Tr "Create shifts"}}</span>
 				</a>
 			{{end}}
 		</div>
 		{{with .Groups}}
-			<table class="table table-sm align-middle">
+			<table class="table align-middle">
 				<thead>
 					<tr>
 						<th>{{$.Tr "Time"}}</th>
@@ -51,42 +52,20 @@
 							</tr>
 						{{end}}
 						{{range .Shifts}}
+							<!-- TODO show one button, which is "take", "apply", or "...". Aus "..." werden dann die Buttons, d.h. keine weitere table row! -->
+							<!-- $more conditions copied from below -->
 							{{$more := or (and ($.Pad.CanTakeShift .) ($.Pad.CanApplyShift .)) ($.Pad.CanEditShift .)}}
 							<tr>
-								<td class="lh-sm">{{FmtDateTimeRef .Begin $day.Begin}} <span class="text-muted text-nowrap">–&hairsp;{{FmtDateTimeRef .End $day.Begin}}</span></td>
-								<td>{{.Quantity}} × {{.Name}} {{with .Note}}({{.}}){{end}} {{if .Paid}}<span class="badge bg-secondary">{{$.Tr "paid"}}</span>{{end}}</td>
-								<td>
-									{{$shift := .}}
-									{{range .TakeViews $.Pad.Auth}}
-										<div>
-											{{.Name}}
-											{{with .Contact}}
-												({{.}})
-											{{end}}
-											{{if not .Approved}}
-												<span class="badge bg-warning">
-													<i class="fa-solid fa-question"></i>
-													<span class="d-none d-md-inline">{{$.Tr "applied"}}</span>
-												</span>
-											{{end}}
-											{{if .PaidOut}}
-												<span class="badge bg-secondary">
-													<i class="fa-solid fa-dollar-sign"></i>
-													<span class="d-none d-md-inline">{{$.Tr "paid out"}}</span>
-												</span>
-											{{end}}
-										</div>
-									{{end}}
-								</td>
+								{{template "shift-cells" (MakeShiftCellsData $.Lang $.Pad $day .)}}
 								<td class="text-end text-nowrap">
 									{{if $.Pad.CanTakeShift .}}
-										<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/take/{{.ID}}">
+										<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/take/{{.ID}}#shift">
 											<i class="fa-solid fa-hand"></i>
 											<span class="d-none d-md-inline">{{$.Tr "Take"}}</span>
 										</a>
 									{{else}}
 										{{if $.Pad.CanApplyShift .}}
-											<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/apply/{{.ID}}">
+											<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/apply/{{.ID}}#shift">
 												<i class="fa-solid fa-hand-point-up"></i>
 												<span class="d-none d-md-inline">{{$.Tr "Apply"}}</span>
 											</a>
@@ -100,7 +79,7 @@
 											<!-- if apply button has been overruled by take button above -->
 											{{if and ($.Pad.CanTakeShift .) ($.Pad.CanApplyShift .)}}
 												<div><!-- for display:block and no margin collapse -->
-													<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/apply/{{.ID}}">
+													<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/apply/{{.ID}}#shift">
 														<i class="fa-solid fa-hand-point-up"></i>
 														<span class="d-none d-md-inline">{{$.Tr "Apply"}}</span>
 													</a>
@@ -108,13 +87,13 @@
 											{{end}}
 											{{if $.Pad.CanEditShift .}}
 												<div><!-- for display:block and no margin collapse -->
-													<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/edit/{{.ID}}">
+													<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/edit/{{.ID}}#shift">
 														<i class="fa-solid fa-pen-to-square"></i>
 														<span class="d-none d-md-inline">{{$.Tr "Edit"}}</span>
 													</a>
 												</div>
 												<div><!-- for display:block and no margin collapse -->
-													<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/delete/{{.ID}}">
+													<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/delete/{{.ID}}#shift">
 														<i class="fa-solid fa-trash"></i>
 														<span class="d-none d-md-inline">{{$.Tr "Delete"}}</span>
 													</a>

@@ -247,11 +247,6 @@
             "translation": "Abbrechen"
         },
         {
-            "id": "Go",
-            "message": "Go",
-            "translation": "Los"
-        },
-        {
             "id": "This",
             "message": "This",
             "translation": "Diese"
@@ -267,34 +262,9 @@
             "translation": "Fehler"
         },
         {
-            "id": "Quantity",
-            "message": "Quantity",
-            "translation": "Anzahl"
-        },
-        {
-            "id": "Edit",
-            "message": "Edit",
-            "translation": "Bearbeiten"
-        },
-        {
-            "id": "Delete",
-            "message": "Delete",
-            "translation": "Löschen"
-        },
-        {
-            "id": "Approve",
-            "message": "Approve",
-            "translation": "Annehmen"
-        },
-        {
-            "id": "paid out",
-            "message": "paid out",
-            "translation": "ausbezahlt"
-        },
-        {
-            "id": "not paid out yet",
-            "message": "not paid out yet",
-            "translation": "noch nicht ausbezahlt"
+            "id": "Create shifts",
+            "message": "Create shifts",
+            "translation": "Schichten anlegen"
         },
         {
             "id": "Take",
@@ -307,9 +277,19 @@
             "translation": "Bewerben"
         },
         {
-            "id": "Create shifts",
-            "message": "Create shifts",
-            "translation": "Schichten anlegen"
+            "id": "Edit",
+            "message": "Edit",
+            "translation": "Bearbeiten"
+        },
+        {
+            "id": "Delete",
+            "message": "Delete",
+            "translation": "Löschen"
+        },
+        {
+            "id": "No shifts or events yet.",
+            "message": "No shifts or events yet.",
+            "translation": "Noch keine Schichten oder Veranstaltungen."
         },
         {
             "id": "Unnamed Pad",
@@ -342,6 +322,21 @@
             "translation": "zuletzt geändert"
         },
         {
+            "id": "applied",
+            "message": "applied",
+            "translation": "beworben"
+        },
+        {
+            "id": "paid out",
+            "message": "paid out",
+            "translation": "ausbezahlt"
+        },
+        {
+            "id": "do not assign to an event",
+            "message": "do not assign to an event",
+            "translation": "keinem Event zugeordnet"
+        },
+        {
             "id": "Begin",
             "message": "Begin",
             "translation": "Beginn"
@@ -352,9 +347,9 @@
             "translation": "Ende"
         },
         {
-            "id": "do not assign to an event",
-            "message": "do not assign to an event",
-            "translation": "keinem Event zugeordnet"
+            "id": "Quantity",
+            "message": "Quantity",
+            "translation": "Anzahl"
         },
         {
             "id": "Shift name",
@@ -372,11 +367,6 @@
             "translation": "Schicht löschen"
         },
         {
-            "id": "Taker and Approvement",
-            "message": "Taker and Approvement",
-            "translation": "Namen und Annahme"
-        },
-        {
             "id": "Contact",
             "message": "Contact",
             "translation": "Kontakt"
@@ -385,6 +375,11 @@
             "id": "Save changes",
             "message": "Save changes",
             "translation": "Änderungen speichern"
+        },
+        {
+            "id": "not paid out yet",
+            "message": "not paid out yet",
+            "translation": "noch nicht ausbezahlt"
         },
         {
             "id": "Apply for shift",

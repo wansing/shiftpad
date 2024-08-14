@@ -76,3 +76,30 @@
 		{{template "pad-content" .}}
 	</div>
 {{end}}
+
+{{define "shift-cells"}}
+	<td class="lh-sm">{{FmtDateTimeRef .Shift.Begin .Day.Begin}} <span class="text-muted text-nowrap">–&hairsp;{{FmtDateTimeRef .Shift.End .Day.Begin}}</span></td>
+	<td>{{.Shift.Quantity}} × {{.Shift.Name}} {{with .Shift.Note}}({{.}}){{end}} {{if .Shift.Paid}}<span class="badge bg-secondary">{{$.Tr "paid"}}</span>{{end}}</td>
+	<td>
+		{{range .Shift.TakeViews $.Pad.Auth}}
+			<div>
+				{{.Name}}
+				{{with .Contact}}
+					({{.}})
+				{{end}}
+				{{if not .Approved}}
+					<span class="badge bg-warning">
+						<i class="fa-solid fa-question"></i>
+						<span class="d-none d-md-inline">{{$.Tr "applied"}}</span>
+					</span>
+				{{end}}
+				{{if .PaidOut}}
+					<span class="badge bg-secondary">
+						<i class="fa-solid fa-dollar-sign"></i>
+						<span class="d-none d-md-inline">{{$.Tr "paid out"}}</span>
+					</span>
+				{{end}}
+			</div>
+		{{end}}
+	</td>
+{{end}}

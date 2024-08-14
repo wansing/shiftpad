@@ -43,85 +43,84 @@ var messageKeyToIndex = map[string]int{
 	"Administrate this pad":          27,
 	"Any shift":                      29,
 	"Any taker name":                 38,
-	"Apply":                          60,
+	"Apply":                          54,
 	"Apply for Shifts":               34,
-	"Apply for shift":                77,
-	"Approve":                        56,
-	"Approve take":                   79,
+	"Apply for shift":                76,
+	"Approve take":                   78,
 	"Back":                           23,
-	"Begin":                          68,
+	"Begin":                          67,
 	"Cancel":                         48,
-	"Contact":                        75,
-	"Copy iCalendar":                 64,
+	"Contact":                        73,
+	"Copy iCalendar":                 60,
 	"Copy link":                      25,
 	"Create new Pad":                 3,
 	"Create share link":              47,
-	"Create shifts":                  61,
+	"Create shifts":                  52,
 	"Create, Edit and Delete Shifts": 28,
 	"Cron expression, example":       37,
 	"Deadline (optional)":            36,
-	"Delete":                         55,
-	"Delete shift":                   73,
+	"Delete":                         56,
+	"Delete shift":                   72,
 	"Description (Markdown)":         18,
-	"Edit":                           54,
+	"Edit":                           55,
 	"Edit retroactively":             30,
-	"End":                            69,
-	"Error":                          52,
+	"End":                            68,
+	"Error":                          51,
 	"Expires":                        45,
-	"Go":                             49,
 	"Link Properties":                44,
-	"Link expires":                   63,
+	"Link expires":                   59,
 	"Location":                       19,
 	"Mark any shift as paid out":     32,
 	"Mark as paid out":               16,
 	"Name":                           17,
-	"Next":                           51,
+	"Next":                           50,
+	"No shifts or events yet.":       57,
 	"No shifts.":                     13,
 	"Note":                           46,
 	"Paid out":                       8,
 	"Paid shifts taken by":           14,
 	"Payout":                         31,
 	"Please use the full link.":      0,
-	"Quantity":                       53,
+	"Quantity":                       69,
 	"Save":                           22,
-	"Save changes":                   76,
-	"Settings":                       65,
-	"Share":                          66,
+	"Save changes":                   74,
+	"Settings":                       61,
+	"Share":                          62,
 	"Shift":                          6,
 	"Shift Names (one name per row)": 20,
-	"Shift name":                     71,
+	"Shift name":                     70,
 	"Sorry, internal server error":   1,
 	"Sorry, not found":               2,
 	"Sum":                            12,
-	"Take":                           59,
+	"Take":                           53,
 	"Take Shifts":                    33,
 	"Take and Apply":                 35,
-	"Take shift":                     78,
+	"Take shift":                     77,
 	"Take shifts as":                 40,
 	"Taker":                          7,
-	"Taker and Approvement":          74,
 	"Taker names":                    39,
 	"These shifts have been marked as paid out for": 4,
-	"This":                               50,
+	"This":                               49,
 	"This is your customized share link": 24,
 	"Time":                               5,
 	"Unknown event":                      9,
-	"Unnamed Pad":                        62,
+	"Unnamed Pad":                        58,
 	"View Shifts":                        41,
 	"View taker contact":                 43,
 	"View taker name":                    42,
-	"do not assign to an event":          70,
+	"applied":                            64,
+	"do not assign to an event":          66,
 	"hours":                              11,
 	"ical Overlay":                       21,
-	"last changed":                       67,
-	"no shifts available":                72,
-	"not paid out yet":                   58,
+	"last changed":                       63,
+	"no shifts available":                71,
+	"not paid out yet":                   75,
 	"not yet approved":                   15,
 	"paid":                               10,
-	"paid out":                           57,
+	"paid out":                           65,
 }
 
-var de_DEIndex = []uint32{ // 81 elements
+var de_DEIndex = []uint32{ // 80 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000028, 0x00000045, 0x0000005b,
 	0x0000006d, 0x000000a1, 0x000000a6, 0x000000ae,
@@ -136,19 +135,18 @@ var de_DEIndex = []uint32{ // 81 elements
 	0x000002e4, 0x000002f8, 0x00000315, 0x00000320,
 	0x00000326, 0x00000340, 0x00000353, 0x00000362,
 	0x00000373, 0x00000386, 0x00000392, 0x0000039a,
-	0x000003b0, 0x000003ba, 0x000003be, 0x000003c4,
-	0x000003cd, 0x000003d4, 0x000003db, 0x000003e6,
-	0x000003ef, 0x000003f8, 0x00000403, 0x00000419,
-	0x00000423, 0x0000042c, 0x0000043e, 0x0000044e,
+	0x000003b0, 0x000003ba, 0x000003c0, 0x000003c9,
+	0x000003d0, 0x000003e2, 0x000003ec, 0x000003f5,
+	0x00000400, 0x00000409, 0x00000434, 0x00000444,
+	0x00000455, 0x0000046d, 0x0000047b, 0x00000482,
 	// Entry 40 - 5F
-	0x0000045f, 0x00000477, 0x00000485, 0x0000048c,
-	0x0000049e, 0x000004a5, 0x000004aa, 0x000004c2,
-	0x000004ca, 0x000004e4, 0x000004f5, 0x00000507,
-	0x0000050f, 0x00000525, 0x0000053a, 0x00000551,
-	0x00000564,
-} // Size: 348 bytes
+	0x00000494, 0x0000049d, 0x000004a8, 0x000004c0,
+	0x000004c7, 0x000004cc, 0x000004d3, 0x000004db,
+	0x000004f5, 0x00000506, 0x0000050e, 0x00000524,
+	0x0000053a, 0x0000054f, 0x00000566, 0x00000579,
+} // Size: 344 bytes
 
-const de_DEData string = "" + // Size: 1380 bytes
+const de_DEData string = "" + // Size: 1401 bytes
 	"\x02Bitte verwende den vollständigen Link.\x02Sorry, interner Serverfehl" +
 	"er\x02Sorry, nicht gefunden\x02Neues Pad anlegen\x02Diese Schichten wurd" +
 	"en als ausbezahlt markiert für\x02Zeit\x02Schicht\x02Name\x02Ausbezahlt" +
@@ -164,16 +162,16 @@ const de_DEData string = "" + // Size: 1380 bytes
 	"\x02Cron-Ausdruck, beispielweise\x02Jeder Name\x02Namen\x02Schichten übe" +
 	"rnehmen als\x02Schichten anzeigen\x02Namen anzeigen\x02Kontakt anzeigen" +
 	"\x02Link-Eigenschaften\x02Gültig bis\x02Hinweis\x02Freigabelink erzeugen" +
-	"\x02Abbrechen\x02Los\x02Diese\x02Nächste\x02Fehler\x02Anzahl\x02Bearbeit" +
-	"en\x02Löschen\x02Annehmen\x02ausbezahlt\x02noch nicht ausbezahlt\x02Eint" +
-	"ragen\x02Bewerben\x02Schichten anlegen\x02Unbenanntes Pad\x02Link gültig" +
-	" bis\x02iCalendar-Link kopieren\x02Einstellungen\x02Teilen\x02zuletzt ge" +
-	"ändert\x02Beginn\x02Ende\x02keinem Event zugeordnet\x02Schicht\x02keine" +
-	" Schichten vorhanden\x02Schicht löschen\x02Namen und Annahme\x02Kontakt" +
-	"\x02Änderungen speichern\x02Auf Schicht bewerben\x02Für Schicht eintrage" +
-	"n\x02Bewerbung annehmen"
+	"\x02Abbrechen\x02Diese\x02Nächste\x02Fehler\x02Schichten anlegen\x02Eint" +
+	"ragen\x02Bewerben\x02Bearbeiten\x02Löschen\x02Noch keine Schichten oder " +
+	"Veranstaltungen.\x02Unbenanntes Pad\x02Link gültig bis\x02iCalendar-Link" +
+	" kopieren\x02Einstellungen\x02Teilen\x02zuletzt geändert\x02beworben\x02" +
+	"ausbezahlt\x02keinem Event zugeordnet\x02Beginn\x02Ende\x02Anzahl\x02Sch" +
+	"icht\x02keine Schichten vorhanden\x02Schicht löschen\x02Kontakt\x02Änder" +
+	"ungen speichern\x02noch nicht ausbezahlt\x02Auf Schicht bewerben\x02Für " +
+	"Schicht eintragen\x02Bewerbung annehmen"
 
-var en_USIndex = []uint32{ // 81 elements
+var en_USIndex = []uint32{ // 80 elements
 	// Entry 0 - 1F
 	0x00000000, 0x0000001a, 0x00000037, 0x00000048,
 	0x00000057, 0x00000085, 0x0000008a, 0x00000090,
@@ -188,17 +186,16 @@ var en_USIndex = []uint32{ // 81 elements
 	0x0000023c, 0x00000250, 0x00000269, 0x00000278,
 	0x00000284, 0x00000293, 0x0000029f, 0x000002af,
 	0x000002c2, 0x000002d2, 0x000002da, 0x000002df,
-	0x000002f1, 0x000002f8, 0x000002fb, 0x00000300,
-	0x00000305, 0x0000030b, 0x00000314, 0x00000319,
-	0x00000320, 0x00000328, 0x00000331, 0x00000342,
-	0x00000347, 0x0000034d, 0x0000035b, 0x00000367,
+	0x000002f1, 0x000002f8, 0x000002fd, 0x00000302,
+	0x00000308, 0x00000316, 0x0000031b, 0x00000321,
+	0x00000326, 0x0000032d, 0x00000346, 0x00000352,
+	0x0000035f, 0x0000036e, 0x00000377, 0x0000037d,
 	// Entry 40 - 5F
-	0x00000374, 0x00000383, 0x0000038c, 0x00000392,
-	0x0000039f, 0x000003a5, 0x000003a9, 0x000003c3,
-	0x000003ce, 0x000003e2, 0x000003ef, 0x00000405,
-	0x0000040d, 0x0000041a, 0x0000042a, 0x00000435,
-	0x00000442,
-} // Size: 348 bytes
+	0x0000038a, 0x00000392, 0x0000039b, 0x000003b5,
+	0x000003bb, 0x000003bf, 0x000003c8, 0x000003d3,
+	0x000003e7, 0x000003f4, 0x000003fc, 0x00000409,
+	0x0000041a, 0x0000042a, 0x00000435, 0x00000442,
+} // Size: 344 bytes
 
 const en_USData string = "" + // Size: 1090 bytes
 	"\x02Please use the full link.\x02Sorry, internal server error\x02Sorry, " +
@@ -213,12 +210,12 @@ const en_USData string = "" + // Size: 1090 bytes
 	"\x02Apply for Shifts\x02Take and Apply\x02Deadline (optional)\x02Cron ex" +
 	"pression, example\x02Any taker name\x02Taker names\x02Take shifts as\x02" +
 	"View Shifts\x02View taker name\x02View taker contact\x02Link Properties" +
-	"\x02Expires\x02Note\x02Create share link\x02Cancel\x02Go\x02This\x02Next" +
-	"\x02Error\x02Quantity\x02Edit\x02Delete\x02Approve\x02paid out\x02not pa" +
-	"id out yet\x02Take\x02Apply\x02Create shifts\x02Unnamed Pad\x02Link expi" +
-	"res\x02Copy iCalendar\x02Settings\x02Share\x02last changed\x02Begin\x02E" +
-	"nd\x02do not assign to an event\x02Shift name\x02no shifts available\x02" +
-	"Delete shift\x02Taker and Approvement\x02Contact\x02Save changes\x02Appl" +
-	"y for shift\x02Take shift\x02Approve take"
+	"\x02Expires\x02Note\x02Create share link\x02Cancel\x02This\x02Next\x02Er" +
+	"ror\x02Create shifts\x02Take\x02Apply\x02Edit\x02Delete\x02No shifts or " +
+	"events yet.\x02Unnamed Pad\x02Link expires\x02Copy iCalendar\x02Settings" +
+	"\x02Share\x02last changed\x02applied\x02paid out\x02do not assign to an " +
+	"event\x02Begin\x02End\x02Quantity\x02Shift name\x02no shifts available" +
+	"\x02Delete shift\x02Contact\x02Save changes\x02not paid out yet\x02Apply" +
+	" for shift\x02Take shift\x02Approve take"
 
-	// Total table size 3166 bytes (3KiB); checksum: C34183FD
+	// Total table size 3179 bytes (3KiB); checksum: FAD3C762

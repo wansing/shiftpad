@@ -4,59 +4,45 @@
 	{{end}}
 	<form method="post">
 		{{with .Day}}
-			<div class="card mb-3">
-				<div class="card-body">
-					<h5 class="card-title">{{FmtDate .Begin}}</h5>
-					{{with .Groups}}
-						<table class="table align-middle">
-							<thead>
-								<tr>
-									<th>{{$.Tr "Time"}}</th>
-									<th>{{$.Tr "Quantity"}}</th>
-									<th>{{$.Tr "Shift"}}</th>
-									<th>{{$.Tr "Taker"}}</th>
+			<h5>{{FmtDate .Begin}}</h5>
+			{{with .Groups}}
+				<table class="table align-middle">
+					<thead>
+						<tr>
+							<th>{{$.Tr "Time"}}</th>
+							<th>{{$.Tr "Shift"}}</th>
+							<th>{{$.Tr "Taker"}}</th>
+						</tr>
+					</thead>
+					{{range .}}
+						<tbody class="table-group-divider">
+							{{with .Event}}
+								<tr class="table-secondary">
+									<td>{{FmtDateTimeRangeRef .Start .End $.Day.Begin}}</td>
+									<td colspan="2">{{with .Summary}}{{.}}{{else}}{{$.Tr "Unknown event"}} {{.UID}}{{end}}</td>
 								</tr>
-							</thead>
-							{{range .}}
-								<tbody class="table-group-divider">
-									{{with .Event}}
-										<tr class="table-secondary">
-											<td>{{FmtDateTimeRangeRef .Start .End $.Day.Begin}}</td>
-											<td colspan="3">{{with .Summary}}{{.}}{{else}}{{$.Tr "Unknown event"}} {{.UID}}{{end}}</td>
-										</tr>
-									{{end}}
-									{{range .Shifts}}
-										<tr {{if eq .ID $.Shift.ID}}class="table-danger" style="text-decoration: line-through"{{end}}>
-												<td>{{FmtDateTimeRangeRef .Begin .End $.Day.Begin}}</td>
-												<td>{{.Quantity}}</td>
-											<td>{{.Name}} {{with .Note}}({{.}}){{end}} {{if .Paid}}<span class="badge bg-secondary">{{$.Tr "paid"}}</span>{{end}}</td>
-											<td>
-												{{$shift := .}}
-												{{range .TakeViews $.Pad.Auth}}
-													<div class="mb-1">
-														{{.Name}}
-														{{with .Contact}}
-															({{.}})
-														{{end}}
-														{{if not .Approved}}
-															<span class="badge bg-warning">not yet approved</span>
-														{{end}}
-														{{if or $shift.Paid .PaidOut}}
-															{{if .PaidOut}}<span class="badge bg-primary">{{$.Tr "paid out"}}</span>{{else}}<span class="badge bg-info">{{$.Tr "not paid out yet"}}</span>{{end}}
-														{{end}}
-													</div>
-												{{end}}
-											</td>
-										</tr>
-									{{end}}
-								</tbody>
 							{{end}}
-						</table>
-						<button class="btn btn-primary" type="submit">{{$.Tr "Delete shift"}}</button>
+							{{range .Shifts}}
+								{{if eq .ID $.Shift.ID}}
+									<tr class="table-danger" style="text-decoration: line-through" id="shift"><!-- #shift -->
+										{{template "shift-cells" (MakeShiftCellsData $.Lang $.Pad $.Day .)}}
+									</tr>
+									<tr>
+										<td colspan="3">
+											<button class="btn btn-danger" type="submit">{{$.Tr "Delete shift"}}</button>
+											<a class="btn btn-light" href="{{$.Pad.Link}}/day/{{FmtISODate .Begin}}">{{$.Tr "Cancel"}}</a>
+										</td>
+									</tr>
+								{{else}}
+									<tr>
+										{{template "shift-cells" (MakeShiftCellsData $.Lang $.Pad $.Day .)}}
+									</tr>
+								{{end}}
+							{{end}}
+						</tbody>
 					{{end}}
-					<a class="btn btn-light" href="{{$.Pad.Link}}/day/{{FmtISODate .Begin}}">{{$.Tr "Cancel"}}</a>
-				</div>
-			</div>
+				</table>
+			{{end}}
 		{{end}}
 	</form>
 {{end}}

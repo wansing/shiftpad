@@ -51,6 +51,14 @@ func parse(fn ...string) *template.Template {
 		"Join": func(elems []string) string {
 			return strings.Join(elems, "\r\n")
 		},
+		"MakeShiftCellsData": func(lang Lang, pad shiftpad.AuthPad, day shiftpad.Day, shift *shiftpad.Shift) ShiftCellsData {
+			return ShiftCellsData{
+				Lang:  lang,
+				Pad:   pad,
+				Day:   day,
+				Shift: shift,
+			}
+		},
 		"Markdown": func(input string) template.HTML {
 			return template.HTML(md.RenderToString([]byte(input)))
 		},
@@ -160,6 +168,14 @@ type TakeApproveData struct {
 	Day   shiftpad.Day
 	Shift *shiftpad.Shift
 	Take  shiftpad.Take
+}
+
+// for subtemplate "shift-cells"
+type ShiftCellsData struct {
+	Lang
+	Pad   shiftpad.AuthPad
+	Day   shiftpad.Day
+	Shift *shiftpad.Shift
 }
 
 type ShiftCreateData struct {
