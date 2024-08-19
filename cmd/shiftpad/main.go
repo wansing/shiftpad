@@ -708,6 +708,18 @@ func (srv *Server) shiftAddTemplate(w http.ResponseWriter, r *http.Request, auth
 		return InternalServerError(err)
 	}
 
+	defaultEventUID := r.URL.Query().Get("event")
+	var ok = false
+	for _, event := range day.Events {
+		if event.UID == defaultEventUID {
+			ok = true
+			break
+		}
+	}
+	if !ok {
+		defaultEventUID = ""
+	}
+
 	var minDate = time.Now()
 	if authpad.EditRetroAlways {
 		minDate = time.Date(2000, time.January, 1, 0, 0, 0, 0, authpad.Location)
@@ -718,10 +730,11 @@ func (srv *Server) shiftAddTemplate(w http.ResponseWriter, r *http.Request, auth
 			LayoutData: html.MakeLayoutData(r),
 			Pad:        authpad,
 		},
-		Day:     day,
-		MaxDate: time.Now().Add(shiftpad.MaxFuture).Format("2006-01-02"),
-		MinDate: minDate.Format("2006-01-02"),
-		Error:   errMsg,
+		Day:             day,
+		DefaultEventUID: defaultEventUID,
+		MaxDate:         time.Now().Add(shiftpad.MaxFuture).Format("2006-01-02"),
+		MinDate:         minDate.Format("2006-01-02"),
+		Error:           errMsg,
 	}); err != nil {
 		return InternalServerError(err)
 	}
