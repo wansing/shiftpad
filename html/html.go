@@ -24,6 +24,9 @@ func dateTimeRef(t, reference time.Time) string {
 	if t.Format(time.DateOnly) == reference.Format(time.DateOnly) {
 		return t.Format("15:04")
 	}
+	if t.Format(time.DateOnly) == reference.AddDate(0, 0, 1).Format(time.DateOnly) && t.Format("15") < reference.Format("15") { // next day at earlier hour
+		return t.Format("15:04")
+	}
 	return t.Format("2. Jan 2006 15:04")
 }
 
@@ -37,7 +40,7 @@ func parse(fn ...string) *template.Template {
 			return fmt.Sprintf("%s – %s", begin.Format("2. Jan 2006 15:04"), dateTimeRef(end, begin)) // begin always contains day, end contains day only if it differs
 		},
 		"FmtDateTimeRangeRef": func(begin, end, reference time.Time) string {
-			return fmt.Sprintf("%s – %s", dateTimeRef(begin, reference), dateTimeRef(end, reference))
+			return fmt.Sprintf("%s – %s", dateTimeRef(begin, reference), dateTimeRef(end, begin)) // end's reference is not $reference, but begin
 		},
 		"FmtFloat2": func(f float64) string {
 			return strconv.FormatFloat(f, 'f', 2, 64)
