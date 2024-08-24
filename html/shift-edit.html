@@ -101,16 +101,19 @@
 															<input type="text" class="form-control" name="taker-name-{{.ID}}"    maxlength="64"  value="{{.Name}}"    placeholder="{{$.Tr "Name"}}">
 															<input type="text" class="form-control" name="taker-contact-{{.ID}}" maxlength="128" value="{{.Contact}}" placeholder="{{$.Tr "Contact"}}">
 															<div class="input-group-text">
-																<input type="checkbox" class="form-check-input mt-0" name="take-approved-{{.ID}}" value="_" {{if .Approved}}checked{{end}}>
+																<input class="form-check-input mt-0"  id="approved-{{.ID}}" type="checkbox" name="approved-{{.ID}}" value="_" {{if .Approved}}checked{{end}}>
+																<label class="form-check-label ms-2" for="approved-{{.ID}}">ok</label>
 															</div>
 														</div>
 													{{end}}
 													{{range $index, $element := .Untaken}}
 														<div class="input-group mb-1">
-															<input type="text" class="form-control" name="new-taker-name"    maxlength="64"  placeholder="{{$.Tr "Name"}}">
-															<input type="text" class="form-control" name="new-taker-contact" maxlength="128" placeholder="{{$.Tr "Contact"}}">
+															<input type="text" class="form-control" name="new-name"    maxlength="64"  placeholder="{{$.Tr "Name"}}">
+															<input type="text" class="form-control" name="new-contact" maxlength="128" placeholder="{{$.Tr "Contact"}}">
 															<div class="input-group-text">
-																<input type="checkbox" class="form-check-input mt-0" name="new-take-approved" value="{{$index}}" checked><!-- checked by default because we have edit permission -->
+																<!-- checked by default because we have edit permission -->
+																<input class="form-check-input mt-0"  id="new-approved" type="checkbox" name="new-approved" value="{{$index}}" checked>
+																<label class="form-check-label ms-2" for="new-approved">ok</label>
 															</div>
 														</div>
 													{{end}}

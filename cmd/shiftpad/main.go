@@ -914,7 +914,7 @@ func (srv *Server) shiftEditPost(w http.ResponseWriter, r *http.Request, authpad
 	for _, take := range shift.Takes {
 		takerName := trim(r.PostFormValue(fmt.Sprintf("taker-name-%d", take.ID)), 64)
 		takerContact := trim(r.PostFormValue(fmt.Sprintf("taker-contact-%d", take.ID)), 128)
-		takeApproved := r.PostFormValue(fmt.Sprintf("take-approved-%d", take.ID)) != ""
+		takeApproved := r.PostFormValue(fmt.Sprintf("approved-%d", take.ID)) != ""
 		if takerName != "" {
 			takes = append(takes, shiftpad.Take{
 				ID:       take.ID, // keep existing id
@@ -926,15 +926,15 @@ func (srv *Server) shiftEditPost(w http.ResponseWriter, r *http.Request, authpad
 		}
 	}
 	// new takes
-	var newNames = r.PostForm["new-taker-name"]
+	var newNames = r.PostForm["new-name"]
 	if len(newNames) > 64 {
 		newNames = newNames[:64]
 	}
-	var newContacts = r.PostForm["new-taker-contact"]
+	var newContacts = r.PostForm["new-contact"]
 	if len(newContacts) > 64 {
 		newContacts = newContacts[:64]
 	}
-	var newApproved = r.PostForm["new-take-approved"]
+	var newApproved = r.PostForm["new-approved"]
 	if len(newApproved) > 64 {
 		newApproved = newApproved[:64]
 	}
