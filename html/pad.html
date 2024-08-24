@@ -39,7 +39,7 @@
 							<a class="nav-link" href="{{.Link}}" onclick="copyHref(event)">{{$.Tr "Copy link"}}</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="{{.Link}}/ical" onclick="copyHref(event)">{{$.Tr "Copy iCalendar"}}</a>
+							<a class="nav-link" href="{{.Readonly.Link}}/ical" onclick="copyHref(event)">{{$.Tr "Copy iCalendar"}}</a>
 						</li>
 						{{if .CanPayout}}
 							<li class="nav-item">

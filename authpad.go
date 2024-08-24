@@ -31,6 +31,19 @@ func (ap AuthPad) Link() string {
 	return fmt.Sprintf("/p/%s/%s/%s", ap.Pad.ID, string(encodedAuth), string(sig64))
 }
 
+// useful for ical link
+func (ap AuthPad) Readonly() AuthPad {
+	return AuthPad{
+		Auth: ap.Restrict(
+			Auth{
+				ViewTakerContact: true,
+				ViewTakerName:    true,
+			},
+		),
+		Pad: ap.Pad,
+	}
+}
+
 // Verify verifies the given base64-encoded signature of the given auth string,
 // decodes the auth string and checks auth.Active().
 func Verify(pad *Pad, authstr, sig string) (AuthPad, error) {
