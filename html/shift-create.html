@@ -50,14 +50,9 @@
 								{{template "shift-cells" (MakeShiftCellsData $.Lang $.Pad $.Day .)}}
 							</tr>
 						{{end}}
-						{{if eq $.DefaultEventUID .Event.UID}}
+						{{if eq .GetUID $.DefaultEventUID}}
 							{{template "trs" $}}
 						{{end}}
-					</tbody>
-				{{end}}
-				{{if eq $.DefaultEventUID ""}}
-					<tbody class="table-group-divider">
-						{{template "trs" $}}
 					</tbody>
 				{{end}}
 			</table>

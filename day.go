@@ -12,6 +12,13 @@ type Event struct {
 	Shifts []Shift
 }
 
+func (event Event) GetUID() string {
+	if event.Event == nil {
+		return ""
+	}
+	return event.Event.UID
+}
+
 type Day struct {
 	Begin  time.Time // inclusive
 	End    time.Time // exclusive
