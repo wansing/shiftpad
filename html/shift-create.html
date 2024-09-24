@@ -37,7 +37,19 @@
 						<th>{{$.Tr "Taker"}}</th>
 					</tr>
 				</thead>
-				{{range .Groups}}
+				{{if or (.Shifts) (eq "" $.DefaultEventUID)}}<!-- if there are shifts without an event or we are creating a shift without an event -->
+					<tbody class="table-group-divider">
+						{{range .Shifts}}
+							<tr>
+								{{template "shift-cells" (MakeShiftCellsData $.Lang $.Pad $.Day .)}}
+							</tr>
+						{{end}}
+						{{if eq "" $.DefaultEventUID}}
+							{{template "trs" $}}
+						{{end}}
+					</tbody>
+				{{end}}
+				{{range .Events}}<!-- not .Groups because we have already processed .Shifts -->
 					<tbody class="table-group-divider">
 						{{with .Event}}
 							<tr class="table-secondary">
