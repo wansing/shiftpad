@@ -21,6 +21,7 @@ var ErrUnauthorized = errors.New("unauthorized")
 type DB struct {
 	SQLDB                *sql.DB
 	addPad               *sql.Stmt
+	addShare             *sql.Stmt
 	addShift             *sql.Stmt
 	addTaker             *sql.Stmt
 	addTakerWithID       *sql.Stmt
@@ -31,6 +32,8 @@ type DB struct {
 	deleteShifts         *sql.Stmt
 	deleteTakers         *sql.Stmt
 	getPad               *sql.Stmt
+	getShare             *sql.Stmt
+	getShares            *sql.Stmt
 	getShift             *sql.Stmt
 	getShifts            *sql.Stmt
 	getShiftsByEvent     *sql.Stmt
@@ -62,8 +65,12 @@ func OpenDB(dbpath string) (*DB, error) {
 			last_updated text not null,
 			location     text not null,
 			name         text not null,
-			private_key  text not null,
 			shift_names  text not null
+		);
+		create table if not exists share (
+			secret text primary key,
+			pad    text not null,
+			auth   text not null
 		);
 		create table if not exists shift (
 			id            integer primary key,
@@ -106,9 +113,17 @@ func OpenDB(dbpath string) (*DB, error) {
 			last_updated,
 			location,
 			name,
-			private_key,
 			shift_names
-		) values (?, ?, ?, ?, ?, ?, ?, ?)`)
+		) values (?, ?, ?, ?, ?, ?, ?)`)
+	if err != nil {
+		return nil, err
+	}
+	db.addShare, err = sqlDB.Prepare(`
+		insert into share (
+			secret,
+			pad,
+			auth
+		) values (?, ?, ?)`)
 	if err != nil {
 		return nil, err
 	}
@@ -199,11 +214,27 @@ func OpenDB(dbpath string) (*DB, error) {
 			last_updated,
 			location,
 			name,
-			private_key,
 			shift_names
 		from pad
 		where id = ?
 		limit 1`)
+	if err != nil {
+		return nil, err
+	}
+	db.getShare, err = sqlDB.Prepare(`
+		select auth
+		from share
+		where secret = ?
+			and pad = ?`)
+	if err != nil {
+		return nil, err
+	}
+	db.getShares, err = sqlDB.Prepare(`
+		select
+			secret,
+			auth
+		from share
+		where pad = ?`)
 	if err != nil {
 		return nil, err
 	}
@@ -353,7 +384,12 @@ func OpenDB(dbpath string) (*DB, error) {
 
 func (db *DB) AddPad(pad shiftpad.Pad) error {
 	shiftnames := strings.Join(pad.ShiftNames, "\n")
-	_, err := db.addPad.Exec(pad.ID, pad.Description, pad.ICalOverlay, pad.LastUpdated, pad.Location.String(), pad.Name, pad.PrivateKey, shiftnames)
+	_, err := db.addPad.Exec(pad.ID, pad.Description, pad.ICalOverlay, pad.LastUpdated, pad.Location.String(), pad.Name, shiftnames)
+	return err
+}
+
+func (db *DB) AddShare(pad shiftpad.Pad, secret string, auth shiftpad.Auth) error {
+	_, err := db.addShare.Exec(secret, pad.ID, auth.Encode())
 	return err
 }
 
@@ -390,12 +426,12 @@ func (db *DB) DeleteShift(shift *shiftpad.Shift) error {
 	return err
 }
 
-func (db *DB) GetPad(id string) (*shiftpad.Pad, error) {
+func (db *DB) GetAuthPad(id, secret string) (shiftpad.AuthPad, error) {
 	var pad = &shiftpad.Pad{}
 	var location string
 	var shiftnames string
-	if err := db.getPad.QueryRow(id).Scan(&pad.ID, &pad.Description, &pad.ICalOverlay, &pad.LastUpdated, &location, &pad.Name, &pad.PrivateKey, &shiftnames); err != nil {
-		return nil, err
+	if err := db.getPad.QueryRow(id).Scan(&pad.ID, &pad.Description, &pad.ICalOverlay, &pad.LastUpdated, &location, &pad.Name, &shiftnames); err != nil {
+		return shiftpad.AuthPad{}, err
 	}
 	loc, err := time.LoadLocation(location)
 	if err != nil {
@@ -403,7 +439,49 @@ func (db *DB) GetPad(id string) (*shiftpad.Pad, error) {
 	}
 	pad.Location = loc
 	pad.ShiftNames = strings.FieldsFunc(shiftnames, func(r rune) bool { return r == '\r' || r == '\n' })
-	return pad, nil
+
+	var authstr string
+	if err := db.getShare.QueryRow(secret, pad.ID).Scan(&authstr); err != nil {
+		return shiftpad.AuthPad{}, err
+	}
+	auth, err := shiftpad.DecodeAuth(authstr)
+	if err != nil {
+		return shiftpad.AuthPad{}, err
+	}
+
+	return shiftpad.AuthPad{
+		Pad: pad,
+		Share: shiftpad.Share{
+			Auth:   auth,
+			Secret: secret,
+		},
+	}, nil
+}
+
+func (db *DB) GetShares(pad *shiftpad.Pad) ([]shiftpad.Share, error) {
+	rows, err := db.getShares.Query(pad.ID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var shares []shiftpad.Share
+	for rows.Next() {
+		var secret string
+		var authStr string
+		if err := rows.Scan(&secret, &authStr); err != nil {
+			return nil, err
+		}
+		auth, err := shiftpad.DecodeAuth(authStr)
+		if err != nil {
+			return nil, err
+		}
+		shares = append(shares, shiftpad.Share{
+			Auth:   auth,
+			Secret: secret,
+		})
+	}
+	return shares, nil
 }
 
 func (db *DB) GetShift(pad *shiftpad.Pad, id int) (*shiftpad.Shift, error) {

@@ -1,7 +1,6 @@
 package shiftpad
 
 import (
-	"crypto/ed25519"
 	"crypto/rand"
 	"encoding/binary"
 	"time"
@@ -17,27 +16,27 @@ type Pad struct {
 	LastUpdated string         // yyyy-mm-dd, update on take and edit (updating on view would cost some performance)
 	Location    *time.Location // must not be nil
 	Name        string
-	PrivateKey  ed25519.PrivateKey
 	ShiftNames  []string
 }
 
-func NewPad() (Pad, error) {
-	var id = make([]byte, 20)
-	for i := range id {
-		id[i] = newDigit()
-	}
-
-	_, privateKey, err := ed25519.GenerateKey(rand.Reader)
-	if err != nil {
-		return Pad{}, err
-	}
-
-	return Pad{
-		ID:          string(id),
+func NewPad() *Pad {
+	return &Pad{
+		ID:          randStr(16),
 		LastUpdated: time.Now().Format(time.DateOnly),
 		Location:    SystemLocation,
-		PrivateKey:  privateKey,
-	}, nil
+	}
+}
+
+func NewShareID() string {
+	return randStr(20)
+}
+
+func randStr(length int) string {
+	var bs = make([]byte, length)
+	for i := range bs {
+		bs[i] = newDigit()
+	}
+	return string(bs)
 }
 
 func newDigit() byte {

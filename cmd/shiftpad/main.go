@@ -63,32 +63,32 @@ func main() {
 	router.Handle(http.MethodGet, "/", HandlerFunc(srv.indexGet))
 	router.Handle(http.MethodGet, "/create/:key", srv.withCreateKey(srv.createGet))
 	router.Handle(http.MethodPost, "/create/:key", srv.withCreateKey(srv.createPost))
-	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig", srv.withPad(srv.padViewGet))
-	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig", srv.withPad(srv.padViewPost))
-	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/apply/:shift", srv.withShift(srv.shiftApplyGet))
-	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/apply/:shift", srv.withShift(srv.shiftApplyPost))
-	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/payout", srv.withPad(srv.padPayoutGet))
-	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/payout/:taker", srv.withPad(srv.padPayoutTakerGet))
-	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/payout/:taker", srv.withPad(srv.padPayoutTakerPost))
-	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/payout/:taker/result", srv.withPad(srv.padPayoutTakerResultGet))
-	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/settings", srv.withPad(srv.padSettingsGet))
-	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/settings", srv.withPad(srv.padSettingsPost))
-	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/share", srv.withPad(srv.padShareGet))
-	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/share", srv.withPad(srv.padSharePost))
-	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/ical", srv.withPad(srv.padICal))
-	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/day/:date", srv.withPad(srv.padViewDay))
-	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/week/:year/:week", srv.withPad(srv.padViewWeekGet))
-	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/week/:year/:week", srv.withPad(srv.padViewPost)) // same handler as without :year/:week
-	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/add/:date", srv.withPad(srv.shiftAddGet))
-	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/add/:date", srv.withPad(srv.shiftAddPost))
-	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/approve/:shift/:take", srv.withTake(srv.takeApproveGet))
-	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/approve/:shift/:take", srv.withTake(srv.takeApprovePost))
-	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/take/:shift", srv.withShift(srv.shiftTakeGet))
-	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/take/:shift", srv.withShift(srv.shiftTakePost))
-	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/edit/:shift", srv.withShift(srv.shiftEditGet))
-	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/edit/:shift", srv.withShift(srv.shiftEditPost))
-	router.Handle(http.MethodGet, "/p/:pad/:auth/:authsig/delete/:shift", srv.withShift(srv.shiftDeleteGet))
-	router.Handle(http.MethodPost, "/p/:pad/:auth/:authsig/delete/:shift", srv.withShift(srv.shiftDeletePost))
+	router.Handle(http.MethodGet, "/p/:pad/:secret", srv.withPad(srv.padViewGet))
+	router.Handle(http.MethodPost, "/p/:pad/:secret", srv.withPad(srv.padViewPost))
+	router.Handle(http.MethodGet, "/p/:pad/:secret/apply/:shift", srv.withShift(srv.shiftApplyGet))
+	router.Handle(http.MethodPost, "/p/:pad/:secret/apply/:shift", srv.withShift(srv.shiftApplyPost))
+	router.Handle(http.MethodGet, "/p/:pad/:secret/payout", srv.withPad(srv.padPayoutGet))
+	router.Handle(http.MethodGet, "/p/:pad/:secret/payout/:taker", srv.withPad(srv.padPayoutTakerGet))
+	router.Handle(http.MethodPost, "/p/:pad/:secret/payout/:taker", srv.withPad(srv.padPayoutTakerPost))
+	router.Handle(http.MethodGet, "/p/:pad/:secret/payout/:taker/result", srv.withPad(srv.padPayoutTakerResultGet))
+	router.Handle(http.MethodGet, "/p/:pad/:secret/settings", srv.withPad(srv.padSettingsGet))
+	router.Handle(http.MethodPost, "/p/:pad/:secret/settings", srv.withPad(srv.padSettingsPost))
+	router.Handle(http.MethodGet, "/p/:pad/:secret/share", srv.withPad(srv.padShareGet))
+	router.Handle(http.MethodPost, "/p/:pad/:secret/share", srv.withPad(srv.padSharePost))
+	router.Handle(http.MethodGet, "/p/:pad/:secret/ical", srv.withPad(srv.padICal))
+	router.Handle(http.MethodGet, "/p/:pad/:secret/day/:date", srv.withPad(srv.padViewDay))
+	router.Handle(http.MethodGet, "/p/:pad/:secret/week/:year/:week", srv.withPad(srv.padViewWeekGet))
+	router.Handle(http.MethodPost, "/p/:pad/:secret/week/:year/:week", srv.withPad(srv.padViewPost)) // same handler as without :year/:week
+	router.Handle(http.MethodGet, "/p/:pad/:secret/add/:date", srv.withPad(srv.shiftAddGet))
+	router.Handle(http.MethodPost, "/p/:pad/:secret/add/:date", srv.withPad(srv.shiftAddPost))
+	router.Handle(http.MethodGet, "/p/:pad/:secret/approve/:shift/:take", srv.withTake(srv.takeApproveGet))
+	router.Handle(http.MethodPost, "/p/:pad/:secret/approve/:shift/:take", srv.withTake(srv.takeApprovePost))
+	router.Handle(http.MethodGet, "/p/:pad/:secret/take/:shift", srv.withShift(srv.shiftTakeGet))
+	router.Handle(http.MethodPost, "/p/:pad/:secret/take/:shift", srv.withShift(srv.shiftTakePost))
+	router.Handle(http.MethodGet, "/p/:pad/:secret/edit/:shift", srv.withShift(srv.shiftEditGet))
+	router.Handle(http.MethodPost, "/p/:pad/:secret/edit/:shift", srv.withShift(srv.shiftEditPost))
+	router.Handle(http.MethodGet, "/p/:pad/:secret/delete/:shift", srv.withShift(srv.shiftDeleteGet))
+	router.Handle(http.MethodPost, "/p/:pad/:secret/delete/:shift", srv.withShift(srv.shiftDeletePost))
 
 	log.Println("listening to 127.0.0.1:8200")
 	http.ListenAndServe("127.0.0.1:8200", srv.sessionManager.LoadAndSave(router))
@@ -113,12 +113,11 @@ func (srv *Server) withCreateKey(f HandlerFunc) HandlerFunc {
 
 func (srv *Server) withPad(f func(http.ResponseWriter, *http.Request, shiftpad.AuthPad) http.Handler) HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) http.Handler {
-		pad, err := srv.DB.GetPad(way.Param(r.Context(), "pad"))
+		authpad, err := srv.DB.GetAuthPad(way.Param(r.Context(), "pad"), way.Param(r.Context(), "secret"))
 		if err != nil {
 			return NotFound()
 		}
-		authpad, err := shiftpad.Verify(pad, way.Param(r.Context(), "auth"), way.Param(r.Context(), "authsig"))
-		if err != nil {
+		if !authpad.Active() {
 			return Forbidden()
 		}
 		return f(w, r, authpad)
@@ -188,20 +187,24 @@ func (srv *Server) createGet(w http.ResponseWriter, r *http.Request) http.Handle
 }
 
 func (srv *Server) createPost(w http.ResponseWriter, r *http.Request) http.Handler {
-	newPad, err := shiftpad.NewPad()
-	if err != nil {
-		return InternalServerError(err)
-	}
-	if err := srv.DB.AddPad(newPad); err != nil {
-		return InternalServerError(err)
-	}
 	authpad := shiftpad.AuthPad{
-		Auth: shiftpad.Auth{
-			Admin: true,
-			Note:  "Admin-Link",
+		Pad: shiftpad.NewPad(),
+		Share: shiftpad.Share{
+			Auth: shiftpad.Auth{
+				Admin: true,
+				Note:  "Admin-Link",
+			},
+			Secret: shiftpad.NewShareID(),
 		},
-		Pad: &newPad,
 	}
+
+	if err := srv.DB.AddPad(*authpad.Pad); err != nil {
+		return InternalServerError(err)
+	}
+	if err := srv.DB.AddShare(*authpad.Pad, authpad.Secret, authpad.Auth); err != nil {
+		return InternalServerError(err)
+	}
+
 	return http.RedirectHandler(authpad.Link(), http.StatusSeeOther)
 }
 
@@ -529,14 +532,22 @@ func (srv *Server) padSharePost(w http.ResponseWriter, r *http.Request, authpad 
 	}
 	shareAuth = authpad.Restrict(shareAuth)
 
+	secret := shiftpad.NewShareID()
+	if err := srv.DB.AddShare(*authpad.Pad, secret, shareAuth); err != nil {
+		return InternalServerError(err)
+	}
+
 	var scheme = "https"
 	if r.Host == "127.0.0.1" || strings.HasPrefix(r.Host, "127.0.0.1:") || strings.HasSuffix(r.Host, ".onion") {
 		scheme = "http"
 	}
 
 	sharePad := shiftpad.AuthPad{
-		Auth: shareAuth,
-		Pad:  authpad.Pad,
+		Pad: authpad.Pad,
+		Share: shiftpad.Share{
+			Auth:   shareAuth,
+			Secret: secret,
+		},
 	}
 
 	err := html.PadShareResult.Execute(w, html.PadShareResultData{

@@ -12,12 +12,13 @@ import (
 
 type DB interface {
 	AddPad(shiftpad.Pad) error
+	AddShare(pad shiftpad.Pad, id string, auth shiftpad.Auth) error
 	AddShift(*shiftpad.Pad, shiftpad.Shift) error
 	ApproveTake(*shiftpad.Shift, shiftpad.Take) error
 	DeletePad(shiftpad.Pad) error
 	DeletePads(string) error
 	DeleteShift(*shiftpad.Shift) error
-	GetPad(id string) (*shiftpad.Pad, error)
+	GetAuthPad(id, secret string) (shiftpad.AuthPad, error)
 	GetShift(pad *shiftpad.Pad, shift int) (*shiftpad.Shift, error)
 	GetShifts(pad *shiftpad.Pad, from, to int64) ([]shiftpad.Shift, error) // begin: from inclusive, to exclusive
 	GetShiftsByEvent(pad *shiftpad.Pad, eventUID string) ([]shiftpad.Shift, error)

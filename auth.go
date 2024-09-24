@@ -9,6 +9,11 @@ import (
 
 const encodeEmptyAuth = "-" // instead of empty string, so slashes are not collapsed
 
+type Share struct {
+	Auth
+	Secret string
+}
+
 type Auth struct {
 	Admin            bool
 	Apply            []string
@@ -197,7 +202,7 @@ func CheckBeginEnd(begin, end time.Time, pastAlways bool, future time.Duration) 
 // Encode copies the contents of auth into url.Values and encodes them.
 // Note that url.Values are designed for url queries, not url path elements.
 // The only difference is the representation of the space character.
-func (auth Auth) Encode() ([]byte, error) {
+func (auth Auth) Encode() []byte {
 	var values = make(url.Values)
 	if auth.Admin {
 		values.Set("admin", "1")
@@ -248,7 +253,7 @@ func (auth Auth) Encode() ([]byte, error) {
 	if encoded == "" {
 		encoded = encodeEmptyAuth
 	}
-	return []byte(encoded), nil
+	return []byte(encoded)
 }
 
 // Restricts returns a copy of input which is restricted to a reference Auth.
