@@ -37,14 +37,14 @@
 						<th>{{$.Tr "Taker"}}</th>
 					</tr>
 				</thead>
-				{{if or (.Shifts) (eq "" $.DefaultEventUID)}}<!-- if there are shifts without an event or we are creating a shift without an event -->
+				{{if or (.Shifts) (eq $.EventUID "")}}<!-- if there are shifts without an event or we are creating a shift without an event -->
 					<tbody class="table-group-divider">
 						{{range .Shifts}}
 							<tr>
 								{{template "shift-cells" (MakeShiftCellsData $.Lang $.Pad $.Day .)}}
 							</tr>
 						{{end}}
-						{{if eq "" $.DefaultEventUID}}
+						{{if eq $.EventUID ""}}
 							{{template "trs" $}}
 						{{end}}
 					</tbody>
@@ -62,7 +62,7 @@
 								{{template "shift-cells" (MakeShiftCellsData $.Lang $.Pad $.Day .)}}
 							</tr>
 						{{end}}
-						{{if eq .GetUID $.DefaultEventUID}}
+						{{if eq $.EventUID .GetUID}}
 							{{template "trs" $}}
 						{{end}}
 					</tbody>
@@ -76,24 +76,7 @@
 	{{with $.Day}}
 		<tr class="table-primary" id="shift"><!-- #shift -->
 			<td colspan="3">
-				{{with $.Day.Events}}
-					<div class="mb-2">
-						<div class="form-check">
-							<input class="form-check-input" id="uid" type="radio" name="event-uid" value="" {{if eq $.DefaultEventUID ""}}checked{{end}}>
-							<label class="form-check-label" for="uid">
-								{{$.Tr "do not assign to an event"}}
-							</label>
-						</div>
-						{{range .}}
-							<div class="form-check">
-								<input class="form-check-input"  id="uid-{{.UID}}" type="radio" name="event-uid" value="{{.UID}}" {{if eq $.DefaultEventUID .UID}}checked{{end}}>
-								<label class="form-check-label" for="uid-{{.UID}}">
-									{{FmtDateTimeRangeRef .Start .End $.Day.Begin}}: {{with .Summary}}{{.}}{{else}}{{$.Tr "Unknown event"}} {{.UID}}{{end}}
-								</label>
-							</div>
-						{{end}}
-					</div>
-				{{end}}
+				<input type="hidden" name="event-uid" value="{{$.EventUID}}">
 				<div class="row" role="row"><!-- role is used in javascript functions -->
 					<div class="col-lg-3 mb-1">
 						<div class="input-group">

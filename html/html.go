@@ -183,11 +183,11 @@ type ShiftCellsData struct {
 
 type ShiftCreateData struct {
 	PadData
-	Day             shiftpad.Day
-	DefaultEventUID string
-	MaxDate         string
-	MinDate         string
-	Error           string
+	Day      shiftpad.Day
+	EventUID string
+	MaxDate  string
+	MinDate  string
+	Error    string
 }
 
 type ShiftDeleteData struct {

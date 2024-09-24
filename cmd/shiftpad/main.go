@@ -719,16 +719,16 @@ func (srv *Server) shiftAddTemplate(w http.ResponseWriter, r *http.Request, auth
 		return InternalServerError(err)
 	}
 
-	defaultEventUID := r.URL.Query().Get("event")
+	eventUID := r.URL.Query().Get("event")
 	var ok = false
 	for _, event := range day.Events {
-		if event.UID == defaultEventUID {
+		if event.UID == eventUID {
 			ok = true
 			break
 		}
 	}
 	if !ok {
-		defaultEventUID = ""
+		eventUID = ""
 	}
 
 	var minDate = time.Now()
@@ -741,11 +741,11 @@ func (srv *Server) shiftAddTemplate(w http.ResponseWriter, r *http.Request, auth
 			LayoutData: html.MakeLayoutData(r),
 			Pad:        authpad,
 		},
-		Day:             day,
-		DefaultEventUID: defaultEventUID,
-		MaxDate:         time.Now().Add(shiftpad.MaxFuture).Format("2006-01-02"),
-		MinDate:         minDate.Format("2006-01-02"),
-		Error:           errMsg,
+		Day:      day,
+		EventUID: eventUID,
+		MaxDate:  time.Now().Add(shiftpad.MaxFuture).Format("2006-01-02"),
+		MinDate:  minDate.Format("2006-01-02"),
+		Error:    errMsg,
 	}); err != nil {
 		return InternalServerError(err)
 	}
@@ -757,7 +757,7 @@ func (srv *Server) shiftAddPost(w http.ResponseWriter, r *http.Request, authpad 
 		return NotFound()
 	}
 
-	eventUID := trim(r.PostFormValue("event-uid"), 128)
+	eventUID := trim(r.PostFormValue("event-uid"), 128) // could also be taken from url query
 
 	quantites := r.PostForm["quantity"]
 	begins := r.PostForm["begin"]
