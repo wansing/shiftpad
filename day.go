@@ -1,6 +1,8 @@
 package shiftpad
 
 import (
+	"cmp"
+	"slices"
 	"sort"
 	"time"
 
@@ -91,13 +93,13 @@ func GetWeek(repo Repository, pad *Pad, year, week int, location *time.Location)
 		}
 	}
 
-	// move independent shifts into their individual day
+	// move independent shifts to their day
 	for _, shift := range shifts {
 		shiftDay := closestDay(days, shift.Begin)
 		shiftDay.Shifts = append(shiftDay.Shifts, shift)
 	}
 
-	// move events
+	// move events to their day
 	for _, event := range events {
 		eventDay := closestDay(days, event.Start)
 		eventDay.Events = append(eventDay.Events, event)
@@ -189,6 +191,12 @@ func GetInterval(repo Repository, pad *Pad, from, to time.Time, location *time.L
 		return a.Event.Start.Before(b.Event.Start)
 	})
 
+	// sort shifts
+	for i := range events {
+		sortShifts(events[i].Shifts)
+	}
+	sortShifts(independentShifts)
+
 	return events, independentShifts, nil
 }
 
@@ -239,4 +247,13 @@ func overlaps(begin1, end1, begin2, end2 time.Time) bool {
 	}
 
 	return true
+}
+
+func sortShifts(shifts []Shift) {
+	slices.SortFunc(shifts, func(a, b Shift) int {
+		if c := cmp.Compare(a.Begin.Unix(), b.Begin.Unix()); c != 0 {
+			return c
+		}
+		return cmp.Compare(a.Name, b.Name)
+	})
 }
