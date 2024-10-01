@@ -78,7 +78,7 @@
 {{end}}
 
 {{define "shift-cells"}}
-	<td class="lh-sm">{{FmtDateTimeRef .Shift.Begin .Day.Begin}} <span class="text-muted text-nowrap">–&hairsp;{{FmtDateTimeRef .Shift.End .Day.Begin}}</span></td>
+	<td class="lh-sm">{{FmtDateTimeRef .Shift.Begin .Day.Begin}} <span class="text-muted text-nowrap">–&hairsp;{{FmtDateTimeRef .Shift.End .Shift.Begin}}</span></td>
 	<td>{{.Shift.Quantity}} × {{.Shift.Name}} {{with .Shift.Note}}({{.}}){{end}} {{if .Shift.Paid}}<span class="badge bg-secondary">{{$.Tr "paid"}}</span>{{end}}</td>
 	<td>
 		{{range .Shift.TakeViews $.Pad.Auth}}
