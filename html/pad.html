@@ -85,7 +85,7 @@
 			<div>
 				{{.Name}}
 				{{with .Contact}}
-					({{.}})
+					<span class="text-muted">{{.}}</span>
 				{{end}}
 				{{if not .Approved}}
 					<span class="badge bg-warning">
