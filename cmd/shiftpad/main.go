@@ -59,7 +59,7 @@ func main() {
 
 	// httprouter does not work here because of its %2F bug: https://github.com/julienschmidt/httprouter/issues/208
 	var router = way.NewRouter()
-	router.Handle(http.MethodGet, "/static/", http.StripPrefix("/static", http.FileServer(http.FS(static.Files))))
+	router.Handle(http.MethodGet, "/static/", http.StripPrefix("/static", http.FileServerFS(ModTimeFS{static.Files, time.Now()})))
 	router.Handle(http.MethodGet, "/", HandlerFunc(srv.indexGet))
 	router.Handle(http.MethodGet, "/create/:key", srv.withCreateKey(srv.createGet))
 	router.Handle(http.MethodPost, "/create/:key", srv.withCreateKey(srv.createPost))
