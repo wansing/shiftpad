@@ -71,6 +71,7 @@ func parse(fn ...string) *template.Template {
 		"Truncate": func(s string, maxlen int) string {
 			if len(s) > maxlen {
 				s = s[:maxlen]
+				s = strings.TrimSpace(s) // return "foo..." instead of "foo ..."
 			}
 			return s
 		},
