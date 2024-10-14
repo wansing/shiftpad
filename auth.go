@@ -98,6 +98,11 @@ func DecodeAuth(s string) (Auth, error) {
 		// edit -> take, take -> apply
 		auth.Take = Union(auth.Take, auth.Edit)
 		auth.Apply = Union(auth.Apply, auth.Take)
+
+		// edit any -> all taker names
+		if len(auth.Edit) > 0 {
+			auth.TakerNameAll = true
+		}
 	}
 	if exp := values.Get("expires"); exp != "" {
 		auth.Expires = exp
@@ -156,7 +161,7 @@ func (auth Auth) CanPayoutTake(shift Shift, take Take) bool {
 }
 
 func (auth Auth) CanTake(shiftname string) bool {
-	return (auth.TakerNameAll || len(auth.TakerName) > 0) && (auth.TakeAll || slices.Contains(auth.Take, shiftname))
+	return (auth.TakerNameAll || len(auth.TakerName) > 0) && (auth.TakeAll || slices.Contains(auth.Take, shiftname)) // taker name exists && shift name is allowed
 }
 
 func (auth Auth) CanTakeShift(shift Shift) bool {
