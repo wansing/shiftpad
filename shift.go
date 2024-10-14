@@ -73,10 +73,10 @@ func (shift Shift) TakeViews(auth Auth) []Take {
 		// copy authorized data to local variables
 		var takerName string
 		var takerContact string
-		if auth.ViewTakerName || slices.Contains(auth.TakerName, take.Name) {
+		if auth.ViewTakerName || slices.Contains(auth.Edit, shift.Name) || slices.Contains(auth.TakerName, take.Name) {
 			takerName = take.Name
 		}
-		if auth.ViewTakerContact {
+		if auth.ViewTakerContact || slices.Contains(auth.Edit, shift.Name) {
 			takerContact = take.Contact
 		}
 
