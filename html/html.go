@@ -68,6 +68,12 @@ func parse(fn ...string) *template.Template {
 		"Max": func(a, b int) int {
 			return max(a, b)
 		},
+		"Truncate": func(s string, maxlen int) string {
+			if len(s) > maxlen {
+				s = s[:maxlen]
+			}
+			return s
+		},
 	}).ParseFS(files, fn...))
 }
 

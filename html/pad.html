@@ -83,10 +83,26 @@
 	<td>
 		{{range .Shift.TakeViews $.Pad.Auth}}
 			<div>
-				{{.Name}}
-				{{with .Contact}}
-					<span class="text-muted">{{.}}</span>
-				{{end}}
+				<span class="d-md-none">
+					{{if or (gt (len .Name) 10) .Contact}}
+						<span role="button" onclick="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none')">{{Truncate .Name 8}}&hellip;</span>
+						<span class="d-none">
+							{{.Name}}
+							{{with .Contact}}
+								<span class="text-muted">{{.}}</span>
+							{{end}}
+						</span>
+					{{else}}
+						{{.Name}}
+					{{end}}
+				</span>
+				<span class="d-none d-md-inline">
+					{{.Name}}
+					{{with .Contact}}
+						<span class="text-muted">{{.}}</span>
+					{{end}}
+				</span>
+
 				{{if not .Approved}}
 					<span class="badge bg-warning">
 						<i class="fa-solid fa-question"></i>
