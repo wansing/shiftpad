@@ -332,11 +332,6 @@
             "translation": "ausbezahlt"
         },
         {
-            "id": "do not assign to an event",
-            "message": "do not assign to an event",
-            "translation": "keinem Event zugeordnet"
-        },
-        {
             "id": "Begin",
             "message": "Begin",
             "translation": "Beginn"
@@ -345,6 +340,11 @@
             "id": "End",
             "message": "End",
             "translation": "Ende"
+        },
+        {
+            "id": "Begin must be before end.",
+            "message": "Begin must be before end.",
+            "translation": "Der Beginn muss vor dem Ende liegen."
         },
         {
             "id": "Quantity",
@@ -365,6 +365,11 @@
             "id": "Delete shift",
             "message": "Delete shift",
             "translation": "Schicht löschen"
+        },
+        {
+            "id": "do not assign to an event",
+            "message": "do not assign to an event",
+            "translation": "keinem Event zugeordnet"
         },
         {
             "id": "Contact",

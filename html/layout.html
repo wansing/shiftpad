@@ -10,28 +10,17 @@
 		<link href="/static/fontawesome-free-6.6.0-web/css/solid.min.css" rel="stylesheet">
 		<script src="/static/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
 		<script>
-			function updateBegin(element) {
+			function beginEndUpdated(element) {
 				let row = element.closest('[role="row"]');
 				let begin = row.querySelector('[name="begin"]');
 				let end = row.querySelector('[name="end"]');
-				// set max
-				begin.max = end.value;
-				// fix value
-				if(begin.value >= begin.max) {
-					let duration = Math.abs(Date.parse(end.defaultValue + ":00.000Z") - Date.parse(begin.defaultValue + ":00.000Z")) // GMT
-					begin.value = new Date(Date.parse(end.value + ":00.000Z") - duration).toISOString().slice(0, -8);
-				}
-			}
-			function updateEnd(element) {
-				let row = element.closest('[role="row"]');
-				let begin = row.querySelector('[name="begin"]');
-				let end = row.querySelector('[name="end"]');
-				// set min
-				end.min = begin.value;
-				// fix value
-				if(end.value <= end.min) {
-					let duration = Math.abs(Date.parse(end.defaultValue + ":00.000Z") - Date.parse(begin.defaultValue + ":00.000Z")) // GMT
-					end.value = new Date(Date.parse(begin.value + ":00.000Z") + duration).toISOString().slice(0, -8);
+				let submit = document.querySelector('button[type="submit"]');
+				if(begin.value < end.value) {
+					end.classList.remove("is-invalid");
+					submit.disabled = false;
+				} else {
+					end.classList.add("is-invalid");
+					submit.disabled = true;
 				}
 			}
 		</script>

@@ -45,12 +45,13 @@ var messageKeyToIndex = map[string]int{
 	"Any taker name":                 38,
 	"Apply":                          54,
 	"Apply for Shifts":               34,
-	"Apply for shift":                76,
-	"Approve take":                   78,
+	"Apply for shift":                77,
+	"Approve take":                   79,
 	"Back":                           23,
-	"Begin":                          67,
+	"Begin":                          66,
+	"Begin must be before end.":      68,
 	"Cancel":                         48,
-	"Contact":                        73,
+	"Contact":                        74,
 	"Copy iCalendar":                 60,
 	"Copy link":                      25,
 	"Create new Pad":                 3,
@@ -64,7 +65,7 @@ var messageKeyToIndex = map[string]int{
 	"Description (Markdown)":         18,
 	"Edit":                           55,
 	"Edit retroactively":             30,
-	"End":                            68,
+	"End":                            67,
 	"Error":                          51,
 	"Expires":                        45,
 	"Link Properties":                44,
@@ -83,7 +84,7 @@ var messageKeyToIndex = map[string]int{
 	"Please use the full link.":      0,
 	"Quantity":                       69,
 	"Save":                           22,
-	"Save changes":                   74,
+	"Save changes":                   75,
 	"Settings":                       61,
 	"Share":                          62,
 	"Shift":                          6,
@@ -95,7 +96,7 @@ var messageKeyToIndex = map[string]int{
 	"Take":                           53,
 	"Take Shifts":                    33,
 	"Take and Apply":                 35,
-	"Take shift":                     77,
+	"Take shift":                     78,
 	"Take shifts as":                 40,
 	"Taker":                          7,
 	"Taker names":                    39,
@@ -109,18 +110,18 @@ var messageKeyToIndex = map[string]int{
 	"View taker contact":                 43,
 	"View taker name":                    42,
 	"applied":                            64,
-	"do not assign to an event":          66,
+	"do not assign to an event":          73,
 	"hours":                              11,
 	"ical Overlay":                       21,
 	"last changed":                       63,
 	"no shifts available":                71,
-	"not paid out yet":                   75,
+	"not paid out yet":                   76,
 	"not yet approved":                   15,
 	"paid":                               10,
 	"paid out":                           65,
 }
 
-var de_DEIndex = []uint32{ // 80 elements
+var de_DEIndex = []uint32{ // 81 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000028, 0x00000045, 0x0000005b,
 	0x0000006d, 0x000000a1, 0x000000a6, 0x000000ae,
@@ -140,13 +141,14 @@ var de_DEIndex = []uint32{ // 80 elements
 	0x00000400, 0x00000409, 0x00000434, 0x00000444,
 	0x00000455, 0x0000046d, 0x0000047b, 0x00000482,
 	// Entry 40 - 5F
-	0x00000494, 0x0000049d, 0x000004a8, 0x000004c0,
-	0x000004c7, 0x000004cc, 0x000004d3, 0x000004db,
-	0x000004f5, 0x00000506, 0x0000050e, 0x00000524,
-	0x0000053a, 0x0000054f, 0x00000566, 0x00000579,
-} // Size: 344 bytes
+	0x00000494, 0x0000049d, 0x000004a8, 0x000004af,
+	0x000004b4, 0x000004d9, 0x000004e0, 0x000004e8,
+	0x00000502, 0x00000513, 0x0000052b, 0x00000533,
+	0x00000549, 0x0000055f, 0x00000574, 0x0000058b,
+	0x0000059e,
+} // Size: 348 bytes
 
-const de_DEData string = "" + // Size: 1401 bytes
+const de_DEData string = "" + // Size: 1438 bytes
 	"\x02Bitte verwende den vollständigen Link.\x02Sorry, interner Serverfehl" +
 	"er\x02Sorry, nicht gefunden\x02Neues Pad anlegen\x02Diese Schichten wurd" +
 	"en als ausbezahlt markiert für\x02Zeit\x02Schicht\x02Name\x02Ausbezahlt" +
@@ -166,12 +168,13 @@ const de_DEData string = "" + // Size: 1401 bytes
 	"ragen\x02Bewerben\x02Bearbeiten\x02Löschen\x02Noch keine Schichten oder " +
 	"Veranstaltungen.\x02Unbenanntes Pad\x02Link gültig bis\x02iCalendar-Link" +
 	" kopieren\x02Einstellungen\x02Teilen\x02zuletzt geändert\x02beworben\x02" +
-	"ausbezahlt\x02keinem Event zugeordnet\x02Beginn\x02Ende\x02Anzahl\x02Sch" +
-	"icht\x02keine Schichten vorhanden\x02Schicht löschen\x02Kontakt\x02Änder" +
-	"ungen speichern\x02noch nicht ausbezahlt\x02Auf Schicht bewerben\x02Für " +
-	"Schicht eintragen\x02Bewerbung annehmen"
+	"ausbezahlt\x02Beginn\x02Ende\x02Der Beginn muss vor dem Ende liegen.\x02" +
+	"Anzahl\x02Schicht\x02keine Schichten vorhanden\x02Schicht löschen\x02kei" +
+	"nem Event zugeordnet\x02Kontakt\x02Änderungen speichern\x02noch nicht au" +
+	"sbezahlt\x02Auf Schicht bewerben\x02Für Schicht eintragen\x02Bewerbung a" +
+	"nnehmen"
 
-var en_USIndex = []uint32{ // 80 elements
+var en_USIndex = []uint32{ // 81 elements
 	// Entry 0 - 1F
 	0x00000000, 0x0000001a, 0x00000037, 0x00000048,
 	0x00000057, 0x00000085, 0x0000008a, 0x00000090,
@@ -191,13 +194,14 @@ var en_USIndex = []uint32{ // 80 elements
 	0x00000326, 0x0000032d, 0x00000346, 0x00000352,
 	0x0000035f, 0x0000036e, 0x00000377, 0x0000037d,
 	// Entry 40 - 5F
-	0x0000038a, 0x00000392, 0x0000039b, 0x000003b5,
-	0x000003bb, 0x000003bf, 0x000003c8, 0x000003d3,
-	0x000003e7, 0x000003f4, 0x000003fc, 0x00000409,
-	0x0000041a, 0x0000042a, 0x00000435, 0x00000442,
-} // Size: 344 bytes
+	0x0000038a, 0x00000392, 0x0000039b, 0x000003a1,
+	0x000003a5, 0x000003bf, 0x000003c8, 0x000003d3,
+	0x000003e7, 0x000003f4, 0x0000040e, 0x00000416,
+	0x00000423, 0x00000434, 0x00000444, 0x0000044f,
+	0x0000045c,
+} // Size: 348 bytes
 
-const en_USData string = "" + // Size: 1090 bytes
+const en_USData string = "" + // Size: 1116 bytes
 	"\x02Please use the full link.\x02Sorry, internal server error\x02Sorry, " +
 	"not found\x02Create new Pad\x02These shifts have been marked as paid out" +
 	" for\x02Time\x02Shift\x02Taker\x02Paid out\x02Unknown event\x02paid\x02h" +
@@ -213,9 +217,9 @@ const en_USData string = "" + // Size: 1090 bytes
 	"\x02Expires\x02Note\x02Create share link\x02Cancel\x02This\x02Next\x02Er" +
 	"ror\x02Create shifts\x02Take\x02Apply\x02Edit\x02Delete\x02No shifts or " +
 	"events yet.\x02Unnamed Pad\x02Link expires\x02Copy iCalendar\x02Settings" +
-	"\x02Share\x02last changed\x02applied\x02paid out\x02do not assign to an " +
-	"event\x02Begin\x02End\x02Quantity\x02Shift name\x02no shifts available" +
-	"\x02Delete shift\x02Contact\x02Save changes\x02not paid out yet\x02Apply" +
-	" for shift\x02Take shift\x02Approve take"
+	"\x02Share\x02last changed\x02applied\x02paid out\x02Begin\x02End\x02Begi" +
+	"n must be before end.\x02Quantity\x02Shift name\x02no shifts available" +
+	"\x02Delete shift\x02do not assign to an event\x02Contact\x02Save changes" +
+	"\x02not paid out yet\x02Apply for shift\x02Take shift\x02Approve take"
 
-	// Total table size 3179 bytes (3KiB); checksum: FAD3C762
+	// Total table size 3250 bytes (3KiB); checksum: 3EEF0747

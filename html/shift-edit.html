@@ -48,13 +48,14 @@
 												<div class="col-lg-3 mb-1">
 													<div class="input-group">
 														<span class="input-group-text">{{$.Tr "Begin"}}</span>
-														<input type="datetime-local" class="form-control" name="begin" onchange="updateEnd(this)" value="{{FmtISODateTime .Begin}}" min="{{$.MinDate}}T00:00" max="{{$.MaxDate}}T24:00">
+														<input type="datetime-local" class="form-control" name="begin" onchange="beginEndUpdated(this)" value="{{FmtISODateTime .Begin}}" min="{{$.MinDate}}T00:00" max="{{$.MaxDate}}T24:00">
 													</div>
 												</div>
 												<div class="col-lg-3 mb-1">
 													<div class="input-group">
 														<span class="input-group-text">{{$.Tr "End"}}</span>
-														<input type="datetime-local" class="form-control" name="end" onchange="updateBegin(this)" value="{{FmtISODateTime .End}}" min="{{$.MinDate}}T00:00" max="{{$.MaxDate}}T24:00">
+														<input type="datetime-local" class="form-control" name="end" onchange="beginEndUpdated(this)" value="{{FmtISODateTime .End}}" min="{{$.MinDate}}T00:00" max="{{$.MaxDate}}T24:00">
+														<div class="invalid-feedback">{{$.Tr "Begin must be before end."}}</div>
 													</div>
 												</div>
 												<div class="col-lg-2 mb-1">

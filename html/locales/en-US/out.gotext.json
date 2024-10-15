@@ -464,13 +464,6 @@
             "fuzzy": true
         },
         {
-            "id": "do not assign to an event",
-            "message": "do not assign to an event",
-            "translation": "do not assign to an event",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
             "id": "Begin",
             "message": "Begin",
             "translation": "Begin",
@@ -481,6 +474,13 @@
             "id": "End",
             "message": "End",
             "translation": "End",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Begin must be before end.",
+            "message": "Begin must be before end.",
+            "translation": "Begin must be before end.",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -509,6 +509,13 @@
             "id": "Delete shift",
             "message": "Delete shift",
             "translation": "Delete shift",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "do not assign to an event",
+            "message": "do not assign to an event",
+            "translation": "do not assign to an event",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
