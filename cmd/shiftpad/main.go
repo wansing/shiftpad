@@ -507,30 +507,24 @@ func (srv *Server) padSharePost(w http.ResponseWriter, r *http.Request, authpad 
 		}
 	}
 
-	apply := shiftpad.Intersect(authpad.ShiftNames, r.PostForm["apply"])
-	edit := shiftpad.Intersect(authpad.ShiftNames, r.PostForm["edit"])
-	take := shiftpad.Intersect(authpad.ShiftNames, r.PostForm["take"])
-	takerName := split(r.PostFormValue("taker-name")) // taker-name is a textarea, not checkboxes
-
-	shareAuth := shiftpad.Auth{
+	shareAuth := authpad.Restrict(shiftpad.Auth{
 		Admin:            r.PostFormValue("admin") != "",
-		Apply:            apply,
+		Apply:            r.PostForm["apply"],
 		ApplyAll:         r.PostFormValue("apply-all") != "",
-		Edit:             edit,
+		Edit:             r.PostForm["edit"],
 		EditAll:          r.PostFormValue("edit-all") != "",
 		EditRetroAlways:  r.PostFormValue("edit-retro-always") != "",
 		Expires:          expires,
 		Note:             trim(r.PostFormValue("note"), 128),
 		PayoutAll:        r.PostFormValue("payout-all") != "",
-		Take:             take,
+		Take:             r.PostForm["take"],
 		TakeAll:          r.PostFormValue("take-all") != "",
 		TakeDeadline:     takeDeadline,
-		TakerName:        takerName,
+		TakerName:        split(r.PostFormValue("taker-name")), // from textarea, not checkboxes
 		TakerNameAll:     r.PostFormValue("taker-name-all") != "",
 		ViewTakerContact: r.PostFormValue("view-taker-contact") != "",
 		ViewTakerName:    r.PostFormValue("view-taker-name") != "",
-	}
-	shareAuth = authpad.Restrict(shareAuth)
+	})
 
 	secret := shiftpad.NewShareID()
 	if err := srv.DB.AddShare(*authpad.Pad, secret, shareAuth); err != nil {
