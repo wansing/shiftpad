@@ -4,10 +4,20 @@ import (
 	"errors"
 	"net/url"
 	"slices"
+	"strings"
 	"time"
 )
 
 const encodeEmptyAuth = "-" // instead of empty string, so slashes are not collapsed
+
+func containsFold(slice []string, s string) bool {
+	for _, elem := range slice {
+		if strings.EqualFold(elem, s) {
+			return true
+		}
+	}
+	return false
+}
 
 type Share struct {
 	Auth
@@ -128,7 +138,7 @@ func (auth Auth) Active() bool {
 }
 
 func (auth Auth) CanApply(shiftname string) bool {
-	return auth.ApplyAll || slices.Contains(auth.Apply, shiftname)
+	return auth.ApplyAll || containsFold(auth.Apply, shiftname)
 }
 
 func (auth Auth) CanApplyShift(shift Shift) bool {
@@ -140,7 +150,7 @@ func (auth Auth) CanApplyName(shift Shift, name string) bool {
 }
 
 func (auth Auth) CanEdit(shiftname string) bool {
-	return auth.EditAll || slices.Contains(auth.Edit, shiftname)
+	return auth.EditAll || containsFold(auth.Edit, shiftname)
 }
 
 // When editing a shift, CanEditShift must be called on the original and on the modified shift.
@@ -153,7 +163,7 @@ func (auth Auth) CanEditAnyShift() bool {
 }
 
 func (auth Auth) CanPayout() bool {
-	return auth.PayoutAll // || slices.Contains(auth.Payout, shiftname)
+	return auth.PayoutAll // || containsFold(auth.Payout, shiftname)
 }
 
 func (auth Auth) CanPayoutTake(shift Shift, take Take) bool {
@@ -161,7 +171,7 @@ func (auth Auth) CanPayoutTake(shift Shift, take Take) bool {
 }
 
 func (auth Auth) CanTake(shiftname string) bool {
-	return (auth.TakerNameAll || len(auth.TakerName) > 0) && (auth.TakeAll || slices.Contains(auth.Take, shiftname)) // taker name exists && shift name is allowed
+	return (auth.TakerNameAll || len(auth.TakerName) > 0) && (auth.TakeAll || containsFold(auth.Take, shiftname)) // taker name exists && shift name is allowed
 }
 
 func (auth Auth) CanTakeShift(shift Shift) bool {
