@@ -24,11 +24,12 @@ type Shift struct {
 	Takes    []Take
 }
 
-func (shift Shift) AfterDeadline(deadline string) bool {
+// AfterDeadline returns true if the shift begins after the next deadline.
+func (shift Shift) AfterDeadline(deadline string, now time.Time) bool {
 	if deadline == "" {
 		return true // no deadline
 	}
-	nextDeadline := cronexpr.MustParse(deadline).Next(time.Now())
+	nextDeadline := cronexpr.MustParse(deadline).Next(now)
 	return shift.Begin.After(nextDeadline)
 }
 
