@@ -1,7 +1,7 @@
 {{define "pad-content"}}
-	{{with .TakerNames}}
+	{{if .TakerNames}}
 		<div class="list-group">
-			{{range .}}
+			{{range .Sort .TakerNames}}
 				<a href="{{$.Pad.Link}}/payout/{{.}}" class="list-group-item list-group-item-action">{{.}}</a>
 			{{end}}
 		</div>

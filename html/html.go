@@ -11,6 +11,7 @@ import (
 
 	"github.com/wansing/shiftpad"
 	"gitlab.com/golang-commonmark/markdown"
+	"golang.org/x/text/collate"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 )
@@ -98,6 +99,12 @@ var (
 )
 
 type Lang language.Tag
+
+func (l Lang) Sort(strs []string) []string {
+	collator := collate.New(language.Tag(l), collate.IgnoreCase) // collator is not thread-safe btw
+	collator.SortStrings(strs)
+	return strs
+}
 
 func (l Lang) Tr(key message.Reference, a ...interface{}) string {
 	return message.NewPrinter(language.Tag(l)).Sprintf(key, a...)
