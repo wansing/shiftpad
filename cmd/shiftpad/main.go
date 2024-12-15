@@ -237,7 +237,11 @@ func (srv *Server) padPayoutTakerGet(w http.ResponseWriter, r *http.Request, aut
 		return NotFound()
 	}
 
-	takerName := way.Param(r.Context(), "taker")
+	takerName, err := url.PathUnescape(way.Param(r.Context(), "taker")) // TODO use net/http router, then check if PathUnescape is still required
+	if err != nil {
+		return NotFound()
+	}
+
 	shifts, err := srv.DB.GetTakesByTaker(authpad.Pad, takerName)
 	if err != nil {
 		return InternalServerError(err)
