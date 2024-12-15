@@ -294,9 +294,12 @@ func OpenDB(dbpath string) (*DB, error) {
 		return nil, err
 	}
 	db.getTakerNames, err = sqlDB.Prepare(`
-		select distinct name
-		from taker
-		where pad = ?`)
+		select distinct taker.name
+		from shift, taker
+		where shift.id = taker.shift
+			and (shift.paid = true or taker.paid_out = true)
+			and shift.pad = ?
+		`)
 	if err != nil {
 		return nil, err
 	}
