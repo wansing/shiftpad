@@ -31,8 +31,8 @@ type FeedCache struct {
 	lock         sync.RWMutex
 }
 
-// Get returns all events. The location parameter is only used if the ical data contains no TZID location.
-func (cache *FeedCache) Get(location *time.Location) ([]Event, error) {
+// Get returns all events. The defaultLocation parameter is used if the ical data contains no TZID location.
+func (cache *FeedCache) Get(defaultLocation *time.Location) ([]Event, error) {
 	if cache.URL == "" {
 		return nil, nil
 	}
@@ -117,18 +117,18 @@ func (cache *FeedCache) Get(location *time.Location) ([]Event, error) {
 					if tzid := prop.Params.Get(ical.PropTimezoneID); tzid != "" {
 						_, err := time.LoadLocation(tzid)
 						if err != nil {
-							prop.Params.Set(ical.PropTimezoneID, location.String())
+							prop.Params.Set(ical.PropTimezoneID, defaultLocation.String())
 						}
 					}
 				}
 			}
 
-			// go-ical: "Use the TZID location, if available."
-			start, err := event.DateTimeStart(location)
+			// go-ical "use[s] the TZID location, if available"
+			start, err := event.DateTimeStart(defaultLocation)
 			if err != nil {
 				return nil, fmt.Errorf("getting start time: %w", err)
 			}
-			end, err := event.DateTimeEnd(location)
+			end, err := event.DateTimeEnd(defaultLocation)
 			if err != nil {
 				return nil, fmt.Errorf("getting end time: %w", err)
 			}
