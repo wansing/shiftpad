@@ -32,29 +32,29 @@ type FeedCache struct {
 }
 
 // Get returns all events. The location parameter is only used if the ical data contains no TZID location.
-func (fc *FeedCache) Get(location *time.Location) ([]Event, error) {
-	if fc.URL == "" {
+func (cache *FeedCache) Get(location *time.Location) ([]Event, error) {
+	if cache.URL == "" {
 		return nil, nil
 	}
 
-	if fc.Interval < 30*time.Second { // see also http client timeout
-		fc.Interval = 2 * time.Minute
+	if cache.Interval < 30*time.Second { // see also http client timeout
+		cache.Interval = 2 * time.Minute
 	}
 
-	if time.Since(fc.lastChecked) < fc.Interval {
-		return fc.events, nil
+	if time.Since(cache.lastChecked) < cache.Interval {
+		return cache.events, nil
 	}
 
 	// first call takes the write lock and does the job, subsequent calls wait until the job is finished
-	if fc.lock.TryLock() {
-		defer fc.lock.Unlock()
+	if cache.lock.TryLock() {
+		defer cache.lock.Unlock()
 
-		req, err := http.NewRequest(http.MethodHead, fc.URL, nil)
+		req, err := http.NewRequest(http.MethodHead, cache.URL, nil)
 		if err != nil {
 			return nil, err
 		}
-		if fc.Username != "" {
-			req.SetBasicAuth(fc.Username, fc.Password)
+		if cache.Config.Username != "" {
+			req.SetBasicAuth(cache.Config.Username, cache.Config.Password)
 		}
 
 		resp, err := client.Do(req)
@@ -63,18 +63,18 @@ func (fc *FeedCache) Get(location *time.Location) ([]Event, error) {
 		}
 
 		if lastModified, err := time.Parse("Mon, 02 Jan 2006 15:04:05 GMT", resp.Header.Get("Last-Modified")); err == nil {
-			if lastModified.Before(fc.lastModified) || lastModified.Equal(fc.lastModified) {
-				return fc.events, nil
+			if lastModified.Before(cache.lastModified) || lastModified.Equal(cache.lastModified) {
+				return cache.events, nil
 			}
-			fc.lastModified = lastModified
+			cache.lastModified = lastModified
 		}
 
-		req, err = http.NewRequest(http.MethodGet, fc.URL, nil)
+		req, err = http.NewRequest(http.MethodGet, cache.URL, nil)
 		if err != nil {
 			return nil, err
 		}
-		if fc.Username != "" {
-			req.SetBasicAuth(fc.Username, fc.Password)
+		if cache.Config.Username != "" {
+			req.SetBasicAuth(cache.Config.Username, cache.Config.Password)
 		}
 
 		resp, err = client.Do(req)
@@ -84,8 +84,8 @@ func (fc *FeedCache) Get(location *time.Location) ([]Event, error) {
 
 		cal, err := ical.NewDecoder(resp.Body).Decode()
 		if err == io.EOF { // no calendars in file
-			fc.events = nil
-			return fc.events, nil
+			cache.events = nil
+			return cache.events, nil
 		}
 		if err != nil {
 			return nil, err
@@ -144,13 +144,13 @@ func (fc *FeedCache) Get(location *time.Location) ([]Event, error) {
 			})
 		}
 
-		fc.events = events
-		fc.lastChecked = time.Now()
+		cache.events = events
+		cache.lastChecked = time.Now()
 	} else {
 		// wait until write lock is released
-		fc.lock.RLock()
-		fc.lock.RUnlock()
+		cache.lock.RLock()
+		cache.lock.RUnlock()
 	}
 
-	return fc.events, nil
+	return cache.events, nil
 }

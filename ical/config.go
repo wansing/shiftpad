@@ -8,8 +8,8 @@ import (
 
 type Config struct {
 	URL      string `json:"url"`
-	Username string `json:"username"` // can be empty
-	Password string `json:"password"` // can be empty
+	Username string `json:"username"` // optional
+	Password string `json:"password"` // optional
 }
 
 func LoadConfig(jsonfile string) (Config, error) {
