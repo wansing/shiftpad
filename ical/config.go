@@ -7,9 +7,10 @@ import (
 )
 
 type Config struct {
-	URL      string `json:"url"`
-	Username string `json:"username"` // optional
-	Password string `json:"password"` // optional
+	URL           string `json:"url"`
+	Username      string `json:"username"` // optional
+	Password      string `json:"password"` // optional
+	SkipTLSVerify bool   `json:"skip-tls-verify"`
 }
 
 func LoadConfig(jsonfile string) (Config, error) {

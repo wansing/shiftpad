@@ -15,7 +15,7 @@ var client = &http.Client{
 	Timeout: 5 * time.Second,
 	Transport: &http.Transport{
 		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: true,
+			// InsecureSkipVerify:
 		},
 	},
 }
@@ -55,6 +55,9 @@ func (cache *FeedCache) Get(location *time.Location) ([]Event, error) {
 		}
 		if cache.Config.Username != "" {
 			req.SetBasicAuth(cache.Config.Username, cache.Config.Password)
+		}
+		if t, ok := client.Transport.(*http.Transport); ok {
+			t.TLSClientConfig.InsecureSkipVerify = cache.SkipTLSVerify
 		}
 
 		resp, err := client.Do(req)
