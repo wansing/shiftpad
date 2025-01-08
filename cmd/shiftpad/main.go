@@ -19,7 +19,6 @@ import (
 	"github.com/wansing/shiftpad/html"
 	"github.com/wansing/shiftpad/html/static"
 	"github.com/wansing/shiftpad/sqlite"
-	"github.com/wansing/shiftpad/way"
 )
 
 type HandlerFunc func(w http.ResponseWriter, r *http.Request) http.Handler
@@ -57,41 +56,40 @@ func main() {
 		}
 	}()
 
-	// httprouter does not work here because of its %2F bug: https://github.com/julienschmidt/httprouter/issues/208
-	var router = way.NewRouter()
-	router.Handle(http.MethodGet, "/static/", http.StripPrefix("/static", http.FileServerFS(ModTimeFS{static.Files, time.Now()})))
-	router.Handle(http.MethodGet, "/", HandlerFunc(srv.indexGet))
-	router.Handle(http.MethodGet, "/create/:key", srv.withCreateKey(srv.createGet))
-	router.Handle(http.MethodPost, "/create/:key", srv.withCreateKey(srv.createPost))
-	router.Handle(http.MethodGet, "/p/:pad/:secret", srv.withPad(srv.padViewGet))
-	router.Handle(http.MethodPost, "/p/:pad/:secret", srv.withPad(srv.padViewPost))
-	router.Handle(http.MethodGet, "/p/:pad/:secret/apply/:shift", srv.withShift(srv.shiftApplyGet))
-	router.Handle(http.MethodPost, "/p/:pad/:secret/apply/:shift", srv.withShift(srv.shiftApplyPost))
-	router.Handle(http.MethodGet, "/p/:pad/:secret/payout", srv.withPad(srv.padPayoutGet))
-	router.Handle(http.MethodGet, "/p/:pad/:secret/payout/:taker", srv.withPad(srv.padPayoutTakerGet))
-	router.Handle(http.MethodPost, "/p/:pad/:secret/payout/:taker", srv.withPad(srv.padPayoutTakerPost))
-	router.Handle(http.MethodGet, "/p/:pad/:secret/payout/:taker/result", srv.withPad(srv.padPayoutTakerResultGet))
-	router.Handle(http.MethodGet, "/p/:pad/:secret/settings", srv.withPad(srv.padSettingsGet))
-	router.Handle(http.MethodPost, "/p/:pad/:secret/settings", srv.withPad(srv.padSettingsPost))
-	router.Handle(http.MethodGet, "/p/:pad/:secret/share", srv.withPad(srv.padShareGet))
-	router.Handle(http.MethodPost, "/p/:pad/:secret/share", srv.withPad(srv.padSharePost))
-	router.Handle(http.MethodGet, "/p/:pad/:secret/ical", srv.withPad(srv.padICal))
-	router.Handle(http.MethodGet, "/p/:pad/:secret/day/:date", srv.withPad(srv.padViewDay))
-	router.Handle(http.MethodGet, "/p/:pad/:secret/week/:year/:week", srv.withPad(srv.padViewWeekGet))
-	router.Handle(http.MethodPost, "/p/:pad/:secret/week/:year/:week", srv.withPad(srv.padViewPost)) // same handler as without :year/:week
-	router.Handle(http.MethodGet, "/p/:pad/:secret/add/:date", srv.withPad(srv.shiftAddGet))
-	router.Handle(http.MethodPost, "/p/:pad/:secret/add/:date", srv.withPad(srv.shiftAddPost))
-	router.Handle(http.MethodGet, "/p/:pad/:secret/approve/:shift/:take", srv.withTake(srv.takeApproveGet))
-	router.Handle(http.MethodPost, "/p/:pad/:secret/approve/:shift/:take", srv.withTake(srv.takeApprovePost))
-	router.Handle(http.MethodGet, "/p/:pad/:secret/take/:shift", srv.withShift(srv.shiftTakeGet))
-	router.Handle(http.MethodPost, "/p/:pad/:secret/take/:shift", srv.withShift(srv.shiftTakePost))
-	router.Handle(http.MethodGet, "/p/:pad/:secret/edit/:shift", srv.withShift(srv.shiftEditGet))
-	router.Handle(http.MethodPost, "/p/:pad/:secret/edit/:shift", srv.withShift(srv.shiftEditPost))
-	router.Handle(http.MethodGet, "/p/:pad/:secret/delete/:shift", srv.withShift(srv.shiftDeleteGet))
-	router.Handle(http.MethodPost, "/p/:pad/:secret/delete/:shift", srv.withShift(srv.shiftDeletePost))
+	var mux = http.NewServeMux()
+	mux.Handle("GET  /static/", http.StripPrefix("/static", http.FileServerFS(ModTimeFS{static.Files, time.Now()})))
+	mux.Handle("GET  /", HandlerFunc(srv.indexGet))
+	mux.Handle("GET  /create/{key}", srv.withCreateKey(srv.createGet))
+	mux.Handle("POST /create/{key}", srv.withCreateKey(srv.createPost))
+	mux.Handle("GET  /p/{pad}/{secret}", srv.withPad(srv.padViewGet))
+	mux.Handle("POST /p/{pad}/{secret}", srv.withPad(srv.padViewPost))
+	mux.Handle("GET  /p/{pad}/{secret}/apply/{shift}", srv.withShift(srv.shiftApplyGet))
+	mux.Handle("POST /p/{pad}/{secret}/apply/{shift}", srv.withShift(srv.shiftApplyPost))
+	mux.Handle("GET  /p/{pad}/{secret}/payout", srv.withPad(srv.padPayoutGet))
+	mux.Handle("GET  /p/{pad}/{secret}/payout/{taker}", srv.withPad(srv.padPayoutTakerGet))
+	mux.Handle("POST /p/{pad}/{secret}/payout/{taker}", srv.withPad(srv.padPayoutTakerPost))
+	mux.Handle("GET  /p/{pad}/{secret}/payout/{taker}/result", srv.withPad(srv.padPayoutTakerResultGet))
+	mux.Handle("GET  /p/{pad}/{secret}/settings", srv.withPad(srv.padSettingsGet))
+	mux.Handle("POST /p/{pad}/{secret}/settings", srv.withPad(srv.padSettingsPost))
+	mux.Handle("GET  /p/{pad}/{secret}/share", srv.withPad(srv.padShareGet))
+	mux.Handle("POST /p/{pad}/{secret}/share", srv.withPad(srv.padSharePost))
+	mux.Handle("GET  /p/{pad}/{secret}/ical", srv.withPad(srv.padICal))
+	mux.Handle("GET  /p/{pad}/{secret}/day/{date}", srv.withPad(srv.padViewDay))
+	mux.Handle("GET  /p/{pad}/{secret}/week/{year}/{week}", srv.withPad(srv.padViewWeekGet))
+	mux.Handle("POST /p/{pad}/{secret}/week/{year}/{week}", srv.withPad(srv.padViewPost)) // same handler as without {year}/{week}
+	mux.Handle("GET  /p/{pad}/{secret}/add/{date}", srv.withPad(srv.shiftAddGet))
+	mux.Handle("POST /p/{pad}/{secret}/add/{date}", srv.withPad(srv.shiftAddPost))
+	mux.Handle("GET  /p/{pad}/{secret}/approve/{shift}/{take}", srv.withTake(srv.takeApproveGet))
+	mux.Handle("POST /p/{pad}/{secret}/approve/{shift}/{take}", srv.withTake(srv.takeApprovePost))
+	mux.Handle("GET  /p/{pad}/{secret}/take/{shift}", srv.withShift(srv.shiftTakeGet))
+	mux.Handle("POST /p/{pad}/{secret}/take/{shift}", srv.withShift(srv.shiftTakePost))
+	mux.Handle("GET  /p/{pad}/{secret}/edit/{shift}", srv.withShift(srv.shiftEditGet))
+	mux.Handle("POST /p/{pad}/{secret}/edit/{shift}", srv.withShift(srv.shiftEditPost))
+	mux.Handle("GET  /p/{pad}/{secret}/delete/{shift}", srv.withShift(srv.shiftDeleteGet))
+	mux.Handle("POST /p/{pad}/{secret}/delete/{shift}", srv.withShift(srv.shiftDeletePost))
 
 	log.Println("listening to 127.0.0.1:8200")
-	http.ListenAndServe("127.0.0.1:8200", srv.sessionManager.LoadAndSave(router))
+	http.ListenAndServe("127.0.0.1:8200", srv.sessionManager.LoadAndSave(mux))
 }
 
 func linkDay(authpad shiftpad.AuthPad, t time.Time) string {
@@ -100,7 +98,7 @@ func linkDay(authpad shiftpad.AuthPad, t time.Time) string {
 
 func (srv *Server) withCreateKey(f HandlerFunc) HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) http.Handler {
-		key := way.Param(r.Context(), "key")
+		key := r.PathValue("key")
 		if key == "" {
 			return Forbidden()
 		}
@@ -113,7 +111,7 @@ func (srv *Server) withCreateKey(f HandlerFunc) HandlerFunc {
 
 func (srv *Server) withPad(f func(http.ResponseWriter, *http.Request, shiftpad.AuthPad) http.Handler) HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) http.Handler {
-		authpad, err := srv.DB.GetAuthPad(way.Param(r.Context(), "pad"), way.Param(r.Context(), "secret"))
+		authpad, err := srv.DB.GetAuthPad(r.PathValue("pad"), r.PathValue("secret"))
 		if err != nil {
 			return NotFound()
 		}
@@ -127,7 +125,7 @@ func (srv *Server) withPad(f func(http.ResponseWriter, *http.Request, shiftpad.A
 // withShift calls handlers with a pad and a shift. It calls GetShift which ensures that the shift belongs to the pad.
 func (srv *Server) withShift(f func(http.ResponseWriter, *http.Request, shiftpad.AuthPad, *shiftpad.Shift) http.Handler) HandlerFunc {
 	return srv.withPad(func(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
-		id, _ := strconv.Atoi(way.Param(r.Context(), "shift"))
+		id, _ := strconv.Atoi(r.PathValue("shift"))
 		shift, err := srv.DB.GetShift(authpad.Pad, id)
 		if err != nil {
 			return NotFound()
@@ -138,7 +136,7 @@ func (srv *Server) withShift(f func(http.ResponseWriter, *http.Request, shiftpad
 
 func (srv *Server) withTake(f func(http.ResponseWriter, *http.Request, shiftpad.AuthPad, *shiftpad.Shift, shiftpad.Take) http.Handler) HandlerFunc {
 	return srv.withShift(func(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, shift *shiftpad.Shift) http.Handler {
-		id, _ := strconv.Atoi(way.Param(r.Context(), "take"))
+		id, _ := strconv.Atoi(r.PathValue("take"))
 		// linear search
 		for _, take := range shift.Takes {
 			if take.ID == id {
@@ -237,10 +235,7 @@ func (srv *Server) padPayoutTakerGet(w http.ResponseWriter, r *http.Request, aut
 		return NotFound()
 	}
 
-	takerName, err := url.PathUnescape(way.Param(r.Context(), "taker")) // TODO use net/http router, then check if PathUnescape is still required
-	if err != nil {
-		return NotFound()
-	}
+	takerName := r.PathValue("taker")
 
 	shifts, err := srv.DB.GetTakesByTaker(authpad.Pad, takerName)
 	if err != nil {
@@ -311,7 +306,7 @@ func (srv *Server) padPayoutTakerPost(w http.ResponseWriter, r *http.Request, au
 	}
 
 	// validate input by iterating over GetTakesByTaker and checking CanPayoutTake
-	takerName := way.Param(r.Context(), "taker")
+	takerName := r.PathValue("taker")
 	shifts, err := srv.DB.GetTakesByTaker(authpad.Pad, takerName)
 	if err != nil {
 		return InternalServerError(err)
@@ -362,7 +357,7 @@ func (srv *Server) padPayoutTakerResultGet(w http.ResponseWriter, r *http.Reques
 	}
 
 	// collect input by iterating over GetTakesByTaker, don't check CanPayoutTake because displayed takes are already paid out
-	takerName := way.Param(r.Context(), "taker")
+	takerName := r.PathValue("taker")
 	shifts, err := srv.DB.GetTakesByTaker(authpad.Pad, takerName)
 	if err != nil {
 		return InternalServerError(err)
@@ -632,7 +627,7 @@ func (srv *Server) padViewPost(w http.ResponseWriter, r *http.Request, authpad s
 }
 
 func (srv *Server) padViewDay(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
-	date, err := time.Parse("2006-01-02", way.Param(r.Context(), "date"))
+	date, err := time.Parse("2006-01-02", r.PathValue("date"))
 	if err != nil {
 		return NotFound()
 	}
@@ -641,7 +636,7 @@ func (srv *Server) padViewDay(w http.ResponseWriter, r *http.Request, authpad sh
 }
 
 func (srv *Server) padViewWeekGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
-	year, err := strconv.Atoi(way.Param(r.Context(), "year"))
+	year, err := strconv.Atoi(r.PathValue("year"))
 	if err != nil {
 		return NotFound()
 	}
@@ -649,7 +644,7 @@ func (srv *Server) padViewWeekGet(w http.ResponseWriter, r *http.Request, authpa
 		return NotFound()
 	}
 
-	week, err := strconv.Atoi(way.Param(r.Context(), "week"))
+	week, err := strconv.Atoi(r.PathValue("week"))
 	if err != nil {
 		return NotFound()
 	}
@@ -707,7 +702,7 @@ func (srv *Server) shiftAddGet(w http.ResponseWriter, r *http.Request, authpad s
 }
 
 func (srv *Server) shiftAddTemplate(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, errMsg string) http.Handler {
-	date, err := time.Parse("2006-01-02", way.Param(r.Context(), "date"))
+	date, err := time.Parse("2006-01-02", r.PathValue("date"))
 	if err != nil {
 		return NotFound()
 	}
@@ -823,7 +818,7 @@ func (srv *Server) shiftAddPost(w http.ResponseWriter, r *http.Request, authpad 
 		return InternalServerError(err)
 	}
 
-	redirectDate := way.Param(r.Context(), "date") // alternative: min shift or event begin time
+	redirectDate := r.PathValue("date") // alternative: min shift or event begin time
 	return http.RedirectHandler(authpad.Link()+fmt.Sprintf("/day/%s", redirectDate), http.StatusSeeOther)
 }
 
