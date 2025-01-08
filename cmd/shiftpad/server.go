@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
+	"github.com/wansing/go-ical-cache"
 	"github.com/wansing/shiftpad"
-	"github.com/wansing/shiftpad/ical"
 )
 
 type DB interface {
@@ -34,7 +34,7 @@ type DB interface {
 type Server struct {
 	CreateKeys     []string
 	DB             DB
-	icalCaches     map[string]*ical.FeedCache
+	icalCaches     map[string]*icalcache.Cache
 	icalCachesLock sync.Mutex
 	sessionManager *scs.SessionManager
 }
@@ -49,7 +49,7 @@ func NewServer(db DB) *Server {
 
 	return &Server{
 		DB:             db,
-		icalCaches:     make(map[string]*ical.FeedCache),
+		icalCaches:     make(map[string]*icalcache.Cache),
 		sessionManager: sessionManager,
 	}
 }
@@ -59,14 +59,14 @@ func (srv *Server) Cleanup() error {
 	return srv.DB.DeletePads(date)
 }
 
-func (srv *Server) GetICalFeedCache(url string) *ical.FeedCache {
+func (srv *Server) GetICalFeedCache(url string) *icalcache.Cache {
 	srv.icalCachesLock.Lock()
 	defer srv.icalCachesLock.Unlock()
 
 	feedCache, ok := srv.icalCaches[url]
 	if !ok {
-		feedCache = &ical.FeedCache{
-			Config: ical.Config{
+		feedCache = &icalcache.Cache{
+			Config: icalcache.Config{
 				URL: url,
 			},
 		}

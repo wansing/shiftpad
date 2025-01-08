@@ -6,11 +6,11 @@ import (
 	"sort"
 	"time"
 
-	"github.com/wansing/shiftpad/ical"
+	"github.com/wansing/go-ical-cache"
 )
 
 type Event struct {
-	*ical.Event
+	*icalcache.Event
 	Shifts []Shift
 }
 
@@ -29,7 +29,7 @@ type Day struct {
 }
 
 type Repository interface {
-	GetICalFeedCache(url string) *ical.FeedCache
+	GetICalFeedCache(url string) *icalcache.Cache
 	GetShifts(pad *Pad, from, to int64) ([]Shift, error) // begin: from inclusive, to exclusive
 	GetShiftsByEvent(pad *Pad, eventUID string) ([]Shift, error)
 }
@@ -157,7 +157,7 @@ func GetInterval(repo Repository, pad *Pad, from, to time.Time, location *time.L
 	// create dummies for remaining event uids
 	for uid := range eventUIDs {
 		events = append(events, Event{
-			Event: &ical.Event{
+			Event: &icalcache.Event{
 				UID: uid,
 				// summary empty
 			},
