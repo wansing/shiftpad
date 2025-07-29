@@ -142,7 +142,7 @@ func (auth Auth) CanApply(shiftname string) bool {
 }
 
 func (auth Auth) CanApplyShift(shift Shift) bool {
-	return auth.CanApply(shift.Name) && !shift.FullyTaken() && !shift.Over() && shift.AfterDeadline(auth.TakeDeadline, time.Now())
+	return auth.CanApply(shift.Name) && !shift.FullyTaken() && !shift.Over() && shift.AfterDeadline(auth.TakeDeadline, time.Now()) && (auth.TakerNameAll || len(auth.TakerName) > 0)
 }
 
 func (auth Auth) CanApplyName(shift Shift, name string) bool {
@@ -175,7 +175,7 @@ func (auth Auth) CanTake(shiftname string) bool {
 }
 
 func (auth Auth) CanTakeShift(shift Shift) bool {
-	return auth.CanTake(shift.Name) && !shift.FullyTaken() && !shift.Over() && shift.AfterDeadline(auth.TakeDeadline, time.Now())
+	return auth.CanTake(shift.Name) && !shift.FullyTaken() && !shift.Over() && shift.AfterDeadline(auth.TakeDeadline, time.Now()) && (auth.TakerNameAll || len(auth.TakerName) > 0)
 }
 
 func (auth Auth) CanTakerName(shift Shift, name string) bool {
