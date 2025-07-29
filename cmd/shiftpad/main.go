@@ -157,14 +157,14 @@ func InternalServerError(err error) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("internal server error: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		html.InternalServerError.Execute(w, html.MakeLayoutData(r))
+		html.ErrInternalServerError.Execute(w, html.MakeLayoutData(r))
 	})
 }
 
 func NotFound() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
-		html.NotFound.Execute(w, html.MakeLayoutData(r))
+		html.ErrNotFound.Execute(w, html.MakeLayoutData(r))
 	})
 }
 
