@@ -11,9 +11,6 @@ import (
 
 	"github.com/wansing/shiftpad"
 	"gitlab.com/golang-commonmark/markdown"
-	"golang.org/x/text/collate"
-	"golang.org/x/text/language"
-	"golang.org/x/text/message"
 )
 
 //go:embed *
@@ -98,32 +95,13 @@ var (
 	TakeApprove            = parse("layout.html", "pad.html", "take-approve.html")
 )
 
-type Lang language.Tag
-
-func (l Lang) Sort(strs []string) []string {
-	collator := collate.New(language.Tag(l), collate.IgnoreCase) // collator is not thread-safe btw
-	collator.SortStrings(strs)
-	return strs
-}
-
-func (l Lang) Tr(key message.Reference, a ...interface{}) string {
-	return message.NewPrinter(language.Tag(l)).Sprintf(key, a...)
-}
-
-// supported languages
-var matcher = language.NewMatcher([]language.Tag{
-	message.MatchLanguage("en-US"), // The first language is used as fallback.
-	message.MatchLanguage("de-DE"),
-})
-
 type LayoutData struct {
 	Lang
 }
 
 func MakeLayoutData(r *http.Request) LayoutData {
-	tag, _ := language.MatchStrings(matcher, r.Header.Get("Accept-Language"))
 	return LayoutData{
-		Lang: Lang(tag),
+		Lang: MakeLang(r),
 	}
 }
 
