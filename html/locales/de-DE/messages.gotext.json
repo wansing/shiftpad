@@ -2,11 +2,6 @@
     "language": "de-DE",
     "messages": [
         {
-            "id": "Please use the full link.",
-            "message": "Please use the full link.",
-            "translation": "Bitte verwende den vollständigen Link."
-        },
-        {
             "id": "Sorry, internal server error",
             "message": "Sorry, internal server error",
             "translation": "Sorry, interner Serverfehler"
@@ -15,6 +10,11 @@
             "id": "Sorry, not found",
             "message": "Sorry, not found",
             "translation": "Sorry, nicht gefunden"
+        },
+        {
+            "id": "Please use the full link.",
+            "message": "Please use the full link.",
+            "translation": "Bitte verwende den vollständigen Link."
         },
         {
             "id": "Create new Pad",
@@ -247,14 +247,54 @@
             "translation": "Abbrechen"
         },
         {
-            "id": "This",
-            "message": "This",
-            "translation": "Diese"
+            "id": "This week",
+            "message": "This week",
+            "translation": "Diese Woche"
         },
         {
-            "id": "Next",
-            "message": "Next",
-            "translation": "Nächste"
+            "id": "This month",
+            "message": "This month",
+            "translation": "Dieser Monat"
+        },
+        {
+            "id": "Upcoming Month",
+            "message": "Upcoming Month",
+            "translation": "Kommender Monat"
+        },
+        {
+            "id": "Upcoming Week",
+            "message": "Upcoming Week",
+            "translation": "Kommende Woche"
+        },
+        {
+            "id": "Unnamed Pad",
+            "message": "Unnamed Pad",
+            "translation": "Unbenanntes Pad"
+        },
+        {
+            "id": "Link expires",
+            "message": "Link expires",
+            "translation": "Link gültig bis"
+        },
+        {
+            "id": "Copy iCalendar",
+            "message": "Copy iCalendar",
+            "translation": "iCalendar-Link kopieren"
+        },
+        {
+            "id": "Settings",
+            "message": "Settings",
+            "translation": "Einstellungen"
+        },
+        {
+            "id": "Share",
+            "message": "Share",
+            "translation": "Teilen"
+        },
+        {
+            "id": "last changed",
+            "message": "last changed",
+            "translation": "zuletzt geändert"
         },
         {
             "id": "Error",
@@ -290,36 +330,6 @@
             "id": "No shifts or events yet.",
             "message": "No shifts or events yet.",
             "translation": "Noch keine Schichten oder Veranstaltungen."
-        },
-        {
-            "id": "Unnamed Pad",
-            "message": "Unnamed Pad",
-            "translation": "Unbenanntes Pad"
-        },
-        {
-            "id": "Link expires",
-            "message": "Link expires",
-            "translation": "Link gültig bis"
-        },
-        {
-            "id": "Copy iCalendar",
-            "message": "Copy iCalendar",
-            "translation": "iCalendar-Link kopieren"
-        },
-        {
-            "id": "Settings",
-            "message": "Settings",
-            "translation": "Einstellungen"
-        },
-        {
-            "id": "Share",
-            "message": "Share",
-            "translation": "Teilen"
-        },
-        {
-            "id": "last changed",
-            "message": "last changed",
-            "translation": "zuletzt geändert"
         },
         {
             "id": "applied",

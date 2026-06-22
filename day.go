@@ -61,14 +61,15 @@ func (day Day) Groups() []Event {
 	return groups
 }
 
-type Week struct {
+// week or month
+type Timespan struct {
 	Begin time.Time
 	End   time.Time
-	Days  [7]*Day
+	Days  []*Day
 }
 
 // date must be any time in the week
-func GetWeek(repo Repository, pad *Pad, year, week int, location *time.Location) (Week, error) {
+func GetWeek(repo Repository, pad *Pad, year, week int, location *time.Location) (Timespan, error) {
 	// get start of week
 	// "Jan 01 to Jan 03 of year n might belong to week 52 or 53 of year n-1", so January 4th is always in week one
 	begin := time.Date(year, time.January, 4, 0, 0, 0, 0, location)
@@ -78,19 +79,28 @@ func GetWeek(repo Repository, pad *Pad, year, week int, location *time.Location)
 		begin = begin.AddDate(0, 0, -1)
 	}
 	to := begin.AddDate(0, 0, 7)
+	return getTimespan(repo, pad, begin, to, location)
+}
 
+func GetMonth(repo Repository, pad *Pad, year int, month int, location *time.Location) (Timespan, error) {
+	begin := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, location)
+	to := begin.AddDate(0, 1, 0)
+	return getTimespan(repo, pad, begin, to, location)
+}
+
+func getTimespan(repo Repository, pad *Pad, begin, to time.Time, location *time.Location) (Timespan, error) {
 	events, shifts, err := GetInterval(repo, pad, begin, to, location)
 	if err != nil {
-		return Week{}, err
+		return Timespan{}, err
 	}
 
 	// create days
-	var days = [7]*Day{}
-	for i := range days {
-		days[i] = &Day{
-			Begin: begin.AddDate(0, 0, i),
-			End:   begin.AddDate(0, 0, i+1),
-		}
+	var days = []*Day{}
+	for i := begin; i.Before(to); i = i.AddDate(0, 0, 1) {
+		days = append(days, &Day{
+			Begin: i,
+			End:   i.AddDate(0, 0, 1),
+		})
 	}
 
 	// move independent shifts to their day
@@ -105,14 +115,14 @@ func GetWeek(repo Repository, pad *Pad, year, week int, location *time.Location)
 		eventDay.Events = append(eventDay.Events, event)
 	}
 
-	return Week{
+	return Timespan{
 		Begin: begin,
 		End:   to,
 		Days:  days,
 	}, nil
 }
 
-func closestDay(days [7]*Day, t time.Time) *Day {
+func closestDay(days []*Day, t time.Time) *Day {
 	if t.Before(days[0].Begin) {
 		return days[0]
 	}
@@ -121,7 +131,7 @@ func closestDay(days [7]*Day, t time.Time) *Day {
 			return day
 		}
 	}
-	return days[6]
+	return days[len(days)-1]
 }
 
 // weeks can't be split into days because shifts and events may be contained in multiple days then, but we want them just once in a week (or any other interval)

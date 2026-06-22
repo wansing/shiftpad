@@ -61,8 +61,7 @@ func main() {
 	mux.Handle("GET  /", HandlerFunc(srv.indexGet))
 	mux.Handle("GET  /create/{key}", srv.withCreateKey(srv.createGet))
 	mux.Handle("POST /create/{key}", srv.withCreateKey(srv.createPost))
-	mux.Handle("GET  /p/{pad}/{secret}", srv.withPad(srv.padViewGet))
-	mux.Handle("POST /p/{pad}/{secret}", srv.withPad(srv.padViewPost))
+	mux.Handle("GET  /p/{pad}/{secret}", srv.withPad(srv.padRedirectWeek))
 	mux.Handle("GET  /p/{pad}/{secret}/apply/{shift}", srv.withShift(srv.shiftApplyGet))
 	mux.Handle("POST /p/{pad}/{secret}/apply/{shift}", srv.withShift(srv.shiftApplyPost))
 	mux.Handle("GET  /p/{pad}/{secret}/payout", srv.withPad(srv.padPayoutGet))
@@ -75,8 +74,12 @@ func main() {
 	mux.Handle("POST /p/{pad}/{secret}/share", srv.withPad(srv.padSharePost))
 	mux.Handle("GET  /p/{pad}/{secret}/ical", srv.withPad(srv.padICal))
 	mux.Handle("GET  /p/{pad}/{secret}/day/{date}", srv.withPad(srv.padViewDay))
+	mux.Handle("GET  /p/{pad}/{secret}/month", srv.withPad(srv.padViewCurrentMonthGet))
+	mux.Handle("GET  /p/{pad}/{secret}/month/{year}/{month}", srv.withPad(srv.padViewMonthGet))
+	mux.Handle("POST /p/{pad}/{secret}/month/{year}/{month}", srv.withPad(srv.padViewPost)) // same handler as /week
+	mux.Handle("GET  /p/{pad}/{secret}/week", srv.withPad(srv.padViewCurrentWeekGet))
 	mux.Handle("GET  /p/{pad}/{secret}/week/{year}/{week}", srv.withPad(srv.padViewWeekGet))
-	mux.Handle("POST /p/{pad}/{secret}/week/{year}/{week}", srv.withPad(srv.padViewPost)) // same handler as without {year}/{week}
+	mux.Handle("POST /p/{pad}/{secret}/week/{year}/{week}", srv.withPad(srv.padViewPost)) // same handler as /month
 	mux.Handle("GET  /p/{pad}/{secret}/add/{date}", srv.withPad(srv.shiftAddGet))
 	mux.Handle("POST /p/{pad}/{secret}/add/{date}", srv.withPad(srv.shiftAddPost))
 	mux.Handle("GET  /p/{pad}/{secret}/approve/{shift}/{take}", srv.withTake(srv.takeApproveGet))
@@ -610,10 +613,8 @@ func (srv *Server) padICal(w http.ResponseWriter, r *http.Request, authpad shift
 	}
 }
 
-// padViewGet shows the current week. It does not redirect, so users can bookmark the link.
-func (srv *Server) padViewGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
-	year, week := time.Now().ISOWeek()
-	return srv.padViewWeek(w, r, authpad, year, week)
+func (srv *Server) padRedirectWeek(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
+	return http.RedirectHandler(authpad.Link()+"/week", http.StatusSeeOther)
 }
 
 func (srv *Server) padViewPost(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
@@ -633,6 +634,39 @@ func (srv *Server) padViewDay(w http.ResponseWriter, r *http.Request, authpad sh
 	}
 	year, week := date.ISOWeek()
 	return http.RedirectHandler(authpad.Link()+fmt.Sprintf("/week/%d/%d#%s", year, week, date.Format("2006-01-02")), http.StatusSeeOther)
+}
+
+func (srv *Server) padViewCurrentMonthGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
+	now := time.Now()
+	return srv.padViewMonth(w, r, authpad, now.Year(), int(now.Month()))
+}
+
+func (srv *Server) padViewMonthGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
+	year, err := strconv.Atoi(r.PathValue("year"))
+	if err != nil {
+		return NotFound()
+	}
+	if year < 2022 || year > 2100 {
+		return NotFound()
+	}
+
+	month, err := strconv.Atoi(r.PathValue("month"))
+	if err != nil {
+		return NotFound()
+	}
+	if month < 1 {
+		month = 1
+	}
+	if month > 12 {
+		month = 12
+	}
+
+	return srv.padViewMonth(w, r, authpad, year, month)
+}
+
+func (srv *Server) padViewCurrentWeekGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
+	year, week := time.Now().ISOWeek()
+	return srv.padViewWeek(w, r, authpad, year, week)
 }
 
 func (srv *Server) padViewWeekGet(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad) http.Handler {
@@ -658,6 +692,38 @@ func (srv *Server) padViewWeekGet(w http.ResponseWriter, r *http.Request, authpa
 	return srv.padViewWeek(w, r, authpad, year, week)
 }
 
+func (srv *Server) padViewMonth(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, year, monthNumber int) http.Handler {
+	month, err := shiftpad.GetMonth(srv, authpad.Pad, year, monthNumber, authpad.Location)
+	if err != nil {
+		return InternalServerError(err)
+	}
+
+	earlier := month.Begin.AddDate(0, -1, 0)
+	later := month.Begin.AddDate(0, 1, 0)
+	upcoming := time.Now().AddDate(0, 1, 0)
+
+	errs, _ := srv.sessionManager.Pop(r.Context(), "errs").([]string)
+
+	if err := html.PadViewMonth.Execute(w, html.PadViewMonthData{
+		PadData: html.PadData{
+			LayoutData: html.MakeLayoutData(r),
+			Pad:        authpad,
+			Errors:     errs,
+		},
+		Month:         fmt.Sprintf("%04d-%02d", year, monthNumber),
+		Days:          month.Days,
+		EarlierYear:   earlier.Year(),
+		EarlierMonth:  int(earlier.Month()),
+		LaterYear:     later.Year(),
+		LaterMonth:    int(later.Month()),
+		UpcomingYear:  upcoming.Year(),
+		UpcomingMonth: int(upcoming.Month()),
+	}); err != nil {
+		return InternalServerError(err)
+	}
+	return nil
+}
+
 func (srv *Server) padViewWeek(w http.ResponseWriter, r *http.Request, authpad shiftpad.AuthPad, year, weekNumber int) http.Handler {
 	week, err := shiftpad.GetWeek(srv, authpad.Pad, year, weekNumber, authpad.Location)
 	if err != nil {
@@ -666,8 +732,7 @@ func (srv *Server) padViewWeek(w http.ResponseWriter, r *http.Request, authpad s
 
 	earlierYear, earlierWeek := week.Begin.AddDate(0, 0, -7).ISOWeek()
 	laterYear, laterWeek := week.Begin.AddDate(0, 0, 7).ISOWeek()
-	thisYear, thisWeek := time.Now().ISOWeek()
-	nextYear, nextWeek := time.Now().AddDate(0, 0, 7).ISOWeek()
+	upcomingYear, upcomingWeek := time.Now().AddDate(0, 0, 7).ISOWeek()
 
 	errs, _ := srv.sessionManager.Pop(r.Context(), "errs").([]string)
 
@@ -677,16 +742,14 @@ func (srv *Server) padViewWeek(w http.ResponseWriter, r *http.Request, authpad s
 			Pad:        authpad,
 			Errors:     errs,
 		},
-		ISOWeek:     fmt.Sprintf("%04d-W%02d", year, weekNumber),
-		Days:        week.Days,
-		EarlierYear: earlierYear,
-		EarlierWeek: earlierWeek,
-		LaterYear:   laterYear,
-		LaterWeek:   laterWeek,
-		ThisYear:    thisYear,
-		ThisWeek:    thisWeek,
-		NextYear:    nextYear,
-		NextWeek:    nextWeek,
+		ISOWeek:      fmt.Sprintf("%04d-W%02d", year, weekNumber),
+		Days:         week.Days,
+		EarlierYear:  earlierYear,
+		EarlierWeek:  earlierWeek,
+		LaterYear:    laterYear,
+		LaterWeek:    laterWeek,
+		UpcomingYear: upcomingYear,
+		UpcomingWeek: upcomingWeek,
 	}); err != nil {
 		return InternalServerError(err)
 	}

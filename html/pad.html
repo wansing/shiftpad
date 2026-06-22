@@ -77,6 +77,124 @@
 	</div>
 {{end}}
 
+{{define "pad-days"}}
+	{{range .Errors}}
+		<div class="alert alert-danger">{{$.Tr "Error"}}: {{.}}</div>
+	{{end}}
+	{{range $day := .Days}}
+		<h5 id="{{FmtISODate .Begin}}">{{FmtDate .Begin}}</h5>
+		{{with .Groups}}
+			<table class="table align-middle">
+				<thead>
+					<tr>
+						<th>{{$.Tr "Time"}}</th>
+						<th>{{$.Tr "Shift"}}</th>
+						<th>{{$.Tr "Taker"}}</th>
+						<th class="pe-0 py-0 text-end">
+							{{if $.Pad.CanEditAnyShift}}
+								<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/add/{{FmtISODate $day.Begin}}#shift">
+									<i class="fa-solid fa-plus"></i>
+									<span class="d-none d-md-inline">{{$.Tr "Create shifts"}}</span>
+								</a>
+							{{end}}
+						</th>
+					</tr>
+				</thead>
+				{{range .}}
+					<tbody class="table-group-divider">
+						{{with .Event}}
+							<tr class="table-secondary">
+								<td>{{FmtDateTimeRangeRef .Start .End $day.Begin}}</td>
+								<td colspan="2">
+									{{if .URL}}
+										<a href="{{.URL}}" rel="noreferrer" target="_blank">
+									{{end}}
+									{{with .Summary}}{{.}}{{else}}{{$.Tr "Unknown event"}} {{.UID}}{{end}}
+									{{if .URL}}
+										</a>
+									{{end}}
+								</td>
+								<td class="pe-0 py-0 text-end">
+									<!-- copied -->
+									{{if $.Pad.CanEditAnyShift}}
+										<a class="btn btn-sm btn-primary d-print-none" href="{{$.Pad.Link}}/add/{{FmtISODate $day.Begin}}?event={{.UID}}#shift">
+											<i class="fa-solid fa-plus"></i>
+											<span class="d-none d-md-inline">{{$.Tr "Create shifts"}}</span>
+										</a>
+									{{end}}
+								</td>
+							</tr>
+						{{end}}
+						{{range .Shifts}}
+							<!-- $more conditions copied from below -->
+							{{$more := or (and ($.Pad.CanTakeShift .) ($.Pad.CanApplyShift .)) ($.Pad.CanEditShift .)}}
+							<tr>
+								{{template "shift-cells" (MakeShiftCellsData $.Lang $.Pad $day .)}}
+								<td class="pe-0 py-0 text-end text-nowrap">
+									{{if $.Pad.CanTakeShift .}}
+										<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/take/{{.ID}}#shift">
+											<i class="fa-solid fa-hand"></i>
+											<span class="d-none d-md-inline">{{$.Tr "Take"}}</span>
+										</a>
+									{{else}}
+										{{if $.Pad.CanApplyShift .}}
+											<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/apply/{{.ID}}#shift">
+												<i class="fa-solid fa-hand-point-up"></i>
+												<span class="d-none d-md-inline">{{$.Tr "Apply"}}</span>
+											</a>
+										{{end}}
+									{{end}}
+									{{if $more}}
+										<button class="btn btn-sm btn-primary my-1 d-print-none hide-me" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{.ID}}" aria-expanded="false" aria-controls="collapse-{{.ID}}">
+											<i class="fa-solid fa-ellipsis"></i>
+										</button>
+										<div class="collapse" id="collapse-{{.ID}}">
+											<!-- if apply button has been overruled by take button above -->
+											{{if and ($.Pad.CanTakeShift .) ($.Pad.CanApplyShift .)}}
+												<div><!-- for display:block and no margin collapse -->
+													<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/apply/{{.ID}}#shift">
+														<i class="fa-solid fa-hand-point-up"></i>
+														<span class="d-none d-md-inline">{{$.Tr "Apply"}}</span>
+													</a>
+												</div>
+											{{end}}
+											{{if $.Pad.CanEditShift .}}
+												<div><!-- for display:block and no margin collapse -->
+													<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/edit/{{.ID}}#shift">
+														<i class="fa-solid fa-pen-to-square"></i>
+														<span class="d-none d-md-inline">{{$.Tr "Edit"}}</span>
+													</a>
+												</div>
+												<div><!-- for display:block and no margin collapse -->
+													<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/delete/{{.ID}}#shift">
+														<i class="fa-solid fa-trash"></i>
+														<span class="d-none d-md-inline">{{$.Tr "Delete"}}</span>
+													</a>
+												</div>
+											{{end}}
+										</div>
+									{{end}}
+								</td>
+							</tr>
+						{{end}}
+					</tbody>
+				{{end}}
+			</table>
+		{{else}}
+			<div class="d-flex align-items-center justify-content-between">
+				<p class="text-muted">{{$.Tr "No shifts or events yet."}}</p>
+				<!-- copied -->
+				{{if $.Pad.CanEditAnyShift}}
+					<a class="btn btn-sm btn-primary my-1 d-print-none" href="{{$.Pad.Link}}/add/{{FmtISODate $day.Begin}}#shift">
+						<i class="fa-solid fa-plus"></i>
+						<span class="d-none d-md-inline">{{$.Tr "Create shifts"}}</span>
+					</a>
+				{{end}}
+			</div>
+		{{end}}
+	{{end}}
+{{end}}
+
 {{define "shift-cells"}}
 	<td class="lh-sm">{{FmtDateTimeRef .Shift.Begin .Day.Begin}} <span class="text-muted text-nowrap">–&hairsp;{{FmtDateTimeRef .Shift.End .Shift.Begin}}</span></td>
 	<td>

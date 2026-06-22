@@ -2,9 +2,9 @@
 	<form method="post">
 		<div class="d-flex align-items-center mb-3 d-print-none">
 			<div class="input-group flex-grow-1" style="flex-basis: content">
-				<a class="btn btn-primary" href="{{.Pad.Link}}/week/{{.EarlierYear}}/{{.EarlierWeek}}"><i class="fa-solid fa-backward"></i></a>
-				<input class="form-control flex-grow-0" style="width: calc(1.5rem + 9ch)" type="week" name="week" value="{{.ISOWeek}}" onchange="this.form.submit()">
-				<a class="btn btn-primary" href="{{.Pad.Link}}/week/{{.LaterYear}}/{{.LaterWeek}}"><i class="fa-solid fa-forward"></i></a>
+				<a class="btn btn-primary" href="{{.Pad.Link}}/month/{{.EarlierYear}}/{{.EarlierMonth}}"><i class="fa-solid fa-backward"></i></a>
+				<input class="form-control flex-grow-0" style="width: calc(1.5rem + 8ch)" type="month" name="month" value="{{.Month}}" onchange="this.form.submit()">
+				<a class="btn btn-primary" href="{{.Pad.Link}}/month/{{.LaterYear}}/{{.LaterMonth}}"><i class="fa-solid fa-forward"></i></a>
 			</div>
 			<div class="input-group flex-grow-1 justify-content-end me-2" style="flex-basis: content">
 				<a class="btn btn-primary" href="{{.Pad.Link}}/week">
@@ -16,9 +16,9 @@
 					<span class="d-none d-md-inline">{{$.Tr "This month"}}</span>
 				</a>
 			</div>
-			<a class="btn btn-primary" href="{{.Pad.Link}}/week/{{.UpcomingYear}}/{{.UpcomingWeek}}">
+			<a class="btn btn-primary" href="{{.Pad.Link}}/month/{{.UpcomingYear}}/{{.UpcomingMonth}}">
 				<i class="fa-solid fa-forward-step"></i>
-				<span class="d-none d-md-inline">{{$.Tr "Upcoming Week"}}</span>
+				<span class="d-none d-md-inline">{{$.Tr "Upcoming Month"}}</span>
 			</a>
 		</div>
 	</form>

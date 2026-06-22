@@ -87,6 +87,7 @@ var (
 	PadSettings            = parse("layout.html", "pad.html", "pad-settings.html")
 	PadShare               = parse("layout.html", "pad.html", "pad-share.html")
 	PadShareResult         = parse("layout.html", "pad.html", "pad-share-result.html")
+	PadViewMonth           = parse("layout.html", "pad.html", "pad-view-month.html")
 	PadViewWeek            = parse("layout.html", "pad.html", "pad-view-week.html")
 	ShiftCreate            = parse("layout.html", "pad.html", "shift-create.html")
 	ShiftDelete            = parse("layout.html", "pad.html", "shift-delete.html")
@@ -144,18 +145,28 @@ type PadShareResultData struct {
 	Link string
 }
 
+type PadViewMonthData struct {
+	PadData
+	Month         string // yyyy-mm
+	Days          []*shiftpad.Day
+	EarlierYear   int
+	EarlierMonth  int
+	LaterYear     int
+	LaterMonth    int
+	UpcomingYear  int
+	UpcomingMonth int
+}
+
 type PadViewWeekData struct {
 	PadData
-	ISOWeek     string
-	Days        [7]*shiftpad.Day
-	EarlierYear int
-	EarlierWeek int
-	LaterYear   int
-	LaterWeek   int
-	ThisYear    int
-	ThisWeek    int
-	NextYear    int
-	NextWeek    int
+	ISOWeek      string // yyyy-Www
+	Days         []*shiftpad.Day
+	EarlierYear  int
+	EarlierWeek  int
+	LaterYear    int
+	LaterWeek    int
+	UpcomingYear int
+	UpcomingWeek int
 }
 
 type TakeApproveData struct {

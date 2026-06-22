@@ -2,13 +2,6 @@
     "language": "en-US",
     "messages": [
         {
-            "id": "Please use the full link.",
-            "message": "Please use the full link.",
-            "translation": "Please use the full link.",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
             "id": "Sorry, internal server error",
             "message": "Sorry, internal server error",
             "translation": "Sorry, internal server error",
@@ -19,6 +12,13 @@
             "id": "Sorry, not found",
             "message": "Sorry, not found",
             "translation": "Sorry, not found",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Please use the full link.",
+            "message": "Please use the full link.",
+            "translation": "Please use the full link.",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -345,16 +345,72 @@
             "fuzzy": true
         },
         {
-            "id": "This",
-            "message": "This",
-            "translation": "This",
+            "id": "This week",
+            "message": "This week",
+            "translation": "This week",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Next",
-            "message": "Next",
-            "translation": "Next",
+            "id": "This month",
+            "message": "This month",
+            "translation": "This month",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Upcoming Month",
+            "message": "Upcoming Month",
+            "translation": "Upcoming Month",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Upcoming Week",
+            "message": "Upcoming Week",
+            "translation": "Upcoming Week",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Unnamed Pad",
+            "message": "Unnamed Pad",
+            "translation": "Unnamed Pad",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Link expires",
+            "message": "Link expires",
+            "translation": "Link expires",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Copy iCalendar",
+            "message": "Copy iCalendar",
+            "translation": "Copy iCalendar",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Settings",
+            "message": "Settings",
+            "translation": "Settings",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Share",
+            "message": "Share",
+            "translation": "Share",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "last changed",
+            "message": "last changed",
+            "translation": "last changed",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -404,48 +460,6 @@
             "id": "No shifts or events yet.",
             "message": "No shifts or events yet.",
             "translation": "No shifts or events yet.",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Unnamed Pad",
-            "message": "Unnamed Pad",
-            "translation": "Unnamed Pad",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Link expires",
-            "message": "Link expires",
-            "translation": "Link expires",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Copy iCalendar",
-            "message": "Copy iCalendar",
-            "translation": "Copy iCalendar",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Settings",
-            "message": "Settings",
-            "translation": "Settings",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Share",
-            "message": "Share",
-            "translation": "Share",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "last changed",
-            "message": "last changed",
-            "translation": "last changed",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
